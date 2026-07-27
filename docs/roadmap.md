@@ -8,23 +8,27 @@ novelty.
 - [x] Typed Go DAG.
 - [x] Stable runner invocation and adapter registry.
 - [x] Taskfile, Just, and direct-command adapters.
-- [x] Stable target acquire/execute/release contract.
+- [x] Resource-aware reserve/acquire/transfer/execute/release contract.
 - [x] Local target.
 - [x] Parallel scheduler.
 - [x] Compatible-run resume behavior.
-- [x] Atomic file state store.
+- [x] Revisioned transition journal with exclusive run locking.
 - [x] Content-addressed cache blob store.
 - [x] Structured event stream and terminal renderer.
-- [ ] Cache coordinator and deterministic output archives.
-- [ ] Persistent project driver and CLI loader.
+- [x] Cache coordinator and deterministic output archives.
+- [x] Compiled project driver, cached CLI loader, and version handshake spike.
+- [x] Crude SSH provider that exercises the remote contract.
 
 ## Milestone 1: excellent local runner
 
-- `taskflow run`, `list`, `graph`, `status`, and `resume`.
-- Cached compilation of project-local typed definitions.
-- Source/input hashing with useful cache-explanation output.
-- Output archive restore and publication.
-- Resource-aware parallel scheduler.
+- [x] `taskflow run`, `list`, `graph`, and `resume`.
+- [ ] `taskflow status`.
+- [x] Cached compilation of project-local typed definitions.
+- [ ] Recursively fingerprint local driver extension dependencies.
+- [x] Source/input hashing.
+- [ ] Useful cache-explanation output.
+- [x] Output archive restore, publication, and manifest verification.
+- [x] Resource-aware, per-provider admission.
 - Signal handling and crash-recovery tests.
 - Quiet, normal, verbose, and trace terminal modes.
 - Shell completion.
@@ -64,7 +68,8 @@ toolchain caches, and resume at a failed node.
 - Versioned extension compatibility policy.
 - Cache schema migration policy.
 - Secret redaction and threat model.
-- Retry/backoff and provider outage behavior.
+- State/cache schema migration registries and compatibility policy.
+- Provider outage and reconnection behavior.
 - Artifact retention and garbage collection.
 - Performance benchmarks.
 - Cross-platform packaging.

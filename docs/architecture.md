@@ -22,11 +22,11 @@ Project pipeline (compiled Go)
        flow.Pipeline
             │ validate + fingerprint
             ▼
-     engine.Scheduler ───────────────► event.Sink ──► terminal.Renderer
+     engine.Scheduler ───────────────► event.Dispatcher ──► event.Sink
         │        │
-        │        └───────────────────► state.Store
-        │                               ├─ local files
-        │                               └─ future shared store
+        │        └───────────────────► state.Lease
+        │                               ├─ revisioned transitions
+        │                               └─ exclusive run ownership
         ▼
   cache coordinator ─────────────────► cache.Store
         │                               ├─ local CAS
@@ -40,7 +40,8 @@ Project pipeline (compiled Go)
             ▼ process.Spec
      target.Registry
         ├─ local provider
-        ├─ Sprite provider
+        ├─ SSH contract spike
+        ├─ future Sprite provider
         └─ Orchard provider
             │
             ▼
@@ -81,17 +82,22 @@ Go types rather than authored as the workflow.
 ### Loading project definitions
 
 Go cannot safely load arbitrary source into an existing binary portably. The
-planned CLI therefore treats a project-local `.taskflow` package as a compiled
-driver:
+CLI therefore treats a project-local `.taskflow` package as a compiled driver:
 
 1. hash its Go sources, module files, Taskflow version, and build platform;
 2. reuse a previously built driver when the hash matches;
 3. otherwise build it with the Go toolchain;
-4. execute the driver through a versioned internal protocol.
+4. require a versioned JSON handshake;
+5. execute `list`, `graph`, `run`, or `resume` in that driver.
 
 This preserves `taskflow run verify` ergonomics without Go's platform-specific
 `plugin` package or runtime source interpretation. The driver links provider
 and adapter modules in-process, preserving compile-time type checking.
+
+The initial cache fingerprint includes `.taskflow` Go sources, module/workspace
+files, CLI version, protocol version, build platform, and Go version. It does
+not yet recursively fingerprint local `replace` dependencies; that is a known
+pre-v1 limitation which an extension-heavy fixture must settle.
 
 ## Runner adapters
 
@@ -125,11 +131,14 @@ leaf.
 
 ## Target providers
 
-A provider implements three operations:
+A provider exposes:
 
-1. report capabilities;
-2. acquire an environment for a run/step/resource request;
-3. execute and release that environment.
+1. capabilities and finite resources;
+2. non-blocking reservation, so provider saturation consumes no global slot;
+3. environment acquisition and deadline-bounded release;
+4. environment identity probes;
+5. workspace tar upload/download;
+6. process execution.
 
 `Acquire` does not mean "create a VM." A provider may:
 
@@ -140,7 +149,8 @@ A provider implements three operations:
 - retain a warm environment for a placement group.
 
 Likewise, `Release` lets the provider pause, recycle, checkpoint, or destroy the
-underlying environment.
+underlying environment. Cleanup runs on a context detached from fail-fast
+cancellation and bounded by a separate deadline.
 
 ### Initial providers
 
@@ -148,6 +158,14 @@ underlying environment.
 
 Runs a child process below a workspace root. It is the reference implementation
 and the fastest default.
+
+#### SSH contract spike
+
+Uses an external SSH executable plus tar streams to exercise remote workspace
+creation, source upload, command execution, output extraction, environment
+identity, capacity, resource accounting, and cleanup. It deliberately has no
+connection pooling, reconnection, secret transport, or production hardening.
+Its purpose is to break local-shaped contracts before a Sprite SDK is adopted.
 
 #### Sprite
 
@@ -179,15 +197,17 @@ Host allocation is a separate fleet-management concern.
 The scheduler is a persistent state machine, not a recursive task walker.
 
 ```text
-pending ──dependencies ready──► running ──exit 0──► succeeded
-   │                              │
-   │ dependency failed            └─exit nonzero─► failed
-   ▼
- blocked
+pending ──admitted──► running ──exit 0/cache hit──► succeeded
+   │                    │
+   │ dependency failed  ├─retry budget──► pending (persisted backoff)
+   ▼                    ├─cancel────────► cancelled
+ blocked                └─exit nonzero─► failed
 ```
 
-Independent ready nodes run up to the configured concurrency. A provider may
-apply a lower capacity or finite-resource constraint.
+Independent ready nodes run up to the configured concurrency. Admission is
+non-blocking and provider-specific: a saturated remote provider does not occupy
+a global slot or starve ready local work. Providers reserve both concurrency
+and declared finite resources before acquisition begins.
 
 Each transition is saved before dependent work becomes eligible. If the
 controller crashes while a node is `running`, resume resets that node to
@@ -196,21 +216,29 @@ record.
 
 ## Resume
 
-Resume is keyed by run ID and guarded by the pipeline definition digest.
+Resume is keyed by run ID and guarded by the pipeline structural digest. A
+separate full definition digest records cosmetic and operational tuning changes.
+Descriptions, retry tuning, and declaration order of independent steps do not
+invalidate resume; graph shape, invocations, targets, declared identity, and
+artifacts do.
 
 A resumed run:
 
-- keeps `succeeded` nodes successful;
+- keeps `succeeded` nodes successful only when their output manifest is still
+  present and valid in the cache;
 - resets `running`, `failed`, and `blocked` nodes to `pending`;
 - schedules only nodes whose dependencies are now satisfied;
 - rejects a changed pipeline definition by default.
 
-Before remote production use, resume also needs an output-presence invariant:
-a successful node may be skipped only if its declared outputs still exist in
-the shared cache/artifact store. Otherwise it is safely re-queued.
-
 Future controlled modes may allow migration across compatible graph changes,
 but silent best-effort matching is explicitly out of scope.
+
+The file store owns each run with an OS file lock and appends one atomic,
+fsynced transition per state change using an expected revision. A shared store
+must provide an equivalent distributed lease/CAS contract. State records carry
+an explicit schema version. Before v1, incompatible schemas are rejected rather
+than silently migrated; a migration registry is required before compatibility
+is promised.
 
 ## Caching
 
@@ -225,7 +253,7 @@ The intended cache key includes:
 ```text
 Taskflow cache schema version
 pipeline + step identity
-runner invocation
+resolved process + runner adapter identity/configuration
 declared input content digests
 dependency output digests
 target OS + architecture
@@ -237,16 +265,19 @@ explicit user cache version
 Secrets are never stored in cache manifests. Nodes that mutate external state,
 depend on undeclared ambient state, or publish releases are uncacheable.
 
-The cache store deals in opaque content-addressed archives. A coordinator above
-the provider is responsible for deterministic packing, restoration, and
-manifest validation. This keeps cache semantics consistent across local,
-Sprite, and Orchard targets.
+The cache store deals in opaque content-addressed archives. The coordinator
+deterministically packs outputs, restores them through the environment transfer
+contract, and verifies the blob digest against its manifest before use. The
+scheduler persists the cache key, execution digest, target environment ID,
+cache-hit flag, and output manifest before emitting success.
 
 ## Workspaces and artifacts
 
-The source checkout is captured as an immutable input snapshot for a run.
-Remote steps receive that snapshot rather than independently choosing a Git
-branch tip.
+The current `ArchiveMaterializer` sends declared workspace paths through the
+same safe tar contract used for cache outputs. It proves transport portability,
+but it still captures the live workspace per acquisition. A single immutable
+run snapshot is required before the SSH spike can be considered a production
+remote provider.
 
 Declared outputs are the only supported cross-target filesystem dependency.
 Shared mutable directories are not part of the distributed execution model.
@@ -257,7 +288,9 @@ Affinity must be visible in the graph rather than inferred by a provider.
 
 ## Events and terminal output
 
-The engine emits structured lifecycle events. The terminal renderer is one
+The engine emits structured lifecycle events only after the corresponding
+journal append succeeds. An ordered asynchronous dispatcher keeps slow
+telemetry consumers off the scheduling path. The terminal renderer is one
 consumer; JSON logs and OpenTelemetry can be additional consumers without
 changing execution.
 
@@ -276,10 +309,20 @@ Output never requires cursor addressing or a full-screen TUI.
 Taskflow extensions are normal Go modules compiled into the project driver:
 
 ```go
-app.UseRunner(taskfile.New())
-app.UseTarget(sprite.New(...))
-app.UseCache(s3cache.New(...))
-app.UseEvents(otel.New(...))
+runners.Register(taskfile.New())
+targets.Register(sprite.New(...))
+
+executor := &engine.RuntimeExecutor{
+	Runners: runners,
+	Targets: targets,
+	Cache:   &cache.Coordinator{Store: s3cache.New(...)},
+}
+
+driver.Main(driver.Config{
+	Pipelines: pipelines,
+	Executor:  executor,
+	Events:    otel.New(...),
+})
 ```
 
 This avoids unstable dynamic loading and gives extensions the same compiler

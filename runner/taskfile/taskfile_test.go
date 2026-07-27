@@ -16,10 +16,11 @@ func TestResolve(t *testing.T) {
 		WithDir("backend").
 		WithEnv("CHECK", "true")
 
-	spec, err := adapter.Resolve(context.Background(), invocation)
+	resolved, err := adapter.Resolve(context.Background(), invocation)
 	if err != nil {
 		t.Fatalf("Resolve() error = %v", err)
 	}
+	spec := resolved.Process
 	if got, want := spec.Program, "task"; got != want {
 		t.Errorf("Program = %q, want %q", got, want)
 	}
@@ -31,5 +32,8 @@ func TestResolve(t *testing.T) {
 	}
 	if got, want := spec.Env["CHECK"], "true"; got != want {
 		t.Errorf("Env[CHECK] = %q, want %q", got, want)
+	}
+	if got, want := resolved.Identity.Configuration["binary"], "task"; got != want {
+		t.Errorf("identity binary = %q, want %q", got, want)
 	}
 }

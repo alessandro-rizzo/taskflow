@@ -53,6 +53,8 @@ func (r *Renderer) Emit(_ context.Context, value event.Event) {
 		fmt.Fprintf(r.writer, "✓ %-24s %s\n", value.StepID, value.Duration.Round(1e6))
 	case event.StepFailed:
 		fmt.Fprintf(r.writer, "✗ %-24s %s: %v\n", value.StepID, value.Duration.Round(1e6), value.Err)
+	case event.StepCancelled:
+		fmt.Fprintf(r.writer, "■ %-24s cancelled: %v\n", value.StepID, value.Err)
 	case event.StepBlocked:
 		fmt.Fprintf(r.writer, "• %-24s blocked: %s\n", value.StepID, value.Message)
 	case event.StepCacheHit:
@@ -67,7 +69,8 @@ func (r *Renderer) Emit(_ context.Context, value event.Event) {
 func (r *Renderer) visible(kind event.Kind) bool {
 	switch r.verbosity {
 	case Quiet:
-		return kind == event.StepFailed || kind == event.RunFailed
+		return kind == event.StepFailed || kind == event.StepCancelled ||
+			kind == event.RunSucceeded || kind == event.RunFailed
 	case Normal:
 		return kind != event.StepQueued
 	default:

@@ -3,6 +3,7 @@ package event
 
 import (
 	"context"
+	"sync"
 	"time"
 )
 
@@ -19,6 +20,7 @@ const (
 	StepRetrying  Kind = "step.retrying"
 	StepSucceeded Kind = "step.succeeded"
 	StepFailed    Kind = "step.failed"
+	StepCancelled Kind = "step.cancelled"
 	StepBlocked   Kind = "step.blocked"
 	StepCacheHit  Kind = "step.cache_hit"
 )
@@ -57,3 +59,68 @@ type Nop struct{}
 
 // Emit implements Sink.
 func (Nop) Emit(context.Context, Event) {}
+
+// Dispatcher decouples scheduling from potentially slow event consumers while
+// preserving event order. Close flushes the unbounded in-memory queue.
+type Dispatcher struct {
+	sink   Sink
+	mu     sync.Mutex
+	cond   *sync.Cond
+	queue  []queuedEvent
+	closed bool
+	done   chan struct{}
+}
+
+type queuedEvent struct {
+	ctx   context.Context
+	event Event
+}
+
+// NewDispatcher starts an asynchronous ordered dispatcher.
+func NewDispatcher(sink Sink) *Dispatcher {
+	if sink == nil {
+		sink = Nop{}
+	}
+	dispatcher := &Dispatcher{sink: sink, done: make(chan struct{})}
+	dispatcher.cond = sync.NewCond(&dispatcher.mu)
+	go dispatcher.run()
+	return dispatcher
+}
+
+// Emit enqueues without invoking the downstream sink on the scheduler path.
+func (d *Dispatcher) Emit(ctx context.Context, value Event) {
+	d.mu.Lock()
+	if !d.closed {
+		d.queue = append(d.queue, queuedEvent{ctx: ctx, event: value})
+		d.cond.Signal()
+	}
+	d.mu.Unlock()
+}
+
+// Close flushes queued events and waits for the consumer.
+func (d *Dispatcher) Close() {
+	d.mu.Lock()
+	d.closed = true
+	d.cond.Signal()
+	d.mu.Unlock()
+	<-d.done
+}
+
+func (d *Dispatcher) run() {
+	defer close(d.done)
+	for {
+		d.mu.Lock()
+		for len(d.queue) == 0 && !d.closed {
+			d.cond.Wait()
+		}
+		if len(d.queue) == 0 && d.closed {
+			d.mu.Unlock()
+			return
+		}
+		next := d.queue[0]
+		d.queue[0] = queuedEvent{}
+		d.queue = d.queue[1:]
+		d.mu.Unlock()
+		d.sink.Emit(next.ctx, next.event)
+	}
+}

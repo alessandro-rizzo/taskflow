@@ -3,131 +3,426 @@ package engine_test
 import (
 	"context"
 	"errors"
+	"io"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/alessandro-rizzo/taskflow/engine"
+	"github.com/alessandro-rizzo/taskflow/event"
 	"github.com/alessandro-rizzo/taskflow/flow"
+	"github.com/alessandro-rizzo/taskflow/process"
+	"github.com/alessandro-rizzo/taskflow/runner"
 	"github.com/alessandro-rizzo/taskflow/runner/command"
 	"github.com/alessandro-rizzo/taskflow/state"
+	"github.com/alessandro-rizzo/taskflow/target"
 )
 
 func TestSchedulerParallelisesReadySteps(t *testing.T) {
 	t.Parallel()
-
 	run := command.New()
 	pipeline := flow.MustDefine("parallel", func(p *flow.Builder) {
 		p.Step("one", run.Run("true"))
 		p.Step("two", run.Run("true"))
 		p.Step("three", run.Run("true"))
 	})
-	executor := &concurrencyExecutor{delay: 40 * time.Millisecond}
-	scheduler := engine.Scheduler{
-		Executor: executor,
-		State:    state.NewMemory(),
-	}
-
-	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{
-		MaxParallel: 3,
-	})
+	executor := newFakeExecutor()
+	executor.delay = 40 * time.Millisecond
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{MaxParallel: 3})
 	if err != nil {
 		t.Fatalf("Run() error = %v", err)
 	}
-	if result.Status != state.Succeeded {
-		t.Fatalf("run status = %q, want %q", result.Status, state.Succeeded)
-	}
-	if executor.maximum < 2 {
-		t.Fatalf("maximum concurrency = %d, want at least 2", executor.maximum)
+	if result.Status != state.Succeeded || executor.maximum < 2 {
+		t.Fatalf("run=%q maximum=%d, want succeeded and concurrent", result.Status, executor.maximum)
 	}
 }
 
-func TestSchedulerResumeSkipsSuccessfulSteps(t *testing.T) {
+func TestSchedulerResumeSkipsValidSuccess(t *testing.T) {
 	t.Parallel()
-
 	run := command.New()
 	pipeline := flow.MustDefine("resume", func(p *flow.Builder) {
 		first := p.Step("first", run.Run("true"))
 		p.Step("second", run.Run("flaky"), flow.Needs(first))
 	})
 	store := state.NewMemory()
-	executor := &flakyExecutor{
-		failuresRemaining: map[string]int{"second": 1},
-		calls:             make(map[string]int),
-	}
+	executor := newFakeExecutor()
+	executor.failures["second"] = 1
 	scheduler := engine.Scheduler{Executor: executor, State: store}
-
 	firstRun, err := scheduler.Run(context.Background(), pipeline, engine.Options{
-		RunID:       "resume-test",
-		MaxParallel: 2,
+		RunID: "resume-test", MaxParallel: 2,
+	})
+	if err == nil || firstRun.Status != state.Failed {
+		t.Fatalf("first Run() = %q, %v, want failure", firstRun.Status, err)
+	}
+	resumed, err := scheduler.Run(context.Background(), pipeline, engine.Options{
+		RunID: "resume-test", Resume: true, MaxParallel: 2,
+	})
+	if err != nil || resumed.Status != state.Succeeded {
+		t.Fatalf("resumed Run() = %q, %v", resumed.Status, err)
+	}
+	if executor.calls["first"] != 1 || executor.calls["second"] != 2 {
+		t.Fatalf("calls = %#v, want first=1 second=2", executor.calls)
+	}
+}
+
+func TestSchedulerResumeRejectsStructuralChangeButAllowsDescriptionChange(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	original := flow.MustDefine("resume", func(p *flow.Builder) {
+		p.Step("test", run.Run("true"), flow.Describe("before"))
+	})
+	store := state.NewMemory()
+	executor := newFakeExecutor()
+	scheduler := engine.Scheduler{Executor: executor, State: store}
+	if _, err := scheduler.Run(context.Background(), original, engine.Options{RunID: "digest"}); err != nil {
+		t.Fatalf("initial Run() error = %v", err)
+	}
+	cosmetic := flow.MustDefine("resume", func(p *flow.Builder) {
+		p.Step("test", run.Run("true"), flow.Describe("after"))
+	})
+	if _, err := scheduler.Run(context.Background(), cosmetic, engine.Options{
+		RunID: "digest", Resume: true,
+	}); err != nil {
+		t.Fatalf("cosmetic resume error = %v", err)
+	}
+	changed := flow.MustDefine("resume", func(p *flow.Builder) {
+		p.Step("test", run.Run("false"))
+	})
+	if _, err := scheduler.Run(context.Background(), changed, engine.Options{
+		RunID: "digest", Resume: true,
+	}); err == nil {
+		t.Fatal("structurally changed resume error = nil")
+	}
+}
+
+func TestSchedulerFailFastCancelsRunningAndBlocksPending(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("fail-fast", func(p *flow.Builder) {
+		failing := p.Step("failing", run.Run("false"))
+		p.Step("dependent", run.Run("true"), flow.Needs(failing))
+		p.Step("slow", run.Run("sleep"))
+	})
+	executor := newFakeExecutor()
+	executor.failures["failing"] = 1
+	executor.block["slow"] = true
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{
+		RunID: "fail-fast", MaxParallel: 2, FailFast: true,
 	})
 	if err == nil {
-		t.Fatal("first Run() error = nil, want failure")
+		t.Fatal("Run() error = nil")
 	}
-	if firstRun.Status != state.Failed {
-		t.Fatalf("first run status = %q, want %q", firstRun.Status, state.Failed)
+	if result.Steps["failing"].Status != state.Failed ||
+		result.Steps["dependent"].Status != state.Blocked ||
+		result.Steps["slow"].Status != state.Cancelled {
+		t.Fatalf("unexpected statuses: %#v", result.Steps)
 	}
+}
 
-	resumed, err := scheduler.Run(context.Background(), pipeline, engine.Options{
-		RunID:       "resume-test",
-		Resume:      true,
-		MaxParallel: 2,
+func TestSchedulerPersistsEveryRetryAttempt(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("retry", func(p *flow.Builder) {
+		p.Step(
+			"flaky",
+			run.Run("flaky"),
+			flow.Retry(1, time.Millisecond, time.Millisecond, 1),
+		)
+	})
+	executor := newFakeExecutor()
+	executor.failures["flaky"] = 1
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{RunID: "retry"})
+	if err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+	if result.Steps["flaky"].Attempts != 2 {
+		t.Fatalf("attempts = %d, want 2", result.Steps["flaky"].Attempts)
+	}
+}
+
+func TestSchedulerDoesNotEmitSuccessBeforeJournalCommit(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("journal", func(p *flow.Builder) {
+		p.Step("test", run.Run("true"))
+	})
+	var mu sync.Mutex
+	var events []event.Kind
+	sink := event.SinkFunc(func(_ context.Context, value event.Event) {
+		mu.Lock()
+		events = append(events, value.Kind)
+		mu.Unlock()
+	})
+	store := &failingStore{Store: state.NewMemory(), failExpectedRevision: 2}
+	scheduler := engine.Scheduler{
+		Executor: newFakeExecutor(),
+		State:    store,
+		Events:   sink,
+	}
+	if _, err := scheduler.Run(context.Background(), pipeline, engine.Options{RunID: "journal"}); err == nil {
+		t.Fatal("Run() error = nil, want journal failure")
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	for _, kind := range events {
+		if kind == event.StepSucceeded {
+			t.Fatalf("events = %v, contained success before failed journal commit", events)
+		}
+	}
+}
+
+func TestSchedulerSkipsSaturatedTargetWithoutConsumingGlobalSlot(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("admission", func(p *flow.Builder) {
+		p.Step("remote", run.Run("true"), flow.On("remote"))
+		p.Step("local", run.Run("true"))
+	})
+	executor := &admissionExecutor{}
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{
+		RunID: "admission", MaxParallel: 1,
 	})
 	if err != nil {
-		t.Fatalf("resumed Run() error = %v", err)
+		t.Fatalf("Run() error = %v", err)
 	}
-	if resumed.Status != state.Succeeded {
-		t.Fatalf("resumed status = %q, want %q", resumed.Status, state.Succeeded)
-	}
-	if got, want := executor.calls["first"], 1; got != want {
-		t.Fatalf("first calls = %d, want %d", got, want)
-	}
-	if got, want := executor.calls["second"], 2; got != want {
-		t.Fatalf("second calls = %d, want %d", got, want)
+	if result.Status != state.Succeeded || executor.order[0] != "local" {
+		t.Fatalf("status=%s order=%v, want local admitted before remote", result.Status, executor.order)
 	}
 }
 
-type concurrencyExecutor struct {
-	mu      sync.Mutex
-	current int
-	maximum int
-	delay   time.Duration
-}
-
-func (e *concurrencyExecutor) Execute(ctx context.Context, _ string, _ flow.Step) error {
-	e.mu.Lock()
-	e.current++
-	if e.current > e.maximum {
-		e.maximum = e.current
+func TestRuntimeReleaseUsesDetachedCleanupContext(t *testing.T) {
+	t.Parallel()
+	direct := command.New()
+	pipeline := flow.MustDefine("cleanup", func(p *flow.Builder) {
+		p.Step("cancelled", direct.Run("true"))
+	})
+	step, _ := pipeline.Step("cancelled")
+	runners := runner.NewRegistry()
+	if err := runners.Register(direct); err != nil {
+		t.Fatal(err)
 	}
-	e.mu.Unlock()
-
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	case <-time.After(e.delay):
+	provider := &cleanupProvider{releaseContext: make(chan error, 1)}
+	targets := target.NewRegistry()
+	if err := targets.Register(provider); err != nil {
+		t.Fatal(err)
 	}
-
-	e.mu.Lock()
-	e.current--
-	e.mu.Unlock()
-	return nil
+	executor := engine.RuntimeExecutor{Runners: runners, Targets: targets}
+	execution, admitted, err := executor.TryAdmit(context.Background(), engine.ExecutionRequest{
+		RunID: "run", Step: step,
+	})
+	if err != nil || !admitted {
+		t.Fatalf("TryAdmit() = %v, %v", admitted, err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := execution.Run(ctx); !errors.Is(err, context.Canceled) {
+		t.Fatalf("Run() error = %v, want context.Canceled", err)
+	}
+	if releaseErr := <-provider.releaseContext; releaseErr != nil {
+		t.Fatalf("cleanup context error = %v, want nil", releaseErr)
+	}
 }
 
-type flakyExecutor struct {
-	mu                sync.Mutex
-	failuresRemaining map[string]int
-	calls             map[string]int
+type fakeExecutor struct {
+	mu       sync.Mutex
+	current  int
+	maximum  int
+	delay    time.Duration
+	failures map[string]int
+	block    map[string]bool
+	calls    map[string]int
 }
 
-func (e *flakyExecutor) Execute(_ context.Context, _ string, step flow.Step) error {
+func newFakeExecutor() *fakeExecutor {
+	return &fakeExecutor{
+		failures: make(map[string]int), block: make(map[string]bool),
+		calls: make(map[string]int),
+	}
+}
+
+func (e *fakeExecutor) TryAdmit(
+	_ context.Context,
+	request engine.ExecutionRequest,
+) (engine.Execution, bool, error) {
+	return fakeExecution{executor: e, step: request.Step}, true, nil
+}
+
+func (e *fakeExecutor) ValidateSuccess(context.Context, flow.Step, state.Step) (bool, error) {
+	return true, nil
+}
+
+type fakeExecution struct {
+	executor *fakeExecutor
+	step     flow.Step
+}
+
+func (fakeExecution) Close() {}
+
+type failingStore struct {
+	state.Store
+	failExpectedRevision uint64
+}
+
+func (s *failingStore) Acquire(ctx context.Context, id string) (state.Lease, error) {
+	lease, err := s.Store.Acquire(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &failingLease{Lease: lease, failExpectedRevision: s.failExpectedRevision}, nil
+}
+
+type failingLease struct {
+	state.Lease
+	failExpectedRevision uint64
+}
+
+func (l *failingLease) Append(
+	ctx context.Context,
+	expected uint64,
+	transition state.Transition,
+) (state.Snapshot, error) {
+	if expected == l.failExpectedRevision {
+		return state.Snapshot{}, errors.New("intentional journal failure")
+	}
+	return l.Lease.Append(ctx, expected, transition)
+}
+
+type admissionExecutor struct {
+	mu        sync.Mutex
+	localDone bool
+	order     []string
+}
+
+func (e *admissionExecutor) TryAdmit(
+	_ context.Context,
+	request engine.ExecutionRequest,
+) (engine.Execution, bool, error) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	id := string(step.ID)
-	e.calls[id]++
-	if e.failuresRemaining[id] > 0 {
-		e.failuresRemaining[id]--
-		return errors.New("intentional test failure")
+	if request.Step.Target == "remote" && !e.localDone {
+		return nil, false, nil
 	}
+	return admissionExecution{executor: e, id: string(request.Step.ID)}, true, nil
+}
+
+func (*admissionExecutor) ValidateSuccess(context.Context, flow.Step, state.Step) (bool, error) {
+	return true, nil
+}
+
+type admissionExecution struct {
+	executor *admissionExecutor
+	id       string
+}
+
+func (admissionExecution) Close() {}
+
+func (e admissionExecution) Run(context.Context) (engine.ExecutionResult, error) {
+	e.executor.mu.Lock()
+	e.executor.order = append(e.executor.order, e.id)
+	if e.id == "local" {
+		e.executor.localDone = true
+	}
+	e.executor.mu.Unlock()
+	return engine.ExecutionResult{}, nil
+}
+
+type cleanupProvider struct {
+	releaseContext chan error
+}
+
+func (*cleanupProvider) Name() string {
+	return "local"
+}
+
+func (*cleanupProvider) Capabilities(context.Context) (target.Capabilities, error) {
+	return target.Capabilities{OS: "test", Architecture: "test", MaxConcurrency: 1}, nil
+}
+
+func (p *cleanupProvider) TryReserve(
+	context.Context,
+	target.AcquireRequest,
+) (target.Reservation, bool, error) {
+	return cleanupReservation{provider: p}, true, nil
+}
+
+type cleanupReservation struct {
+	provider *cleanupProvider
+}
+
+func (r cleanupReservation) Acquire(context.Context) (target.Environment, error) {
+	return cleanupEnvironment{provider: r.provider}, nil
+}
+
+func (cleanupReservation) Release() {}
+
+type cleanupEnvironment struct {
+	provider *cleanupProvider
+}
+
+func (cleanupEnvironment) ID() string {
+	return "cleanup"
+}
+
+func (cleanupEnvironment) Identity(context.Context, target.IdentityRequest) (target.Identity, error) {
+	return target.Identity{OS: "test", Architecture: "test"}, nil
+}
+
+func (cleanupEnvironment) Exec(ctx context.Context, _ process.Spec, _ process.IO) (process.Result, error) {
+	return process.Result{}, ctx.Err()
+}
+
+func (cleanupEnvironment) Upload(context.Context, io.Reader) error {
 	return nil
+}
+
+func (cleanupEnvironment) Download(
+	context.Context,
+	[]string,
+	io.Writer,
+) error {
+	return nil
+}
+
+func (e cleanupEnvironment) Release(ctx context.Context, _ target.Release) error {
+	e.provider.releaseContext <- ctx.Err()
+	return nil
+}
+
+func (e fakeExecution) Run(ctx context.Context) (engine.ExecutionResult, error) {
+	id := string(e.step.ID)
+	e.executor.mu.Lock()
+	e.executor.calls[id]++
+	e.executor.current++
+	if e.executor.current > e.executor.maximum {
+		e.executor.maximum = e.executor.current
+	}
+	fail := e.executor.failures[id] > 0
+	if fail {
+		e.executor.failures[id]--
+	}
+	block := e.executor.block[id]
+	delay := e.executor.delay
+	e.executor.mu.Unlock()
+	defer func() {
+		e.executor.mu.Lock()
+		e.executor.current--
+		e.executor.mu.Unlock()
+	}()
+	if block {
+		<-ctx.Done()
+		return engine.ExecutionResult{}, ctx.Err()
+	}
+	select {
+	case <-ctx.Done():
+		return engine.ExecutionResult{}, ctx.Err()
+	case <-time.After(delay):
+	}
+	if fail {
+		return engine.ExecutionResult{}, errors.New("intentional failure")
+	}
+	return engine.ExecutionResult{}, nil
 }

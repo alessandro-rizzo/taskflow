@@ -12,9 +12,10 @@ or a web UI.
 
 > [!IMPORTANT]
 > This repository is at its architecture bootstrap. The typed graph,
-> adapter/provider contracts, parallel scheduler, and durable state primitives
-> compile and are tested. Cache coordination and remote providers are the next
-> implementation slices.
+> cache coordinator, revisioned transition journal, parallel scheduler,
+> compiled-driver protocol, and local/SSH target contracts compile and are
+> tested. The SSH provider is a contract-falsification spike, not a
+> production-ready remote backend.
 
 ## Design principles
 
@@ -61,6 +62,9 @@ func verify() *flow.Pipeline {
 			flow.On("sprite"),
 			flow.Inputs("**/*.go", "go.mod", "go.sum"),
 			flow.Outputs("build/test-results/**"),
+			flow.EnvironmentKeys("GOFLAGS"),
+			flow.Toolchain("go", "go", "version"),
+			flow.Requires("linux", "arm64"),
 			flow.WithCache(flow.CacheReadWrite, "v1"),
 		)
 
@@ -77,6 +81,42 @@ func verify() *flow.Pipeline {
 
 The invocation is structured data. The Task adapter resolves it to
 `task <name>` only after Taskflow has selected and acquired the target.
+The resolved command, adapter configuration, selected environment values,
+toolchain probes, and target identity all participate in cache identity.
+
+## Project driver
+
+A project defines its executable configuration in `.taskflow/main.go`:
+
+```go
+func main() {
+	runners := runner.NewRegistry()
+	must(runners.Register(taskfile.New()))
+
+	targets := target.NewRegistry()
+	must(targets.Register(local.New(".")))
+
+	executor := &engine.RuntimeExecutor{Runners: runners, Targets: targets}
+	os.Exit(driver.Main(driver.Config{
+		Pipelines: []*flow.Pipeline{verify()},
+		Executor:  executor,
+	}))
+}
+```
+
+The generic CLI fingerprints and caches that compiled driver, checks its
+internal protocol version, then delegates:
+
+```sh
+taskflow list
+taskflow graph verify
+taskflow run --max-parallel 4 verify
+taskflow resume RUN_ID verify
+```
+
+This repository dogfoods the protocol with its own `.taskflow/main.go`.
+`TASKFLOW_DRIVER_CACHE` can override the platform driver cache directory for
+hermetic development environments.
 
 ## Packages
 
@@ -85,11 +125,14 @@ The invocation is structured data. The Task adapter resolves it to
 - `runner/taskfile`, `runner/just`, `runner/command`: initial adapters.
 - `target`: execution target lifecycle and provider registry.
 - `target/local`: local process execution.
+- `target/ssh`: deliberately crude remote transfer/execution proof.
 - `engine`: parallel scheduler and runtime executor.
-- `state`: durable run journal contract.
-- `state/file`: atomic JSON journal implementation.
-- `cache`: content-addressed blob contract.
+- `state`: revisioned durable transition-journal contract.
+- `state/file`: atomic append-only JSON transition implementation with locking.
+- `cache`: cache-key coordinator and content-addressed blob contract.
 - `cache/file`: atomic filesystem-backed blob store.
+- `workspace`: deterministic input hashing and safe tar transfer.
+- `driver`, `internal/projectdriver`: versioned project protocol and CLI loader.
 - `event`: stable execution event stream.
 - `terminal`: line-oriented terminal renderer.
 
@@ -118,8 +161,9 @@ go run ./examples/basic
 
 ## Status
 
-Taskflow is not ready for production use. The repository deliberately starts
-with small interfaces and executable invariants before adding provider SDKs.
+Taskflow is not ready for production use. The next remote slice should replace
+the SSH subprocess spike with a real Sprite provider and use the resulting
+pressure to revise these pre-v1 interfaces.
 
 ## License
 

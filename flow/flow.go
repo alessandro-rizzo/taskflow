@@ -7,8 +7,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"path"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/alessandro-rizzo/taskflow/runner"
 )
@@ -16,9 +18,13 @@ import (
 // StepID is a stable node identity inside a pipeline.
 type StepID string
 
-// Ref is a typed reference to a previously declared step.
+// Ref is a pipeline-scoped reference to a previously declared step.
+//
+// The owner token prevents a reference from one pipeline being accepted by
+// another pipeline merely because the string IDs happen to match.
 type Ref struct {
-	id StepID
+	id    StepID
+	owner *Builder
 }
 
 // ID returns the referenced step identity.
@@ -30,11 +36,8 @@ func (r Ref) ID() StepID {
 type CacheMode string
 
 const (
-	// CacheOff disables caching.
-	CacheOff CacheMode = "off"
-	// CacheReadOnly permits restoration but not publication.
-	CacheReadOnly CacheMode = "read-only"
-	// CacheReadWrite permits restoration and publication.
+	CacheOff       CacheMode = "off"
+	CacheReadOnly  CacheMode = "read-only"
 	CacheReadWrite CacheMode = "read-write"
 )
 
@@ -44,18 +47,43 @@ type CachePolicy struct {
 	Version string    `json:"version,omitempty"`
 }
 
+// RetryPolicy controls retries after the first attempt.
+type RetryPolicy struct {
+	MaxRetries     int           `json:"max_retries,omitempty"`
+	InitialBackoff time.Duration `json:"initial_backoff,omitempty"`
+	MaxBackoff     time.Duration `json:"max_backoff,omitempty"`
+	Multiplier     float64       `json:"multiplier,omitempty"`
+}
+
+// ToolchainProbe captures actual toolchain identity inside the selected target.
+type ToolchainProbe struct {
+	Name    string   `json:"name"`
+	Program string   `json:"program"`
+	Args    []string `json:"args,omitempty"`
+}
+
+// Requirements are checked against provider capabilities before admission.
+type Requirements struct {
+	OS           string `json:"os,omitempty"`
+	Architecture string `json:"architecture,omitempty"`
+}
+
 // Step is an immutable node returned by Pipeline.
 type Step struct {
-	ID          StepID            `json:"id"`
-	Description string            `json:"description,omitempty"`
-	Run         runner.Invocation `json:"run"`
-	Needs       []StepID          `json:"needs,omitempty"`
-	Target      string            `json:"target"`
-	Inputs      []string          `json:"inputs,omitempty"`
-	Outputs     []string          `json:"outputs,omitempty"`
-	Cache       CachePolicy       `json:"cache"`
-	MaxRetries  int               `json:"max_retries,omitempty"`
-	Resources   map[string]int64  `json:"resources,omitempty"`
+	ID             StepID            `json:"id"`
+	Description    string            `json:"description,omitempty"`
+	Run            runner.Invocation `json:"run"`
+	Needs          []StepID          `json:"needs,omitempty"`
+	Target         string            `json:"target"`
+	ExecutionGroup string            `json:"execution_group,omitempty"`
+	Requirements   Requirements      `json:"requirements,omitempty"`
+	Inputs         []string          `json:"inputs,omitempty"`
+	Outputs        []string          `json:"outputs,omitempty"`
+	Environment    []string          `json:"environment,omitempty"`
+	Toolchains     []ToolchainProbe  `json:"toolchains,omitempty"`
+	Cache          CachePolicy       `json:"cache"`
+	Retry          RetryPolicy       `json:"retry"`
+	Resources      map[string]int64  `json:"resources,omitempty"`
 }
 
 // Pipeline is a validated DAG in declaration order.
@@ -65,12 +93,10 @@ type Pipeline struct {
 	index map[StepID]int
 }
 
-// Name returns the pipeline name.
 func (p *Pipeline) Name() string {
 	return p.name
 }
 
-// Steps returns a defensive copy in declaration order.
 func (p *Pipeline) Steps() []Step {
 	steps := make([]Step, len(p.steps))
 	for index, step := range p.steps {
@@ -79,7 +105,6 @@ func (p *Pipeline) Steps() []Step {
 	return steps
 }
 
-// Step returns a defensive copy of one node.
 func (p *Pipeline) Step(id StepID) (Step, bool) {
 	index, ok := p.index[id]
 	if !ok {
@@ -88,21 +113,43 @@ func (p *Pipeline) Step(id StepID) (Step, bool) {
 	return cloneStep(p.steps[index]), true
 }
 
-// Digest fingerprints the graph definition, including structured invocations.
-func (p *Pipeline) Digest() (string, error) {
-	value := struct {
+// StructuralDigest fingerprints resume- and cache-relevant semantics. It is
+// independent of descriptions, retry tuning, and declaration order.
+func (p *Pipeline) StructuralDigest() (string, error) {
+	steps := p.Steps()
+	sort.Slice(steps, func(i, j int) bool { return steps[i].ID < steps[j].ID })
+	for index := range steps {
+		steps[index].Description = ""
+		steps[index].Retry = RetryPolicy{}
+		sort.Slice(steps[index].Needs, func(i, j int) bool {
+			return steps[index].Needs[i] < steps[index].Needs[j]
+		})
+		sort.Strings(steps[index].Inputs)
+		sort.Strings(steps[index].Outputs)
+		sort.Strings(steps[index].Environment)
+		sort.Slice(steps[index].Toolchains, func(i, j int) bool {
+			return steps[index].Toolchains[i].Name < steps[index].Toolchains[j].Name
+		})
+	}
+	return digestValue(struct {
 		Name  string `json:"name"`
 		Steps []Step `json:"steps"`
-	}{
-		Name:  p.name,
-		Steps: p.Steps(),
-	}
-	encoded, err := json.Marshal(value)
-	if err != nil {
-		return "", fmt.Errorf("marshal pipeline definition: %w", err)
-	}
-	sum := sha256.Sum256(encoded)
-	return hex.EncodeToString(sum[:]), nil
+	}{Name: p.name, Steps: steps})
+}
+
+// DefinitionDigest fingerprints the complete authored definition for
+// diagnostics. Unlike StructuralDigest, cosmetic and operational tuning changes
+// are visible here.
+func (p *Pipeline) DefinitionDigest() (string, error) {
+	return digestValue(struct {
+		Name  string `json:"name"`
+		Steps []Step `json:"steps"`
+	}{Name: p.name, Steps: p.Steps()})
+}
+
+// Digest is retained as the semantic digest used by execution.
+func (p *Pipeline) Digest() (string, error) {
+	return p.StructuralDigest()
 }
 
 // Builder collects typed steps and deferred validation errors.
@@ -111,26 +158,20 @@ type Builder struct {
 	errs     []error
 }
 
-// Define constructs and validates a pipeline.
 func Define(name string, define func(*Builder)) (*Pipeline, error) {
-	pipeline := &Pipeline{
-		name:  strings.TrimSpace(name),
-		index: make(map[StepID]int),
-	}
+	pipeline := &Pipeline{name: strings.TrimSpace(name), index: make(map[StepID]int)}
 	builder := &Builder{pipeline: pipeline}
 	if define == nil {
 		builder.errs = append(builder.errs, errors.New("pipeline definition function is nil"))
 	} else {
 		define(builder)
 	}
-
 	if err := builder.validate(); err != nil {
 		return nil, err
 	}
 	return pipeline, nil
 }
 
-// MustDefine is Define for static pipeline declarations.
 func MustDefine(name string, define func(*Builder)) *Pipeline {
 	pipeline, err := Define(name, define)
 	if err != nil {
@@ -139,18 +180,22 @@ func MustDefine(name string, define func(*Builder)) *Pipeline {
 	return pipeline
 }
 
-// StepOption configures one step.
-type StepOption func(*Step) error
+// StepOption configures one step with access to its owning builder.
+type StepOption func(*Builder, *Step) error
 
-// Step declares a node and returns a reference for dependency options.
 func (b *Builder) Step(id string, invocation runner.Invocation, options ...StepOption) Ref {
 	stepID := StepID(strings.TrimSpace(id))
-	ref := Ref{id: stepID}
+	ref := Ref{id: stepID, owner: b}
 	step := Step{
 		ID:     stepID,
 		Run:    invocation,
 		Target: "local",
 		Cache:  CachePolicy{Mode: CacheOff},
+		Retry: RetryPolicy{
+			InitialBackoff: time.Second,
+			MaxBackoff:     30 * time.Second,
+			Multiplier:     2,
+		},
 	}
 
 	for _, option := range options {
@@ -158,7 +203,7 @@ func (b *Builder) Step(id string, invocation runner.Invocation, options ...StepO
 			b.errs = append(b.errs, fmt.Errorf("step %q has a nil option", stepID))
 			continue
 		}
-		if err := option(&step); err != nil {
+		if err := option(b, &step); err != nil {
 			b.errs = append(b.errs, fmt.Errorf("step %q: %w", stepID, err))
 		}
 	}
@@ -172,20 +217,21 @@ func (b *Builder) Step(id string, invocation runner.Invocation, options ...StepO
 	return ref
 }
 
-// Describe adds human-readable context.
 func Describe(description string) StepOption {
-	return func(step *Step) error {
+	return func(_ *Builder, step *Step) error {
 		step.Description = strings.TrimSpace(description)
 		return nil
 	}
 }
 
-// Needs adds prerequisite edges.
 func Needs(refs ...Ref) StepOption {
-	return func(step *Step) error {
+	return func(builder *Builder, step *Step) error {
 		for _, ref := range refs {
 			if ref.id == "" {
 				return errors.New("dependency has an empty step ID")
+			}
+			if ref.owner != builder {
+				return fmt.Errorf("dependency %q belongs to another pipeline", ref.id)
 			}
 			step.Needs = append(step.Needs, ref.id)
 		}
@@ -193,9 +239,8 @@ func Needs(refs ...Ref) StepOption {
 	}
 }
 
-// On selects a registered target provider.
 func On(target string) StepOption {
-	return func(step *Step) error {
+	return func(_ *Builder, step *Step) error {
 		target = strings.TrimSpace(target)
 		if target == "" {
 			return errors.New("target is empty")
@@ -205,25 +250,73 @@ func On(target string) StepOption {
 	}
 }
 
-// Inputs declares files that participate in the cache key.
+// InExecutionGroup requests affinity to one provider-managed workspace.
+func InExecutionGroup(group string) StepOption {
+	return func(_ *Builder, step *Step) error {
+		group = strings.TrimSpace(group)
+		if group == "" {
+			return errors.New("execution group is empty")
+		}
+		step.ExecutionGroup = group
+		return nil
+	}
+}
+
+func Requires(osName, architecture string) StepOption {
+	return func(_ *Builder, step *Step) error {
+		step.Requirements = Requirements{
+			OS:           strings.TrimSpace(osName),
+			Architecture: strings.TrimSpace(architecture),
+		}
+		return nil
+	}
+}
+
 func Inputs(patterns ...string) StepOption {
-	return func(step *Step) error {
-		step.Inputs = append(step.Inputs, patterns...)
-		return nil
-	}
+	return workspacePatterns("input", patterns, func(step *Step, values []string) {
+		step.Inputs = append(step.Inputs, values...)
+	})
 }
 
-// Outputs declares files restored or captured by caching and artifact transfer.
 func Outputs(patterns ...string) StepOption {
-	return func(step *Step) error {
-		step.Outputs = append(step.Outputs, patterns...)
+	return workspacePatterns("output", patterns, func(step *Step, values []string) {
+		step.Outputs = append(step.Outputs, values...)
+	})
+}
+
+// EnvironmentKeys declares ambient environment values that affect cache
+// identity. Invocation-level explicit environment is always included.
+func EnvironmentKeys(keys ...string) StepOption {
+	return func(_ *Builder, step *Step) error {
+		for _, key := range keys {
+			key = strings.TrimSpace(key)
+			if key == "" || strings.Contains(key, "=") {
+				return fmt.Errorf("invalid environment key %q", key)
+			}
+			step.Environment = append(step.Environment, key)
+		}
 		return nil
 	}
 }
 
-// WithCache configures cache behavior and an explicit invalidation version.
+// Toolchain declares a command whose output identifies a toolchain on the
+// selected target, for example Toolchain("go", "go", "version").
+func Toolchain(name, program string, args ...string) StepOption {
+	return func(_ *Builder, step *Step) error {
+		name = strings.TrimSpace(name)
+		program = strings.TrimSpace(program)
+		if name == "" || program == "" {
+			return errors.New("toolchain name and program are required")
+		}
+		step.Toolchains = append(step.Toolchains, ToolchainProbe{
+			Name: name, Program: program, Args: append([]string(nil), args...),
+		})
+		return nil
+	}
+}
+
 func WithCache(mode CacheMode, version string) StepOption {
-	return func(step *Step) error {
+	return func(_ *Builder, step *Step) error {
 		switch mode {
 		case CacheOff, CacheReadOnly, CacheReadWrite:
 		default:
@@ -234,20 +327,31 @@ func WithCache(mode CacheMode, version string) StepOption {
 	}
 }
 
-// Retries configures retries after the first attempt.
 func Retries(maxRetries int) StepOption {
-	return func(step *Step) error {
+	return Retry(maxRetries, time.Second, 30*time.Second, 2)
+}
+
+func Retry(maxRetries int, initialBackoff, maxBackoff time.Duration, multiplier float64) StepOption {
+	return func(_ *Builder, step *Step) error {
 		if maxRetries < 0 {
 			return errors.New("max retries cannot be negative")
 		}
-		step.MaxRetries = maxRetries
+		if initialBackoff < 0 || maxBackoff < 0 || maxBackoff < initialBackoff {
+			return errors.New("invalid retry backoff bounds")
+		}
+		if multiplier < 1 {
+			return errors.New("retry multiplier must be at least 1")
+		}
+		step.Retry = RetryPolicy{
+			MaxRetries: maxRetries, InitialBackoff: initialBackoff,
+			MaxBackoff: maxBackoff, Multiplier: multiplier,
+		}
 		return nil
 	}
 }
 
-// Resource requests a finite named target resource.
 func Resource(name string, amount int64) StepOption {
-	return func(step *Step) error {
+	return func(_ *Builder, step *Step) error {
 		name = strings.TrimSpace(name)
 		if name == "" {
 			return errors.New("resource name is empty")
@@ -270,7 +374,6 @@ func (b *Builder) validate() error {
 	if len(b.pipeline.steps) == 0 {
 		b.errs = append(b.errs, errors.New("pipeline has no steps"))
 	}
-
 	for _, step := range b.pipeline.steps {
 		if step.ID == "" {
 			b.errs = append(b.errs, errors.New("step ID is empty"))
@@ -294,8 +397,14 @@ func (b *Builder) validate() error {
 		if step.Cache.Mode != CacheOff && len(step.Outputs) == 0 {
 			b.errs = append(b.errs, fmt.Errorf("step %q enables caching without outputs", step.ID))
 		}
+		toolchains := make(map[string]struct{}, len(step.Toolchains))
+		for _, probe := range step.Toolchains {
+			if _, exists := toolchains[probe.Name]; exists {
+				b.errs = append(b.errs, fmt.Errorf("step %q repeats toolchain %q", step.ID, probe.Name))
+			}
+			toolchains[probe.Name] = struct{}{}
+		}
 	}
-
 	if len(b.errs) == 0 {
 		if err := validateAcyclic(b.pipeline); err != nil {
 			b.errs = append(b.errs, err)
@@ -303,6 +412,43 @@ func (b *Builder) validate() error {
 	}
 	if len(b.errs) > 0 {
 		return errors.Join(b.errs...)
+	}
+	return nil
+}
+
+func workspacePatterns(
+	kind string,
+	patterns []string,
+	set func(*Step, []string),
+) StepOption {
+	return func(_ *Builder, step *Step) error {
+		values := make([]string, 0, len(patterns))
+		for _, pattern := range patterns {
+			pattern = strings.TrimSpace(strings.ReplaceAll(pattern, "\\", "/"))
+			if err := validateWorkspacePattern(pattern); err != nil {
+				return fmt.Errorf("%s pattern %q: %w", kind, pattern, err)
+			}
+			values = append(values, pattern)
+		}
+		set(step, values)
+		return nil
+	}
+}
+
+func validateWorkspacePattern(pattern string) error {
+	if pattern == "" {
+		return errors.New("pattern is empty")
+	}
+	if strings.HasPrefix(pattern, "/") || path.IsAbs(pattern) {
+		return errors.New("absolute paths are not allowed")
+	}
+	for _, segment := range strings.Split(pattern, "/") {
+		if segment == ".." {
+			return errors.New("workspace escape is not allowed")
+		}
+	}
+	if cleaned := path.Clean(pattern); cleaned == "." || strings.HasPrefix(cleaned, "../") {
+		return errors.New("pattern must stay below the workspace")
 	}
 	return nil
 }
@@ -316,7 +462,6 @@ func validateAcyclic(pipeline *Pipeline) error {
 			dependents[dependency] = append(dependents[dependency], step.ID)
 		}
 	}
-
 	queue := make([]StepID, 0, len(pipeline.steps))
 	for _, step := range pipeline.steps {
 		if inDegree[step.ID] == 0 {
@@ -338,7 +483,6 @@ func validateAcyclic(pipeline *Pipeline) error {
 	if visited == len(pipeline.steps) {
 		return nil
 	}
-
 	cyclic := make([]string, 0)
 	for id, degree := range inDegree {
 		if degree > 0 {
@@ -349,6 +493,15 @@ func validateAcyclic(pipeline *Pipeline) error {
 	return fmt.Errorf("pipeline contains a dependency cycle involving %s", strings.Join(cyclic, ", "))
 }
 
+func digestValue(value any) (string, error) {
+	encoded, err := json.Marshal(value)
+	if err != nil {
+		return "", fmt.Errorf("marshal pipeline definition: %w", err)
+	}
+	sum := sha256.Sum256(encoded)
+	return hex.EncodeToString(sum[:]), nil
+}
+
 func cloneStep(step Step) Step {
 	step.Run.Args = append([]string(nil), step.Run.Args...)
 	if step.Run.Env != nil {
@@ -357,6 +510,11 @@ func cloneStep(step Step) Step {
 	step.Needs = append([]StepID(nil), step.Needs...)
 	step.Inputs = append([]string(nil), step.Inputs...)
 	step.Outputs = append([]string(nil), step.Outputs...)
+	step.Environment = append([]string(nil), step.Environment...)
+	step.Toolchains = append([]ToolchainProbe(nil), step.Toolchains...)
+	for index := range step.Toolchains {
+		step.Toolchains[index].Args = append([]string(nil), step.Toolchains[index].Args...)
+	}
 	if step.Resources != nil {
 		resources := make(map[string]int64, len(step.Resources))
 		for name, amount := range step.Resources {

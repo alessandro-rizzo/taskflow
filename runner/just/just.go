@@ -13,7 +13,8 @@ const adapterName = "just"
 
 // Adapter resolves Just recipe names.
 type Adapter struct {
-	Binary string
+	Binary  string
+	Version string
 }
 
 // New constructs an adapter for the just executable.
@@ -36,20 +37,30 @@ func (Adapter) Run(recipe string, args ...string) runner.Invocation {
 }
 
 // Resolve converts a Just invocation into a portable process.
-func (a Adapter) Resolve(_ context.Context, invocation runner.Invocation) (process.Spec, error) {
+func (a Adapter) Resolve(_ context.Context, invocation runner.Invocation) (runner.Resolved, error) {
 	if invocation.Adapter != adapterName {
-		return process.Spec{}, fmt.Errorf("just adapter cannot resolve %q", invocation.Adapter)
+		return runner.Resolved{}, fmt.Errorf("just adapter cannot resolve %q", invocation.Adapter)
 	}
 	binary := a.Binary
 	if binary == "" {
 		binary = "just"
 	}
 	args := append([]string{invocation.Recipe}, invocation.Args...)
-	return process.Spec{
-		Program: binary,
-		Args:    args,
-		Dir:     invocation.Dir,
-		Env:     cloneMap(invocation.Env),
+	version := a.Version
+	if version == "" {
+		version = "v1"
+	}
+	return runner.Resolved{
+		Process: process.Spec{
+			Program: binary,
+			Args:    args,
+			Dir:     invocation.Dir,
+			Env:     cloneMap(invocation.Env),
+		},
+		Identity: runner.Identity{
+			Name: adapterName, Version: version,
+			Configuration: map[string]string{"binary": binary},
+		},
 	}, nil
 }
 

@@ -34,15 +34,18 @@ func (Adapter) Run(program string, args ...string) runner.Invocation {
 }
 
 // Resolve converts an invocation to a portable process.
-func (Adapter) Resolve(_ context.Context, invocation runner.Invocation) (process.Spec, error) {
+func (Adapter) Resolve(_ context.Context, invocation runner.Invocation) (runner.Resolved, error) {
 	if invocation.Adapter != adapterName {
-		return process.Spec{}, fmt.Errorf("command adapter cannot resolve %q", invocation.Adapter)
+		return runner.Resolved{}, fmt.Errorf("command adapter cannot resolve %q", invocation.Adapter)
 	}
-	return process.Spec{
-		Program: invocation.Recipe,
-		Args:    append([]string(nil), invocation.Args...),
-		Dir:     invocation.Dir,
-		Env:     cloneMap(invocation.Env),
+	return runner.Resolved{
+		Process: process.Spec{
+			Program: invocation.Recipe,
+			Args:    append([]string(nil), invocation.Args...),
+			Dir:     invocation.Dir,
+			Env:     cloneMap(invocation.Env),
+		},
+		Identity: runner.Identity{Name: adapterName, Version: "v1"},
 	}, nil
 }
 
