@@ -152,21 +152,26 @@ second-pass findings and their disposition.
 
 Requirements:
 
-- Go 1.24 or newer
+- [mise](https://mise.jdx.dev/) (installs the pinned Go toolchain)
 - Task 3.x (optional, for repository shortcuts)
 
 ```sh
-task check
-task example
+mise trust
+mise install
+mise exec -- task check
+mise exec -- task example
 ```
 
 Without Task:
 
 ```sh
-go test ./...
-go vet ./...
-go run ./examples/basic
+mise exec -- go test ./...
+mise exec -- go vet ./...
+mise exec -- go run ./examples/basic
 ```
+
+`mise.toml` pins the development toolchain to Go 1.25.12. The `go 1.24.0`
+directive in `go.mod` remains the module's minimum supported Go version.
 
 ## Status
 
