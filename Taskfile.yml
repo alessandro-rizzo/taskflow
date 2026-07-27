@@ -1,0 +1,46 @@
+version: "3"
+
+tasks:
+  fmt:
+    desc: Format Go source files
+    cmds:
+      - go fmt ./...
+
+  fmt:check:
+    desc: Verify Go source formatting
+    cmds:
+      - |
+        files="$(gofmt -l .)"
+        test -z "$files" || {
+          printf '%s\n' "$files"
+          exit 1
+        }
+
+  test:
+    desc: Run all tests
+    cmds:
+      - go test ./...
+
+  lint:
+    desc: Run the standard Go static checks
+    cmds:
+      - go vet ./...
+
+  build:
+    desc: Build the Taskflow CLI
+    cmds:
+      - go build -o bin/taskflow ./cmd/taskflow
+    sources:
+      - "**/*.go"
+      - go.mod
+    generates:
+      - bin/taskflow
+
+  example:
+    desc: Run the typed local pipeline example
+    cmds:
+      - go run ./examples/basic
+
+  check:
+    desc: Run formatting, tests, and static checks
+    deps: [fmt:check, test, lint]
