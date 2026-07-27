@@ -69,3 +69,8 @@ executes an actual temporary project driver and verifies cache reuse.
   their distributed lease/CAS behavior still needs an implementation.
 - State schema migration is explicit rejection pre-v1; a migration registry is
   required before compatibility is promised.
+
+The subsequent [Fable 5 adversarial review](reviews/2026-07-27-fable-5.md)
+found additional concrete failures in artifact transfer, pipe cancellation,
+archive safety, transitive resume, and driver hashing. That document records
+the remediation and the narrower remaining gaps.

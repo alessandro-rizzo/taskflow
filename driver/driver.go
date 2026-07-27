@@ -10,9 +10,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/signal"
 	"sort"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/alessandro-rizzo/taskflow/engine"
 	"github.com/alessandro-rizzo/taskflow/event"
@@ -42,7 +44,9 @@ type Config struct {
 
 // Main runs a compiled project driver using process arguments and streams.
 func Main(config Config) int {
-	return Run(context.Background(), config, os.Args[1:], os.Stdout, os.Stderr)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	return Run(ctx, config, os.Args[1:], os.Stdout, os.Stderr)
 }
 
 // Run exposes the protocol separately from os.Exit for tests and embedding.

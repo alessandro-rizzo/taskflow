@@ -2,13 +2,17 @@ package cache_test
 
 import (
 	"context"
+	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/alessandro-rizzo/taskflow/cache"
 	cachefile "github.com/alessandro-rizzo/taskflow/cache/file"
 	"github.com/alessandro-rizzo/taskflow/flow"
+	"github.com/alessandro-rizzo/taskflow/process"
 	"github.com/alessandro-rizzo/taskflow/runner"
 	"github.com/alessandro-rizzo/taskflow/runner/taskfile"
 	"github.com/alessandro-rizzo/taskflow/target"
@@ -129,6 +133,29 @@ func TestCoordinatorPublishesRestoresAndValidatesManifest(t *testing.T) {
 	}
 }
 
+func TestPublishDoesNotDeadlockWhenStoreRejectsBeforeReading(t *testing.T) {
+	t.Parallel()
+	coordinator := cache.Coordinator{Store: rejectingStore{}}
+	finished := make(chan error, 1)
+	go func() {
+		_, err := coordinator.Publish(
+			context.Background(),
+			cache.NewKey([]byte("failure")),
+			endlessDownloadEnvironment{},
+			[]string{"result"},
+		)
+		finished <- err
+	}()
+	select {
+	case err := <-finished:
+		if err == nil {
+			t.Fatal("Publish() error = nil")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("Publish() deadlocked after store rejected the stream")
+	}
+}
+
 func assertDifferentKey(
 	t *testing.T,
 	coordinator cache.Coordinator,
@@ -153,4 +180,63 @@ func assertDifferentKey(
 	if identity.Key == base.Key {
 		t.Fatalf("cache key did not change from %s", base.Key)
 	}
+}
+
+type rejectingStore struct{}
+
+func (rejectingStore) Open(
+	context.Context,
+	cache.Key,
+) (cache.Entry, io.ReadCloser, bool, error) {
+	return cache.Entry{}, nil, false, nil
+}
+
+func (rejectingStore) Put(context.Context, cache.Key, io.Reader) (cache.Entry, error) {
+	return cache.Entry{}, errors.New("reject before reading")
+}
+
+func (rejectingStore) Exists(context.Context, cache.Key, string) (bool, error) {
+	return false, nil
+}
+
+type endlessDownloadEnvironment struct{}
+
+func (endlessDownloadEnvironment) ID() string {
+	return "endless"
+}
+
+func (endlessDownloadEnvironment) Identity(
+	context.Context,
+	target.IdentityRequest,
+) (target.Identity, error) {
+	return target.Identity{}, nil
+}
+
+func (endlessDownloadEnvironment) Exec(
+	context.Context,
+	process.Spec,
+	process.IO,
+) (process.Result, error) {
+	return process.Result{}, nil
+}
+
+func (endlessDownloadEnvironment) Upload(context.Context, io.Reader) error {
+	return nil
+}
+
+func (endlessDownloadEnvironment) Download(
+	_ context.Context,
+	_ []string,
+	destination io.Writer,
+) error {
+	block := make([]byte, 64*1024)
+	for {
+		if _, err := destination.Write(block); err != nil {
+			return err
+		}
+	}
+}
+
+func (endlessDownloadEnvironment) Release(context.Context, target.Release) error {
+	return nil
 }

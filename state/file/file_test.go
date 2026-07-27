@@ -89,3 +89,11 @@ func TestJournalNotFound(t *testing.T) {
 		t.Fatalf("Load() error = %v, want state.ErrNotFound", err)
 	}
 }
+
+func TestJournalRejectsRunIDThatCollidesWithLockNamespace(t *testing.T) {
+	t.Parallel()
+	store := statefile.New(t.TempDir())
+	if _, err := store.Acquire(context.Background(), "other.lock"); err == nil {
+		t.Fatal("Acquire() error = nil, want reserved lock suffix rejection")
+	}
+}

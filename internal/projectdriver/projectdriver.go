@@ -4,6 +4,7 @@ package projectdriver
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -16,7 +17,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strings"
+	"time"
 
 	"github.com/alessandro-rizzo/taskflow/driver"
 )
@@ -53,7 +54,7 @@ func FindRoot(start string) (string, error) {
 }
 
 func (l Loader) Build(ctx context.Context, root string) (string, error) {
-	digest, err := l.SourceDigest(root)
+	digest, err := l.sourceDigest(ctx, root)
 	if err != nil {
 		return "", err
 	}
@@ -102,21 +103,13 @@ func (l Loader) Build(ctx context.Context, root string) (string, error) {
 }
 
 func (l Loader) SourceDigest(root string) (string, error) {
-	var files []string
-	err := filepath.WalkDir(
-		filepath.Join(root, ".taskflow"),
-		func(path string, entry os.DirEntry, walkErr error) error {
-			if walkErr != nil {
-				return walkErr
-			}
-			if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".go") {
-				files = append(files, path)
-			}
-			return nil
-		},
-	)
+	return l.sourceDigest(context.Background(), root)
+}
+
+func (l Loader) sourceDigest(ctx context.Context, root string) (string, error) {
+	files, err := mainModuleDependencyFiles(ctx, root)
 	if err != nil {
-		return "", fmt.Errorf("scan .taskflow package: %w", err)
+		return "", err
 	}
 	for _, name := range []string{"go.mod", "go.sum", "go.work", "go.work.sum"} {
 		path := filepath.Join(root, name)
@@ -153,6 +146,76 @@ func (l Loader) SourceDigest(root string) (string, error) {
 	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
+type listedPackage struct {
+	Dir      string
+	Standard bool
+	Module   *struct {
+		Main bool
+	}
+	GoFiles      []string
+	CgoFiles     []string
+	CFiles       []string
+	CXXFiles     []string
+	MFiles       []string
+	HFiles       []string
+	FFiles       []string
+	SFiles       []string
+	SwigFiles    []string
+	SwigCXXFiles []string
+	SysoFiles    []string
+	EmbedFiles   []string
+}
+
+func mainModuleDependencyFiles(ctx context.Context, root string) ([]string, error) {
+	command := exec.CommandContext(ctx, "go", "list", "-deps", "-json", "./.taskflow")
+	command.Dir = root
+	var output, stderr bytes.Buffer
+	command.Stdout = &output
+	command.Stderr = &stderr
+	if err := command.Run(); err != nil {
+		return nil, fmt.Errorf("inspect .taskflow dependencies: %w: %s", err, stderr.String())
+	}
+	files := make(map[string]struct{})
+	decoder := json.NewDecoder(&output)
+	for {
+		var pkg listedPackage
+		err := decoder.Decode(&pkg)
+		if errors.Is(err, io.EOF) {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("decode .taskflow dependency: %w", err)
+		}
+		if pkg.Standard || pkg.Module == nil || !pkg.Module.Main {
+			continue
+		}
+		for _, names := range [][]string{
+			pkg.GoFiles,
+			pkg.CgoFiles,
+			pkg.CFiles,
+			pkg.CXXFiles,
+			pkg.MFiles,
+			pkg.HFiles,
+			pkg.FFiles,
+			pkg.SFiles,
+			pkg.SwigFiles,
+			pkg.SwigCXXFiles,
+			pkg.SysoFiles,
+			pkg.EmbedFiles,
+		} {
+			for _, name := range names {
+				files[filepath.Join(pkg.Dir, name)] = struct{}{}
+			}
+		}
+	}
+	result := make([]string, 0, len(files))
+	for file := range files {
+		result = append(result, file)
+	}
+	sort.Strings(result)
+	return result, nil
+}
+
 func (l Loader) Run(ctx context.Context, root, binary string, args []string) error {
 	handshake := exec.CommandContext(ctx, binary, driver.HandshakeCommand)
 	handshake.Dir = root
@@ -172,22 +235,45 @@ func (l Loader) Run(ctx context.Context, root, binary string, args []string) err
 	}
 	if response.Protocol != driver.ProtocolVersion {
 		return fmt.Errorf(
-			"driver protocol %d is incompatible with CLI protocol %d; rebuild the driver",
+			"driver protocol %d is incompatible with CLI protocol %d; align the project Taskflow SDK and CLI versions",
 			response.Protocol,
 			driver.ProtocolVersion,
 		)
 	}
-	command := exec.CommandContext(ctx, binary, args...)
+	command := exec.Command(binary, args...)
 	command.Dir = root
 	command.Stdin = l.Stdin
 	command.Stdout = l.Stdout
 	command.Stderr = l.Stderr
-	if err := command.Run(); err != nil {
+	if err := command.Start(); err != nil {
+		return fmt.Errorf("start project driver: %w", err)
+	}
+	waited := make(chan error, 1)
+	go func() {
+		waited <- command.Wait()
+	}()
+	var runErr error
+	select {
+	case runErr = <-waited:
+	case <-ctx.Done():
+		_ = command.Process.Signal(os.Interrupt)
+		timer := time.NewTimer(45 * time.Second)
+		select {
+		case runErr = <-waited:
+			if !timer.Stop() {
+				<-timer.C
+			}
+		case <-timer.C:
+			_ = command.Process.Kill()
+			runErr = <-waited
+		}
+	}
+	if runErr != nil {
 		var exitError *exec.ExitError
-		if errors.As(err, &exitError) {
+		if errors.As(runErr, &exitError) {
 			return &ExitError{Code: exitError.ExitCode()}
 		}
-		return fmt.Errorf("run project driver: %w", err)
+		return fmt.Errorf("run project driver: %w", runErr)
 	}
 	return nil
 }

@@ -38,7 +38,7 @@ func (s Store) Open(_ context.Context, key cache.Key) (cache.Entry, io.ReadClose
 	}
 	var entry cache.Entry
 	if err := json.Unmarshal(encoded, &entry); err != nil {
-		return cache.Entry{}, nil, false, fmt.Errorf("decode cache metadata: %w", err)
+		return cache.Entry{}, nil, false, nil
 	}
 	file, err := os.Open(blob)
 	if errors.Is(err, os.ErrNotExist) {
@@ -49,7 +49,7 @@ func (s Store) Open(_ context.Context, key cache.Key) (cache.Entry, io.ReadClose
 	}
 	if entry.Key != key {
 		file.Close()
-		return cache.Entry{}, nil, false, errors.New("cache metadata key does not match requested key")
+		return cache.Entry{}, nil, false, nil
 	}
 	hash := sha256.New()
 	size, err := io.Copy(hash, file)
@@ -59,7 +59,7 @@ func (s Store) Open(_ context.Context, key cache.Key) (cache.Entry, io.ReadClose
 	}
 	if size != entry.Size || hex.EncodeToString(hash.Sum(nil)) != entry.Manifest {
 		file.Close()
-		return cache.Entry{}, nil, false, errors.New("cache blob does not match its manifest")
+		return cache.Entry{}, nil, false, nil
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
 		file.Close()

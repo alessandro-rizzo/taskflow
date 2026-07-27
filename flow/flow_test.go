@@ -127,6 +127,35 @@ func TestWorkspacePatternsCannotEscape(t *testing.T) {
 	}
 }
 
+func TestDefineRejectsDotOnlyRemotePathComponents(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	for _, test := range []struct {
+		name   string
+		define func(*flow.Builder)
+	}{
+		{
+			name: "step ID",
+			define: func(p *flow.Builder) {
+				p.Step("..", run.Run("true"))
+			},
+		},
+		{
+			name: "execution group",
+			define: func(p *flow.Builder) {
+				p.Step("step", run.Run("true"), flow.InExecutionGroup("."))
+			},
+		},
+	} {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			if _, err := flow.Define("invalid", test.define); err == nil {
+				t.Fatal("Define() error = nil")
+			}
+		})
+	}
+}
+
 func TestStructuralDigestIgnoresCosmeticsTuningAndOrder(t *testing.T) {
 	t.Parallel()
 
@@ -179,7 +208,7 @@ func TestStructuralDigestGolden(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	const want = "4aa4ea7f9c2c2f3ac3d433917089f7e29cc7b22ce2acc1604bead1b957da1225"
+	const want = "323d6ac994677154a6f8c7457d8524b73f0c3e2fec13e6b81e22708b2eefd37e"
 	if digest != want {
 		t.Fatalf("StructuralDigest() = %q, want %q", digest, want)
 	}

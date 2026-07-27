@@ -21,6 +21,7 @@ import (
 
 	"github.com/alessandro-rizzo/taskflow/process"
 	"github.com/alessandro-rizzo/taskflow/target"
+	"github.com/alessandro-rizzo/taskflow/workspace"
 )
 
 type Config struct {
@@ -100,6 +101,12 @@ func (p *Provider) TryReserve(
 	workspace := path.Join(
 		p.config.Root, safeComponent(request.RunID), safeComponent(component),
 	)
+	cleanRoot := path.Clean(p.config.Root)
+	if workspace == cleanRoot || !strings.HasPrefix(workspace, cleanRoot+"/") {
+		p.running--
+		addResources(p.used, request.Resources, -1)
+		return nil, false, errors.New("resolved SSH workspace escapes configured root")
+	}
 	return &reservation{
 		provider: p, workspace: workspace, stepID: request.StepID,
 		resources: cloneResources(request.Resources),
@@ -208,28 +215,47 @@ func (e *environment) Exec(ctx context.Context, spec process.Spec, streams proce
 }
 
 func (e *environment) Upload(ctx context.Context, source io.Reader) error {
-	_, err := e.remote(
+	reader, writer := io.Pipe()
+	defer reader.Close()
+	normalized := make(chan error, 1)
+	go func() {
+		err := workspace.NormalizeArchive(ctx, source, nil, writer)
+		_ = writer.CloseWithError(err)
+		normalized <- err
+	}()
+	_, remoteErr := e.remote(
 		ctx,
-		"mkdir -p -- "+quote(e.workspace)+" && tar -xpf - -C "+quote(e.workspace),
-		process.IO{Stdin: source},
+		"mkdir -p -- "+quote(e.workspace)+" && tar -x -f - -C "+quote(e.workspace),
+		process.IO{Stdin: reader},
 	)
-	return err
+	_ = reader.Close()
+	normalizeErr := <-normalized
+	return errors.Join(remoteErr, normalizeErr)
 }
 
 func (e *environment) Download(ctx context.Context, patterns []string, destination io.Writer) error {
 	if len(patterns) == 0 {
 		return errors.New("remote download has no patterns")
 	}
-	expression := make([]string, 0, len(patterns))
-	for _, pattern := range patterns {
-		findPattern := "./" + strings.ReplaceAll(pattern, "**", "*")
-		expression = append(expression, "-path "+quote(findPattern))
+	reader, writer := io.Pipe()
+	defer reader.Close()
+	downloaded := make(chan error, 1)
+	go func() {
+		command := "cd " + quote(e.workspace) +
+			" && find . -mindepth 1 -print0 | LC_ALL=C sort -z" +
+			" | tar -c -f - --null --no-recursion -T -"
+		_, err := e.remote(ctx, command, process.IO{Stdout: writer})
+		_ = writer.CloseWithError(err)
+		downloaded <- err
+	}()
+	normalizeErr := workspace.NormalizeArchive(ctx, reader, patterns, destination)
+	if normalizeErr != nil {
+		_ = reader.Close()
+	} else {
+		_, _ = io.Copy(io.Discard, reader)
 	}
-	command := "cd " + quote(e.workspace) +
-		" && find . -mindepth 1 \\( " + strings.Join(expression, " -o ") +
-		" \\) -print0 | tar -cpf - --null -T -"
-	_, err := e.remote(ctx, command, process.IO{Stdout: destination})
-	return err
+	downloadErr := <-downloaded
+	return errors.Join(normalizeErr, downloadErr)
 }
 
 func (e *environment) Release(ctx context.Context, _ target.Release) error {
@@ -286,7 +312,9 @@ func quote(value string) string {
 }
 
 func safeComponent(value string) string {
-	if value != "" && strings.Trim(value, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-") == "" {
+	if value != "" && value != "." && value != ".." &&
+		strings.Trim(value, ".") != "" &&
+		strings.Trim(value, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-") == "" {
 		return value
 	}
 	sum := sha256.Sum256([]byte(value))

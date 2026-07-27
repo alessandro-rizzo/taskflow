@@ -1,6 +1,7 @@
 package ssh_test
 
 import (
+	"archive/tar"
 	"bytes"
 	"context"
 	"os"
@@ -77,10 +78,108 @@ func TestProviderTransfersExecutesAndCleansRemoteWorkspace(t *testing.T) {
 	if string(output) != "HELLO\n" {
 		t.Fatalf("output = %q", output)
 	}
+	var firstArchive, secondArchive bytes.Buffer
+	if err := environment.Download(ctx, []string{"output.txt"}, &firstArchive); err != nil {
+		t.Fatal(err)
+	}
+	if err := environment.Download(ctx, []string{"output.txt"}, &secondArchive); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(firstArchive.Bytes(), secondArchive.Bytes()) {
+		t.Fatal("remote output archive is not deterministic")
+	}
 	if err := environment.Release(ctx, target.Release{Success: true}); err != nil {
 		t.Fatalf("Release() error = %v", err)
 	}
 	if _, err := os.Stat(filepath.Join(root, "run-1", "build")); !os.IsNotExist(err) {
 		t.Fatalf("remote workspace remains after cleanup: %v", err)
+	}
+}
+
+func TestProviderContainsHostileComponentsBelowRoot(t *testing.T) {
+	ctx := context.Background()
+	root := t.TempDir()
+	marker := filepath.Join(root, "keep")
+	if err := os.WriteFile(marker, []byte("keep"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	fakeSSH := filepath.Join(t.TempDir(), "ssh")
+	if err := os.WriteFile(
+		fakeSSH,
+		[]byte("#!/bin/sh\nshift\nexec /bin/sh -c \"$1\"\n"),
+		0o700,
+	); err != nil {
+		t.Fatal(err)
+	}
+	provider, err := ssh.New(ssh.Config{
+		Host: "fixture", Root: filepath.ToSlash(root), Binary: fakeSSH,
+		MaxConcurrency: 1, Cleanup: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	reservation, admitted, err := provider.TryReserve(ctx, target.AcquireRequest{
+		RunID: "..", StepID: ".", ExecutionGroup: "..",
+	})
+	if err != nil || !admitted {
+		t.Fatalf("TryReserve() = %v, %v", admitted, err)
+	}
+	environment, err := reservation.Acquire(ctx)
+	if err != nil {
+		reservation.Release()
+		t.Fatal(err)
+	}
+	if err := environment.Release(ctx, target.Release{}); err != nil {
+		reservation.Release()
+		t.Fatal(err)
+	}
+	reservation.Release()
+	if contents, err := os.ReadFile(marker); err != nil || string(contents) != "keep" {
+		t.Fatalf("cleanup escaped generated workspace: contents=%q error=%v", contents, err)
+	}
+}
+
+func TestUploadRejectsHostileArchiveBeforeRemoteExtraction(t *testing.T) {
+	ctx := context.Background()
+	root := t.TempDir()
+	fakeSSH := filepath.Join(t.TempDir(), "ssh")
+	if err := os.WriteFile(
+		fakeSSH,
+		[]byte("#!/bin/sh\nshift\nexec /bin/sh -c \"$1\"\n"),
+		0o700,
+	); err != nil {
+		t.Fatal(err)
+	}
+	provider, err := ssh.New(ssh.Config{
+		Host: "fixture", Root: filepath.ToSlash(root), Binary: fakeSSH,
+		MaxConcurrency: 1,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	reservation, admitted, err := provider.TryReserve(
+		ctx,
+		target.AcquireRequest{RunID: "run", StepID: "step"},
+	)
+	if err != nil || !admitted {
+		t.Fatalf("TryReserve() = %v, %v", admitted, err)
+	}
+	defer reservation.Release()
+	environment, err := reservation.Acquire(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	writer := tar.NewWriter(&archive)
+	if err := writer.WriteHeader(&tar.Header{
+		Name: "escape", Typeflag: tar.TypeSymlink, Linkname: "..",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := environment.Upload(ctx, &archive); err == nil {
+		t.Fatal("Upload() error = nil, want traversal rejection")
 	}
 }

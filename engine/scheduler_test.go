@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"io"
+	"os"
+	"path/filepath"
+	"slices"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -66,6 +70,40 @@ func TestSchedulerResumeSkipsValidSuccess(t *testing.T) {
 	}
 }
 
+func TestSchedulerResumeTransitivelyInvalidatesDependents(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("transitive-resume", func(p *flow.Builder) {
+		first := p.Step("first", run.Run("true"))
+		p.Step("second", run.Run("true"), flow.Needs(first))
+	})
+	store := state.NewMemory()
+	executor := newFakeExecutor()
+	scheduler := engine.Scheduler{Executor: executor, State: store}
+	if _, err := scheduler.Run(
+		context.Background(),
+		pipeline,
+		engine.Options{RunID: "transitive"},
+	); err != nil {
+		t.Fatal(err)
+	}
+	executor.invalid["first"] = true
+	resumed, err := scheduler.Run(
+		context.Background(),
+		pipeline,
+		engine.Options{RunID: "transitive", Resume: true},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if executor.calls["first"] != 2 || executor.calls["second"] != 2 {
+		t.Fatalf("calls = %v, want both invalid dependency and dependent re-executed", executor.calls)
+	}
+	if resumed.Steps["first"].Attempts != 1 || resumed.Steps["second"].Attempts != 1 {
+		t.Fatalf("resume attempts = %#v, want retry budgets reset per invocation", resumed.Steps)
+	}
+}
+
 func TestSchedulerResumeRejectsStructuralChangeButAllowsDescriptionChange(t *testing.T) {
 	t.Parallel()
 	run := command.New()
@@ -121,6 +159,50 @@ func TestSchedulerFailFastCancelsRunningAndBlocksPending(t *testing.T) {
 	}
 }
 
+func TestSchedulerPersistsExternalCancellation(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("cancel", func(p *flow.Builder) {
+		p.Step("slow", run.Run("sleep"))
+	})
+	executor := newFakeExecutor()
+	executor.block["slow"] = true
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	ctx, cancel := context.WithCancel(context.Background())
+	finished := make(chan struct {
+		run state.Run
+		err error
+	}, 1)
+	go func() {
+		result, err := scheduler.Run(ctx, pipeline, engine.Options{RunID: "cancel"})
+		finished <- struct {
+			run state.Run
+			err error
+		}{run: result, err: err}
+	}()
+	deadline := time.After(time.Second)
+	for {
+		executor.mu.Lock()
+		started := executor.calls["slow"] > 0
+		executor.mu.Unlock()
+		if started {
+			break
+		}
+		select {
+		case <-deadline:
+			t.Fatal("slow execution did not start")
+		case <-time.After(time.Millisecond):
+		}
+	}
+	cancel()
+	result := <-finished
+	if result.err == nil ||
+		result.run.Status != state.Cancelled ||
+		result.run.Steps["slow"].Status != state.Cancelled {
+		t.Fatalf("cancelled run = %#v, error %v", result.run, result.err)
+	}
+}
+
 func TestSchedulerPersistsEveryRetryAttempt(t *testing.T) {
 	t.Parallel()
 	run := command.New()
@@ -133,13 +215,75 @@ func TestSchedulerPersistsEveryRetryAttempt(t *testing.T) {
 	})
 	executor := newFakeExecutor()
 	executor.failures["flaky"] = 1
-	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	store := &recordingStore{Store: state.NewMemory()}
+	scheduler := engine.Scheduler{Executor: executor, State: store}
 	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{RunID: "retry"})
 	if err != nil {
 		t.Fatalf("Run() error = %v", err)
 	}
 	if result.Steps["flaky"].Attempts != 2 {
 		t.Fatalf("attempts = %d, want 2", result.Steps["flaky"].Attempts)
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	var statuses []state.Status
+	for _, transition := range store.transitions {
+		if transition.Step != nil && transition.Step.ID == "flaky" {
+			statuses = append(statuses, transition.Step.Status)
+		}
+	}
+	want := []state.Status{state.Running, state.Pending, state.Running, state.Succeeded}
+	if !slices.Equal(statuses, want) {
+		t.Fatalf("journaled statuses = %v, want %v", statuses, want)
+	}
+}
+
+func TestSchedulerWakesRetryWhileUnrelatedStepRuns(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("retry-timer", func(p *flow.Builder) {
+		p.Step(
+			"flaky",
+			run.Run("flaky"),
+			flow.Retry(1, 20*time.Millisecond, 20*time.Millisecond, 1),
+		)
+		p.Step("slow", run.Run("slow"))
+	})
+	executor := &retryTimerExecutor{started: time.Now()}
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	if _, err := scheduler.Run(context.Background(), pipeline, engine.Options{
+		RunID: "retry-timer", MaxParallel: 2,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	executor.mu.Lock()
+	secondAttempt := executor.secondAttempt
+	executor.mu.Unlock()
+	if secondAttempt <= 0 || secondAttempt >= 150*time.Millisecond {
+		t.Fatalf("second retry started after %s, want before unrelated 250ms step completed", secondAttempt)
+	}
+}
+
+func TestSchedulerPersistsAdmissionFailureAndFinalRunStatus(t *testing.T) {
+	t.Parallel()
+	run := command.New()
+	pipeline := flow.MustDefine("admission-failure", func(p *flow.Builder) {
+		p.Step("unsupported", run.Run("true"))
+	})
+	scheduler := engine.Scheduler{
+		Executor: admissionFailureExecutor{},
+		State:    state.NewMemory(),
+	}
+	result, err := scheduler.Run(context.Background(), pipeline, engine.Options{
+		RunID: "admission-failure",
+	})
+	if err == nil {
+		t.Fatal("Run() error = nil")
+	}
+	if result.Status != state.Failed ||
+		result.Steps["unsupported"].Status != state.Failed ||
+		!strings.Contains(result.Steps["unsupported"].Error, "admission failed") {
+		t.Fatalf("result = %#v, want durable admission failure", result)
 	}
 }
 
@@ -227,6 +371,63 @@ func TestRuntimeReleaseUsesDetachedCleanupContext(t *testing.T) {
 	}
 }
 
+func TestRuntimeCleanupFailureDoesNotFailCompletedWork(t *testing.T) {
+	t.Parallel()
+	direct := command.New()
+	pipeline := flow.MustDefine("cleanup-warning", func(p *flow.Builder) {
+		p.Step("complete", direct.Run("true"))
+	})
+	step, _ := pipeline.Step("complete")
+	runners := runner.NewRegistry()
+	if err := runners.Register(direct); err != nil {
+		t.Fatal(err)
+	}
+	provider := &cleanupProvider{
+		releaseContext: make(chan error, 1),
+		releaseErr:     errors.New("remote cleanup failed"),
+	}
+	targets := target.NewRegistry()
+	if err := targets.Register(provider); err != nil {
+		t.Fatal(err)
+	}
+	executor := engine.RuntimeExecutor{Runners: runners, Targets: targets}
+	execution, admitted, err := executor.TryAdmit(context.Background(), engine.ExecutionRequest{
+		RunID: "run", Pipeline: "cleanup-warning", Step: step,
+	})
+	if err != nil || !admitted {
+		t.Fatalf("TryAdmit() = %v, %v", admitted, err)
+	}
+	result, err := execution.Run(context.Background())
+	execution.Close()
+	if err != nil {
+		t.Fatalf("Run() error = %v, want successful work with cleanup warning", err)
+	}
+	if result.CleanupError != "remote cleanup failed" {
+		t.Fatalf("CleanupError = %q", result.CleanupError)
+	}
+}
+
+func TestArchiveMaterializerDoesNotDeadlockWhenUploadReturnsEarly(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	if err := os.WriteFile(filepath.Join(root, "input"), make([]byte, 1024*1024), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	materializer := engine.ArchiveMaterializer{Root: root, Patterns: []string{"input"}}
+	finished := make(chan error, 1)
+	go func() {
+		finished <- materializer.Materialize(context.Background(), cleanupEnvironment{})
+	}()
+	select {
+	case err := <-finished:
+		if err == nil {
+			t.Fatal("Materialize() error = nil, want closed upload stream")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("Materialize() deadlocked after Upload returned early")
+	}
+}
+
 type fakeExecutor struct {
 	mu       sync.Mutex
 	current  int
@@ -235,12 +436,13 @@ type fakeExecutor struct {
 	failures map[string]int
 	block    map[string]bool
 	calls    map[string]int
+	invalid  map[string]bool
 }
 
 func newFakeExecutor() *fakeExecutor {
 	return &fakeExecutor{
 		failures: make(map[string]int), block: make(map[string]bool),
-		calls: make(map[string]int),
+		calls: make(map[string]int), invalid: make(map[string]bool),
 	}
 }
 
@@ -251,8 +453,10 @@ func (e *fakeExecutor) TryAdmit(
 	return fakeExecution{executor: e, step: request.Step}, true, nil
 }
 
-func (e *fakeExecutor) ValidateSuccess(context.Context, flow.Step, state.Step) (bool, error) {
-	return true, nil
+func (e *fakeExecutor) ValidateSuccess(_ context.Context, step flow.Step, _ state.Step) (bool, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return !e.invalid[string(step.ID)], nil
 }
 
 type fakeExecution struct {
@@ -265,6 +469,39 @@ func (fakeExecution) Close() {}
 type failingStore struct {
 	state.Store
 	failExpectedRevision uint64
+}
+
+type recordingStore struct {
+	state.Store
+	mu          sync.Mutex
+	transitions []state.Transition
+}
+
+func (s *recordingStore) Acquire(ctx context.Context, id string) (state.Lease, error) {
+	lease, err := s.Store.Acquire(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &recordingLease{Lease: lease, store: s}, nil
+}
+
+type recordingLease struct {
+	state.Lease
+	store *recordingStore
+}
+
+func (l *recordingLease) Append(
+	ctx context.Context,
+	expected uint64,
+	transition state.Transition,
+) (state.Snapshot, error) {
+	snapshot, err := l.Lease.Append(ctx, expected, transition)
+	if err == nil {
+		l.store.mu.Lock()
+		l.store.transitions = append(l.store.transitions, transition)
+		l.store.mu.Unlock()
+	}
+	return snapshot, err
 }
 
 func (s *failingStore) Acquire(ctx context.Context, id string) (state.Lease, error) {
@@ -332,6 +569,7 @@ func (e admissionExecution) Run(context.Context) (engine.ExecutionResult, error)
 
 type cleanupProvider struct {
 	releaseContext chan error
+	releaseErr     error
 }
 
 func (*cleanupProvider) Name() string {
@@ -363,6 +601,66 @@ type cleanupEnvironment struct {
 	provider *cleanupProvider
 }
 
+type retryTimerExecutor struct {
+	mu            sync.Mutex
+	attempts      int
+	started       time.Time
+	secondAttempt time.Duration
+}
+
+func (e *retryTimerExecutor) TryAdmit(
+	_ context.Context,
+	request engine.ExecutionRequest,
+) (engine.Execution, bool, error) {
+	return retryTimerExecution{executor: e, id: string(request.Step.ID)}, true, nil
+}
+
+func (*retryTimerExecutor) ValidateSuccess(context.Context, flow.Step, state.Step) (bool, error) {
+	return true, nil
+}
+
+type retryTimerExecution struct {
+	executor *retryTimerExecutor
+	id       string
+}
+
+func (retryTimerExecution) Close() {}
+
+func (e retryTimerExecution) Run(context.Context) (engine.ExecutionResult, error) {
+	if e.id == "slow" {
+		time.Sleep(250 * time.Millisecond)
+		return engine.ExecutionResult{}, nil
+	}
+	e.executor.mu.Lock()
+	e.executor.attempts++
+	attempt := e.executor.attempts
+	if attempt == 2 {
+		e.executor.secondAttempt = time.Since(e.executor.started)
+	}
+	e.executor.mu.Unlock()
+	if attempt == 1 {
+		return engine.ExecutionResult{}, errors.New("retry me")
+	}
+	return engine.ExecutionResult{}, nil
+}
+
+type admissionFailureExecutor struct{}
+
+func (admissionFailureExecutor) TryAdmit(
+	context.Context,
+	engine.ExecutionRequest,
+) (engine.Execution, bool, error) {
+	return nil, false, errors.New("unsupported target")
+}
+
+func (admissionFailureExecutor) ValidateSuccess(
+	context.Context,
+	flow.Step,
+	state.Step,
+) (bool, error) {
+	return true, nil
+}
+
 func (cleanupEnvironment) ID() string {
 	return "cleanup"
 }
@@ -389,7 +687,7 @@ func (cleanupEnvironment) Download(
 
 func (e cleanupEnvironment) Release(ctx context.Context, _ target.Release) error {
 	e.provider.releaseContext <- ctx.Err()
-	return nil
+	return e.provider.releaseErr
 }
 
 func (e fakeExecution) Run(ctx context.Context) (engine.ExecutionResult, error) {

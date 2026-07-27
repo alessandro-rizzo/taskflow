@@ -24,7 +24,10 @@ type AcquireRequest struct {
 	RunID          string
 	StepID         string
 	ExecutionGroup string
-	Resources      map[string]int64
+	// ExclusiveWorkspace prevents overlap with other executions that share a
+	// mutable provider workspace.
+	ExclusiveWorkspace bool
+	Resources          map[string]int64
 }
 
 type Release struct {
@@ -73,7 +76,11 @@ type Reservation interface {
 
 type Provider interface {
 	Name() string
+	// Capabilities returns a locally cached snapshot and must not perform
+	// latency-bearing remote discovery on the scheduler path.
 	Capabilities(context.Context) (Capabilities, error)
+	// TryReserve is non-blocking. Providers refresh remote capacity outside the
+	// scheduler path and return admitted=false when no reservation is ready.
 	TryReserve(context.Context, AcquireRequest) (Reservation, bool, error)
 }
 

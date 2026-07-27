@@ -101,3 +101,41 @@ func TestProviderReservesFiniteResources(t *testing.T) {
 	}
 	second.Release()
 }
+
+func TestProviderSerializesExclusiveWorkspaceExecutions(t *testing.T) {
+	t.Parallel()
+	provider := local.New(t.TempDir())
+	shared, admitted, err := provider.TryReserve(context.Background(), target.AcquireRequest{
+		RunID: "run", StepID: "shared",
+	})
+	if err != nil || !admitted {
+		t.Fatalf("shared TryReserve() = %v, %v", admitted, err)
+	}
+	_, admitted, err = provider.TryReserve(context.Background(), target.AcquireRequest{
+		RunID: "run", StepID: "cacheable", ExclusiveWorkspace: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if admitted {
+		t.Fatal("exclusive execution admitted while shared execution was active")
+	}
+	shared.Release()
+
+	exclusive, admitted, err := provider.TryReserve(context.Background(), target.AcquireRequest{
+		RunID: "run", StepID: "cacheable", ExclusiveWorkspace: true,
+	})
+	if err != nil || !admitted {
+		t.Fatalf("exclusive TryReserve() = %v, %v", admitted, err)
+	}
+	_, admitted, err = provider.TryReserve(context.Background(), target.AcquireRequest{
+		RunID: "run", StepID: "other",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if admitted {
+		t.Fatal("shared execution admitted while exclusive execution was active")
+	}
+	exclusive.Release()
+}

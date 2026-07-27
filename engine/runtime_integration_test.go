@@ -18,6 +18,7 @@ import (
 	"github.com/alessandro-rizzo/taskflow/state"
 	"github.com/alessandro-rizzo/taskflow/target"
 	"github.com/alessandro-rizzo/taskflow/target/local"
+	"github.com/alessandro-rizzo/taskflow/target/ssh"
 )
 
 func TestRuntimeCacheHitRestoresOutputWithoutExecuting(t *testing.T) {
@@ -96,5 +97,91 @@ func TestRuntimeCacheHitRestoresOutputWithoutExecuting(t *testing.T) {
 	}
 	if !found {
 		t.Fatalf("events = %v, want StepCacheHit", kinds)
+	}
+}
+
+func TestRuntimeTransfersDependencyArtifactsAcrossTargets(t *testing.T) {
+	ctx := context.Background()
+	fakeSSH := filepath.Join(t.TempDir(), "ssh")
+	if err := os.WriteFile(
+		fakeSSH,
+		[]byte("#!/bin/sh\nshift\nexec /bin/sh -c \"$1\"\n"),
+		0o700,
+	); err != nil {
+		t.Fatal(err)
+	}
+	buildRoot := t.TempDir()
+	packageRoot := t.TempDir()
+	buildTarget, err := ssh.New(ssh.Config{
+		Name: "build-target", Host: "fixture", Root: filepath.ToSlash(buildRoot),
+		Binary: fakeSSH, MaxConcurrency: 1,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	packageTarget, err := ssh.New(ssh.Config{
+		Name: "package-target", Host: "fixture", Root: filepath.ToSlash(packageRoot),
+		Binary: fakeSSH, MaxConcurrency: 1,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	direct := command.New()
+	pipeline := flow.MustDefine("cross-target", func(p *flow.Builder) {
+		build := p.Step(
+			"build",
+			direct.Run("sh", "-c", "printf artifact > artifact.txt"),
+			flow.On("build-target"),
+			flow.Outputs("artifact.txt"),
+		)
+		p.Step(
+			"package",
+			direct.Run("sh", "-c", "cat artifact.txt > package.txt"),
+			flow.Needs(build),
+			flow.On("package-target"),
+			flow.Outputs("package.txt"),
+		)
+	})
+	runners := runner.NewRegistry()
+	if err := runners.Register(direct); err != nil {
+		t.Fatal(err)
+	}
+	targets := target.NewRegistry()
+	if err := targets.Register(buildTarget); err != nil {
+		t.Fatal(err)
+	}
+	if err := targets.Register(packageTarget); err != nil {
+		t.Fatal(err)
+	}
+	executor := &engine.RuntimeExecutor{
+		Runners: runners,
+		Targets: targets,
+		Cache: &cache.Coordinator{
+			Store:         cachefile.New(filepath.Join(t.TempDir(), "artifacts")),
+			WorkspaceRoot: t.TempDir(),
+		},
+		Stdout: io.Discard,
+		Stderr: io.Discard,
+	}
+	scheduler := engine.Scheduler{Executor: executor, State: state.NewMemory()}
+	result, err := scheduler.Run(ctx, pipeline, engine.Options{
+		RunID: "cross-target", MaxParallel: 2,
+	})
+	if err != nil {
+		t.Fatalf("Run() error = %v", err)
+	}
+	for _, id := range []string{"build", "package"} {
+		if result.Steps[id].OutputManifest == "" || result.Steps[id].CacheKey == "" {
+			t.Fatalf("step %s has no persisted run artifact: %#v", id, result.Steps[id])
+		}
+	}
+	packaged, err := os.ReadFile(
+		filepath.Join(packageRoot, "cross-target", "package", "package.txt"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(packaged) != "artifact" {
+		t.Fatalf("cross-target package = %q", packaged)
 	}
 }

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/alessandro-rizzo/taskflow/internal/projectdriver"
 )
@@ -16,6 +18,8 @@ func main() {
 		fmt.Println(version)
 		return
 	}
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 	workingDirectory, err := os.Getwd()
 	if err != nil {
 		exitError(err)
@@ -31,11 +35,11 @@ func main() {
 		Stdout:   os.Stdout,
 		Stderr:   os.Stderr,
 	}
-	binary, err := loader.Build(context.Background(), root)
+	binary, err := loader.Build(ctx, root)
 	if err != nil {
 		exitError(err)
 	}
-	if err := loader.Run(context.Background(), root, binary, os.Args[1:]); err != nil {
+	if err := loader.Run(ctx, root, binary, os.Args[1:]); err != nil {
 		var driverExit *projectdriver.ExitError
 		if errors.As(err, &driverExit) {
 			os.Exit(driverExit.Code)

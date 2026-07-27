@@ -59,6 +59,8 @@ func (r *Renderer) Emit(_ context.Context, value event.Event) {
 		fmt.Fprintf(r.writer, "• %-24s blocked: %s\n", value.StepID, value.Message)
 	case event.StepCacheHit:
 		fmt.Fprintf(r.writer, "◆ %-24s cache hit\n", value.StepID)
+	case event.StepCleanupFailed:
+		fmt.Fprintf(r.writer, "! %-24s cleanup failed: %v\n", value.StepID, value.Err)
 	case event.RunSucceeded:
 		fmt.Fprintf(r.writer, "taskflow: ✓ succeeded in %s\n", value.Duration.Round(1e6))
 	case event.RunFailed:
@@ -70,6 +72,7 @@ func (r *Renderer) visible(kind event.Kind) bool {
 	switch r.verbosity {
 	case Quiet:
 		return kind == event.StepFailed || kind == event.StepCancelled ||
+			kind == event.StepCleanupFailed ||
 			kind == event.RunSucceeded || kind == event.RunFailed
 	case Normal:
 		return kind != event.StepQueued

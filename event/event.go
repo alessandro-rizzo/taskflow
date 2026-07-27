@@ -11,18 +11,19 @@ import (
 type Kind string
 
 const (
-	RunStarted    Kind = "run.started"
-	RunResumed    Kind = "run.resumed"
-	RunSucceeded  Kind = "run.succeeded"
-	RunFailed     Kind = "run.failed"
-	StepQueued    Kind = "step.queued"
-	StepStarted   Kind = "step.started"
-	StepRetrying  Kind = "step.retrying"
-	StepSucceeded Kind = "step.succeeded"
-	StepFailed    Kind = "step.failed"
-	StepCancelled Kind = "step.cancelled"
-	StepBlocked   Kind = "step.blocked"
-	StepCacheHit  Kind = "step.cache_hit"
+	RunStarted        Kind = "run.started"
+	RunResumed        Kind = "run.resumed"
+	RunSucceeded      Kind = "run.succeeded"
+	RunFailed         Kind = "run.failed"
+	StepQueued        Kind = "step.queued"
+	StepStarted       Kind = "step.started"
+	StepRetrying      Kind = "step.retrying"
+	StepSucceeded     Kind = "step.succeeded"
+	StepFailed        Kind = "step.failed"
+	StepCancelled     Kind = "step.cancelled"
+	StepBlocked       Kind = "step.blocked"
+	StepCacheHit      Kind = "step.cache_hit"
+	StepCleanupFailed Kind = "step.cleanup_failed"
 )
 
 // Event is intentionally transport-neutral so renderers and telemetry adapters

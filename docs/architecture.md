@@ -94,10 +94,11 @@ This preserves `taskflow run verify` ergonomics without Go's platform-specific
 `plugin` package or runtime source interpretation. The driver links provider
 and adapter modules in-process, preserving compile-time type checking.
 
-The initial cache fingerprint includes `.taskflow` Go sources, module/workspace
-files, CLI version, protocol version, build platform, and Go version. It does
-not yet recursively fingerprint local `replace` dependencies; that is a known
-pre-v1 limitation which an extension-heavy fixture must settle.
+The driver cache fingerprint uses `go list -deps` to include compiled and
+embedded inputs from every imported package in the project's main module, plus
+module/workspace files, CLI version, protocol version, build platform, and Go
+version. It does not yet recursively fingerprint separate modules reached by a
+local `replace`; that remains a known pre-v1 limitation.
 
 ## Runner adapters
 
@@ -166,6 +167,9 @@ creation, source upload, command execution, output extraction, environment
 identity, capacity, resource accounting, and cleanup. It deliberately has no
 connection pooling, reconnection, secret transport, or production hardening.
 Its purpose is to break local-shaped contracts before a Sprite SDK is adopted.
+Transport archives are validated and normalized by Taskflow on the controller;
+remote tar is not trusted to define path, ownership, permission, pattern, or
+manifest semantics.
 
 #### Sprite
 
@@ -209,6 +213,10 @@ non-blocking and provider-specific: a saturated remote provider does not occupy
 a global slot or starve ready local work. Providers reserve both concurrency
 and declared finite resources before acquisition begins.
 
+The local provider shares the checkout for ergonomics. Cacheable and
+output-producing steps therefore receive exclusive workspace admission;
+read-only/no-output steps may still run concurrently.
+
 Each transition is saved before dependent work becomes eligible. If the
 controller crashes while a node is `running`, resume resets that node to
 `pending`; a task must not be assumed successful without a committed success
@@ -227,6 +235,7 @@ A resumed run:
 - keeps `succeeded` nodes successful only when their output manifest is still
   present and valid in the cache;
 - resets `running`, `failed`, and `blocked` nodes to `pending`;
+- transitively resets successful dependents when any dependency is reset;
 - schedules only nodes whose dependencies are now satisfied;
 - rejects a changed pipeline definition by default.
 
@@ -271,6 +280,13 @@ contract, and verifies the blob digest against its manifest before use. The
 scheduler persists the cache key, execution digest, target environment ID,
 cache-hit flag, and output manifest before emitting success.
 
+Cache-off and read-only steps with declared outputs still publish a run-scoped
+artifact. That artifact is available only through the run-specific key, so it
+supports cross-target dependencies and resume without becoming a cross-run
+cache hit. A downstream step restores each dependency manifest before execution.
+Corrupt or torn cache entries are misses; underlying store I/O failures remain
+errors.
+
 ## Workspaces and artifacts
 
 The current `ArchiveMaterializer` sends declared workspace paths through the
@@ -281,6 +297,8 @@ remote provider.
 
 Declared outputs are the only supported cross-target filesystem dependency.
 Shared mutable directories are not part of the distributed execution model.
+Dependency archives are restored in declared edge order before a cache-miss
+execution begins.
 
 Longer-lived same-target workflows, such as booting a simulator and then
 running multiple iOS phases, will use an explicit placement/workspace group.
@@ -293,6 +311,11 @@ journal append succeeds. An ordered asynchronous dispatcher keeps slow
 telemetry consumers off the scheduling path. The terminal renderer is one
 consumer; JSON logs and OpenTelemetry can be additional consumers without
 changing execution.
+
+Provider cleanup is detached and deadline-bounded. A cleanup failure after work
+and artifact publication is recorded and emitted as a warning without changing
+the successful result. CLI interrupt and termination signals enter this
+graceful cancellation path before a final forced-kill deadline.
 
 Planned verbosity:
 

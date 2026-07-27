@@ -34,6 +34,8 @@ type Entry struct {
 }
 
 type Store interface {
+	// Open must return found=false for incomplete, corrupt, or unverifiable
+	// entries. Cache corruption is a miss, not an execution failure.
 	Open(context.Context, Key) (Entry, io.ReadCloser, bool, error)
 	Put(context.Context, Key, io.Reader) (Entry, error)
 	Exists(context.Context, Key, string) (bool, error)
@@ -48,6 +50,16 @@ type Identity struct {
 	Key             Key
 	ExecutionDigest string
 	InputDigest     string
+}
+
+func RunArtifactKey(runID, pipeline string, stepID flow.StepID, executionDigest string) Key {
+	return NewKey(
+		[]byte("taskflow-run-artifact-v1"),
+		[]byte(runID),
+		[]byte(pipeline),
+		[]byte(stepID),
+		[]byte(executionDigest),
+	)
 }
 
 type dependencyManifest struct {
@@ -131,6 +143,30 @@ func (c Coordinator) Restore(ctx context.Context, key Key, environment target.En
 	return entry, true, nil
 }
 
+func (c Coordinator) RestoreExpected(
+	ctx context.Context,
+	key Key,
+	manifest string,
+	environment target.Environment,
+) error {
+	entry, hit, err := c.Restore(ctx, key, environment)
+	if err != nil {
+		return err
+	}
+	if !hit {
+		return fmt.Errorf("required artifact %s is not present", key)
+	}
+	if entry.Manifest != manifest {
+		return fmt.Errorf(
+			"required artifact %s manifest is %s, want %s",
+			key,
+			entry.Manifest,
+			manifest,
+		)
+	}
+	return nil
+}
+
 func (c Coordinator) Publish(
 	ctx context.Context,
 	key Key,
@@ -138,6 +174,7 @@ func (c Coordinator) Publish(
 	outputs []string,
 ) (Entry, error) {
 	reader, writer := io.Pipe()
+	defer reader.Close()
 	downloaded := make(chan error, 1)
 	go func() {
 		err := environment.Download(ctx, outputs, writer)
@@ -145,6 +182,7 @@ func (c Coordinator) Publish(
 		downloaded <- err
 	}()
 	entry, storeErr := c.Store.Put(ctx, key, reader)
+	_ = reader.Close()
 	downloadErr := <-downloaded
 	if err := errors.Join(storeErr, downloadErr); err != nil {
 		return Entry{}, fmt.Errorf("publish cached outputs: %w", err)

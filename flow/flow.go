@@ -132,9 +132,10 @@ func (p *Pipeline) StructuralDigest() (string, error) {
 		})
 	}
 	return digestValue(struct {
-		Name  string `json:"name"`
-		Steps []Step `json:"steps"`
-	}{Name: p.name, Steps: steps})
+		Schema int    `json:"schema"`
+		Name   string `json:"name"`
+		Steps  []Step `json:"steps"`
+	}{Schema: 1, Name: p.name, Steps: steps})
 }
 
 // DefinitionDigest fingerprints the complete authored definition for
@@ -142,9 +143,10 @@ func (p *Pipeline) StructuralDigest() (string, error) {
 // are visible here.
 func (p *Pipeline) DefinitionDigest() (string, error) {
 	return digestValue(struct {
-		Name  string `json:"name"`
-		Steps []Step `json:"steps"`
-	}{Name: p.name, Steps: p.Steps()})
+		Schema int    `json:"schema"`
+		Name   string `json:"name"`
+		Steps  []Step `json:"steps"`
+	}{Schema: 1, Name: p.name, Steps: p.Steps()})
 }
 
 // Digest is retained as the semantic digest used by execution.
@@ -377,6 +379,16 @@ func (b *Builder) validate() error {
 	for _, step := range b.pipeline.steps {
 		if step.ID == "" {
 			b.errs = append(b.errs, errors.New("step ID is empty"))
+		}
+		if strings.Trim(string(step.ID), ".") == "" {
+			b.errs = append(b.errs, fmt.Errorf("step ID %q cannot be dot-only", step.ID))
+		}
+		if step.ExecutionGroup != "" && strings.Trim(step.ExecutionGroup, ".") == "" {
+			b.errs = append(b.errs, fmt.Errorf(
+				"step %q execution group %q cannot be dot-only",
+				step.ID,
+				step.ExecutionGroup,
+			))
 		}
 		if err := step.Run.Validate(); err != nil {
 			b.errs = append(b.errs, fmt.Errorf("step %q: %w", step.ID, err))

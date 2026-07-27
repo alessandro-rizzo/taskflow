@@ -3,12 +3,14 @@ package projectdriver_test
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/alessandro-rizzo/taskflow/internal/projectdriver"
 )
@@ -30,16 +32,26 @@ import (
 	"os"
 
 	"github.com/alessandro-rizzo/taskflow/driver"
+	"fixture/pipelines"
+)
+
+func main() {
+	os.Exit(driver.Main(driver.Config{Pipelines: pipelines.All()}))
+}
+`)
+	writeFile(t, filepath.Join(project, "pipelines", "pipelines.go"), `package pipelines
+
+import (
 	"github.com/alessandro-rizzo/taskflow/flow"
 	"github.com/alessandro-rizzo/taskflow/runner/command"
 )
 
-func main() {
+func All() []*flow.Pipeline {
 	run := command.New()
 	pipeline := flow.MustDefine("verify", func(p *flow.Builder) {
 		p.Step("test", run.Run("true"))
 	})
-	os.Exit(driver.Main(driver.Config{Pipelines: []*flow.Pipeline{pipeline}}))
+	return []*flow.Pipeline{pipeline}
 }
 `)
 	var stdout, stderr bytes.Buffer
@@ -53,12 +65,23 @@ func main() {
 	if err != nil {
 		t.Fatalf("Build() error = %v, stderr = %s", err, stderr.String())
 	}
+	oldTime := time.Unix(100, 0)
+	if err := os.Chtimes(first, oldTime, oldTime); err != nil {
+		t.Fatal(err)
+	}
 	second, err := loader.Build(context.Background(), project)
 	if err != nil {
 		t.Fatalf("cached Build() error = %v", err)
 	}
 	if first != second {
 		t.Fatalf("cached binary = %q, want %q", second, first)
+	}
+	info, err := os.Stat(second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !info.ModTime().Equal(oldTime) {
+		t.Fatalf("cached driver was rebuilt: modtime = %s", info.ModTime())
 	}
 	if err := loader.Run(context.Background(), project, first, []string{"list"}); err != nil {
 		t.Fatalf("Run(list) error = %v", err)
@@ -71,7 +94,7 @@ func main() {
 	if err != nil {
 		t.Fatal(err)
 	}
-	path := filepath.Join(project, ".taskflow", "main.go")
+	path := filepath.Join(project, "pipelines", "pipelines.go")
 	contents, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
@@ -82,7 +105,7 @@ func main() {
 		t.Fatal(err)
 	}
 	if digestBefore == digestAfter {
-		t.Fatal("driver source edit did not change cache digest")
+		t.Fatal("imported main-module source edit did not change cache digest")
 	}
 }
 
@@ -101,6 +124,54 @@ func TestFindRootWalksParents(t *testing.T) {
 	}
 	if got != root {
 		t.Fatalf("FindRoot() = %q, want %q", got, root)
+	}
+}
+
+func TestRunForwardsCancellationToDriverForGracefulShutdown(t *testing.T) {
+	t.Parallel()
+	root := t.TempDir()
+	binary := filepath.Join(root, "driver")
+	writeFile(t, binary, `#!/bin/sh
+if [ "$1" = "__taskflow_handshake" ]; then
+  printf '{"protocol":1}\n'
+  exit 0
+fi
+trap 'printf interrupted > interrupted; exit 1' INT TERM
+printf started > started
+while :; do sleep 0.05; done
+`)
+	if err := os.Chmod(binary, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	loader := projectdriver.Loader{}
+	ctx, cancel := context.WithCancel(context.Background())
+	finished := make(chan error, 1)
+	go func() {
+		finished <- loader.Run(ctx, root, binary, []string{"run"})
+	}()
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		if _, err := os.Stat(filepath.Join(root, "started")); err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("driver did not start")
+		}
+		time.Sleep(5 * time.Millisecond)
+	}
+	cancel()
+	select {
+	case err := <-finished:
+		var exitErr *projectdriver.ExitError
+		if !errors.As(err, &exitErr) {
+			t.Fatalf("Run() error = %v, want driver exit status", err)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("Run() did not wait for graceful driver shutdown")
+	}
+	if contents, err := os.ReadFile(filepath.Join(root, "interrupted")); err != nil ||
+		string(contents) != "interrupted" {
+		t.Fatalf("driver did not handle interrupt: contents=%q error=%v", contents, err)
 	}
 }
 

@@ -26,6 +26,7 @@ type Provider struct {
 	mu          sync.Mutex
 	maxParallel int
 	running     int
+	exclusive   bool
 	resources   map[string]int64
 	used        map[string]int64
 }
@@ -57,10 +58,13 @@ func (p *Provider) Capabilities(context.Context) (target.Capabilities, error) {
 func (p *Provider) TryReserve(_ context.Context, request target.AcquireRequest) (target.Reservation, bool, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if p.running >= p.maxParallel || !resourcesAvailable(p.resources, p.used, request.Resources) {
+	if p.running >= p.maxParallel || p.exclusive ||
+		(request.ExclusiveWorkspace && p.running > 0) ||
+		!resourcesAvailable(p.resources, p.used, request.Resources) {
 		return nil, false, nil
 	}
 	p.running++
+	p.exclusive = request.ExclusiveWorkspace
 	addResources(p.used, request.Resources, 1)
 	return &reservation{provider: p, request: request}, true, nil
 }
@@ -95,6 +99,9 @@ func (r *reservation) Release() {
 	}
 	r.once = true
 	r.provider.running--
+	if r.request.ExclusiveWorkspace {
+		r.provider.exclusive = false
+	}
 	addResources(r.provider.used, r.request.Resources, -1)
 }
 

@@ -30,6 +30,7 @@ type ArchiveMaterializer struct {
 
 func (m ArchiveMaterializer) Materialize(ctx context.Context, environment target.Environment) error {
 	reader, writer := io.Pipe()
+	defer reader.Close()
 	packed := make(chan error, 1)
 	go func() {
 		err := workspace.Pack(ctx, m.Root, m.Patterns, writer)
@@ -37,6 +38,7 @@ func (m ArchiveMaterializer) Materialize(ctx context.Context, environment target
 		packed <- err
 	}()
 	uploadErr := environment.Upload(ctx, reader)
+	_ = reader.Close()
 	packErr := <-packed
 	return errors.Join(uploadErr, packErr)
 }
@@ -79,7 +81,9 @@ func (e *RuntimeExecutor) TryAdmit(
 	reservation, admitted, err := provider.TryReserve(ctx, target.AcquireRequest{
 		RunID: request.RunID, StepID: string(request.Step.ID),
 		ExecutionGroup: request.Step.ExecutionGroup,
-		Resources:      cloneResources(request.Step.Resources),
+		ExclusiveWorkspace: len(request.Step.Outputs) > 0 ||
+			request.Step.Cache.Mode != flow.CacheOff,
+		Resources: cloneResources(request.Step.Resources),
 	})
 	if err != nil || !admitted {
 		return nil, admitted, err
@@ -97,7 +101,7 @@ func (e *RuntimeExecutor) ValidateSuccess(
 	if len(step.Outputs) == 0 {
 		return true, nil
 	}
-	if step.Cache.Mode == flow.CacheOff || e.Cache == nil {
+	if e.Cache == nil {
 		return false, nil
 	}
 	return e.Cache.Valid(ctx, record.CacheKey, record.OutputManifest)
@@ -125,6 +129,13 @@ func (e *runtimeExecution) Run(ctx context.Context) (result ExecutionResult, ret
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), timeout)
 		defer cancel()
 		releaseErr := environment.Release(cleanupCtx, target.Release{Success: success})
+		if releaseErr == nil {
+			return
+		}
+		if success {
+			result.CleanupError = releaseErr.Error()
+			return
+		}
 		returnedErr = errors.Join(returnedErr, releaseErr)
 	}()
 
@@ -133,7 +144,12 @@ func (e *runtimeExecution) Run(ctx context.Context) (result ExecutionResult, ret
 			return result, fmt.Errorf("materialize workspace: %w", err)
 		}
 	}
-	probes := make([]target.Probe, 0, len(e.request.Step.Toolchains))
+	probes := make([]target.Probe, 0, len(e.resolved.Toolchains)+len(e.request.Step.Toolchains))
+	for _, probe := range e.resolved.Toolchains {
+		probes = append(probes, target.Probe{
+			Name: probe.Name, Program: probe.Program, Args: append([]string(nil), probe.Args...),
+		})
+	}
 	for _, probe := range e.request.Step.Toolchains {
 		probes = append(probes, target.Probe{
 			Name: probe.Name, Program: probe.Program, Args: append([]string(nil), probe.Args...),
@@ -146,12 +162,22 @@ func (e *runtimeExecution) Run(ctx context.Context) (result ExecutionResult, ret
 	if err != nil {
 		return result, fmt.Errorf("identify target environment: %w", err)
 	}
+	executionDigest, err := cacheExecutionDigest(e.resolved, environmentIdentity)
+	if err != nil {
+		return result, err
+	}
+	result.ExecutionDigest = executionDigest
+	needsArtifactStore := e.request.Step.Cache.Mode != flow.CacheOff ||
+		len(e.request.Step.Outputs) > 0
+	for _, dependency := range e.request.Dependencies {
+		needsArtifactStore = needsArtifactStore || dependency.OutputManifest != ""
+	}
+	if needsArtifactStore && e.executor.Cache == nil {
+		return result, errors.New("caching and transferable artifacts require a cache coordinator")
+	}
 
 	var cacheIdentity cache.Identity
 	if e.request.Step.Cache.Mode != flow.CacheOff {
-		if e.executor.Cache == nil {
-			return result, errors.New("step enables caching but no cache coordinator is configured")
-		}
 		dependencyManifests := make(map[string]string, len(e.request.Dependencies))
 		for id, dependency := range e.request.Dependencies {
 			dependencyManifests[id] = dependency.OutputManifest
@@ -180,12 +206,25 @@ func (e *runtimeExecution) Run(ctx context.Context) (result ExecutionResult, ret
 			return result, nil
 		}
 	}
-	if result.ExecutionDigest == "" {
-		identity, err := cacheExecutionDigest(e.resolved, environmentIdentity)
-		if err != nil {
-			return result, err
+	for _, dependencyID := range e.request.Step.Needs {
+		dependency := e.request.Dependencies[string(dependencyID)]
+		if dependency.OutputManifest == "" {
+			continue
 		}
-		result.ExecutionDigest = identity
+		if dependency.CacheKey == "" {
+			return result, fmt.Errorf(
+				"dependency %s has outputs but no restorable artifact key",
+				dependencyID,
+			)
+		}
+		if err := e.executor.Cache.RestoreExpected(
+			ctx,
+			cache.Key(dependency.CacheKey),
+			dependency.OutputManifest,
+			environment,
+		); err != nil {
+			return result, fmt.Errorf("restore dependency %s: %w", dependencyID, err)
+		}
 	}
 	_, err = environment.Exec(ctx, e.resolved.Process, process.IO{
 		Stdout: e.executor.Stdout, Stderr: e.executor.Stderr,
@@ -193,13 +232,23 @@ func (e *runtimeExecution) Run(ctx context.Context) (result ExecutionResult, ret
 	if err != nil {
 		return result, err
 	}
-	if e.request.Step.Cache.Mode == flow.CacheReadWrite {
+	if len(e.request.Step.Outputs) > 0 {
+		outputKey := cacheIdentity.Key
+		if e.request.Step.Cache.Mode != flow.CacheReadWrite {
+			outputKey = cache.RunArtifactKey(
+				e.request.RunID,
+				e.request.Pipeline,
+				e.request.Step.ID,
+				result.ExecutionDigest,
+			)
+		}
 		entry, err := e.executor.Cache.Publish(
-			ctx, cacheIdentity.Key, environment, e.request.Step.Outputs,
+			ctx, outputKey, environment, e.request.Step.Outputs,
 		)
 		if err != nil {
 			return result, err
 		}
+		result.CacheKey = string(outputKey)
 		result.OutputManifest = entry.Manifest
 	}
 	success = true

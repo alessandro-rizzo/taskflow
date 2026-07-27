@@ -66,6 +66,9 @@ func (a Adapter) Resolve(_ context.Context, invocation runner.Invocation) (runne
 			Name: adapterName, Version: version,
 			Configuration: map[string]string{"binary": binary},
 		},
+		Toolchains: []runner.ToolchainProbe{{
+			Name: "taskfile", Program: binary, Args: []string{"--version"},
+		}},
 	}, nil
 }
 

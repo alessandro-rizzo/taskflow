@@ -29,10 +29,14 @@ novelty.
 - [ ] Useful cache-explanation output.
 - [x] Output archive restore, publication, and manifest verification.
 - [x] Resource-aware, per-provider admission.
-- Signal handling and crash-recovery tests.
-- Quiet, normal, verbose, and trace terminal modes.
-- Shell completion.
-- End-to-end Taskfile and Just fixtures.
+- [x] Run-scoped cross-target artifacts for cache-off steps.
+- [x] Graceful CLI signal cancellation and bounded cleanup.
+- [x] Controller-side validation/normalization of SSH archives.
+- [ ] Crash-recovery fault-injection tests.
+- [x] End-to-end subprocess signal/cancellation fixture.
+- [ ] Quiet, normal, verbose, and trace terminal modes.
+- [ ] Shell completion.
+- [ ] End-to-end Taskfile and Just fixtures.
 
 Exit criterion: Taskflow is nicer than invoking the same local aggregate Task
 directly, even without a remote target.

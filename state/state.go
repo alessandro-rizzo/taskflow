@@ -39,6 +39,7 @@ type Step struct {
 	CacheHit        bool      `json:"cache_hit,omitempty"`
 	CacheKey        string    `json:"cache_key,omitempty"`
 	OutputManifest  string    `json:"output_manifest,omitempty"`
+	CleanupError    string    `json:"cleanup_error,omitempty"`
 	StartedAt       time.Time `json:"started_at,omitempty"`
 	FinishedAt      time.Time `json:"finished_at,omitempty"`
 	Error           string    `json:"error,omitempty"`
@@ -109,6 +110,10 @@ func StepStatus(step Step, at time.Time) Transition {
 
 // Apply validates and applies one transition.
 func Apply(snapshot Snapshot, transition Transition) (Snapshot, error) {
+	return apply(CloneSnapshot(snapshot), transition)
+}
+
+func apply(snapshot Snapshot, transition Transition) (Snapshot, error) {
 	if transition.Schema != SchemaVersion {
 		return Snapshot{}, fmt.Errorf("unsupported state schema %d", transition.Schema)
 	}
@@ -146,7 +151,7 @@ func Apply(snapshot Snapshot, transition Transition) (Snapshot, error) {
 func Replay(transitions []Transition) (Snapshot, error) {
 	var snapshot Snapshot
 	for _, transition := range transitions {
-		next, err := Apply(snapshot, transition)
+		next, err := apply(snapshot, transition)
 		if err != nil {
 			return Snapshot{}, err
 		}

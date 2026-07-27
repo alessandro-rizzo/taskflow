@@ -67,11 +67,33 @@ func TestStoreRejectsCorruptBlob(t *testing.T) {
 	if err := os.WriteFile(blob, []byte("changed!"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	_, reader, _, err := store.Open(context.Background(), key)
+	_, reader, found, err := store.Open(context.Background(), key)
 	if reader != nil {
 		reader.Close()
 	}
-	if err == nil {
-		t.Fatal("Open() error = nil, want manifest mismatch")
+	if err != nil || found {
+		t.Fatalf("Open() = found %v, error %v; want safe cache miss", found, err)
+	}
+}
+
+func TestStoreTreatsCorruptMetadataAsMiss(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	store := cachefile.New(dir)
+	key := cache.NewKey([]byte("metadata"))
+	if _, err := store.Put(context.Background(), key, bytes.NewReader([]byte("blob"))); err != nil {
+		t.Fatal(err)
+	}
+	value := string(key)
+	metadata := filepath.Join(dir, value[:2], value[2:]+".json")
+	if err := os.WriteFile(metadata, []byte("{"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	_, reader, found, err := store.Open(context.Background(), key)
+	if reader != nil {
+		reader.Close()
+	}
+	if err != nil || found {
+		t.Fatalf("Open() = found %v, error %v; want safe cache miss", found, err)
 	}
 }

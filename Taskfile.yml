@@ -21,6 +21,11 @@ tasks:
     cmds:
       - go test ./...
 
+  test:race:
+    desc: Run tests with the Go race detector
+    cmds:
+      - go test -race ./...
+
   lint:
     desc: Run the standard Go static checks
     cmds:
@@ -43,4 +48,4 @@ tasks:
 
   check:
     desc: Run formatting, tests, and static checks
-    deps: [fmt:check, test, lint]
+    deps: [fmt:check, test:race, lint]

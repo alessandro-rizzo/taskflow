@@ -96,9 +96,16 @@ func main() {
 	targets := target.NewRegistry()
 	must(targets.Register(local.New(".")))
 
-	executor := &engine.RuntimeExecutor{Runners: runners, Targets: targets}
+	executor := &engine.RuntimeExecutor{
+		Runners: runners,
+		Targets: targets,
+		Cache: &cache.Coordinator{
+			Store:         cachefile.New(".taskflow/cache"),
+			WorkspaceRoot: ".",
+		},
+	}
 	os.Exit(driver.Main(driver.Config{
-		Pipelines: []*flow.Pipeline{verify()},
+		Pipelines: []*flow.Pipeline{localVerify()},
 		Executor:  executor,
 	}))
 }
@@ -137,7 +144,9 @@ hermetic development environments.
 - `terminal`: line-oriented terminal renderer.
 
 See [Architecture](docs/architecture.md) and
-[Roadmap](docs/roadmap.md) for the boundaries and implementation order.
+[Roadmap](docs/roadmap.md) for the boundaries and implementation order. The
+[Fable 5 adversarial review](docs/reviews/2026-07-27-fable-5.md) records the
+second-pass findings and their disposition.
 
 ## Development
 

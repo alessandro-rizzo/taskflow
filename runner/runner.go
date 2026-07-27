@@ -53,10 +53,17 @@ type Identity struct {
 	Configuration map[string]string `json:"configuration,omitempty"`
 }
 
+type ToolchainProbe struct {
+	Name    string   `json:"name"`
+	Program string   `json:"program"`
+	Args    []string `json:"args,omitempty"`
+}
+
 // Resolved is the cacheable result of adapter resolution.
 type Resolved struct {
-	Process  process.Spec `json:"process"`
-	Identity Identity     `json:"identity"`
+	Process    process.Spec     `json:"process"`
+	Identity   Identity         `json:"identity"`
+	Toolchains []ToolchainProbe `json:"toolchains,omitempty"`
 }
 
 // Adapter deterministically resolves an invocation. Identity must include

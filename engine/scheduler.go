@@ -30,6 +30,7 @@ type ExecutionResult struct {
 	CacheHit        bool
 	CacheKey        string
 	OutputManifest  string
+	CleanupError    string
 }
 
 // Execution owns one provider reservation.
@@ -145,6 +146,11 @@ func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Op
 			if running >= options.MaxParallel || failedFast {
 				break
 			}
+			if ctx.Err() != nil {
+				failedFast = true
+				cancel()
+				break
+			}
 			id := string(step.ID)
 			record := run.Steps[id]
 			if record.Status != state.Pending || currentTime.Before(retryAt[id]) {
@@ -176,9 +182,37 @@ func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Op
 				Dependencies: dependencyRecords(step, run.Steps),
 			})
 			if err != nil {
-				cancel()
-				drainExecutions(results, running)
-				return state.Run{}, fmt.Errorf("admit step %s: %w", id, err)
+				record.Status = state.Failed
+				record.Attempts++
+				record.StartedAt = currentTime
+				record.FinishedAt = currentTime
+				record.Error = fmt.Sprintf("admission failed: %v", err)
+				snapshot, appendErr := appendTransition(
+					context.WithoutCancel(ctx),
+					lease,
+					revision,
+					state.StepStatus(record, currentTime),
+				)
+				if appendErr != nil {
+					cancel()
+					drainExecutions(results, running)
+					return state.Run{}, errors.Join(
+						fmt.Errorf("admit step %s: %w", id, err),
+						appendErr,
+					)
+				}
+				run, revision = snapshot.Run, snapshot.Revision
+				events.Emit(ctx, event.Event{
+					Kind: event.StepFailed, RunID: run.ID, Pipeline: pipeline.Name(),
+					StepID: id, Target: step.Target, Attempt: record.Attempts,
+					Time: currentTime, Err: errors.New(record.Error),
+				})
+				if options.FailFast {
+					failedFast = true
+					cancel()
+				}
+				progress = true
+				continue
 			}
 			if !admitted {
 				continue
@@ -226,6 +260,12 @@ func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Op
 			continue
 		}
 
+		var retryTimer *time.Timer
+		var retryReady <-chan time.Time
+		if wait := nextRetryDelay(now(), retryAt, run.Steps); wait > 0 {
+			retryTimer = time.NewTimer(wait)
+			retryReady = retryTimer.C
+		}
 		select {
 		case completed := <-results:
 			running--
@@ -238,6 +278,7 @@ func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Op
 			record.CacheHit = completed.result.CacheHit
 			record.CacheKey = completed.result.CacheKey
 			record.OutputManifest = completed.result.OutputManifest
+			record.CleanupError = completed.result.CleanupError
 			if completed.err == nil {
 				record.Status = state.Succeeded
 				record.Error = ""
@@ -271,6 +312,13 @@ func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Op
 			duration := completed.finishedAt.Sub(completed.startedAt)
 			switch record.Status {
 			case state.Succeeded:
+				if record.CleanupError != "" {
+					events.Emit(ctx, event.Event{
+						Kind: event.StepCleanupFailed, RunID: run.ID, Pipeline: pipeline.Name(),
+						StepID: id, Target: step.Target, Time: completed.finishedAt,
+						Err: errors.New(record.CleanupError),
+					})
+				}
 				if record.CacheHit {
 					events.Emit(ctx, event.Event{
 						Kind: event.StepCacheHit, RunID: run.ID, Pipeline: pipeline.Name(),
@@ -310,6 +358,11 @@ func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Op
 			failedFast = true
 			cancel()
 			contextDone = nil
+		case <-retryReady:
+			// Re-enter admission even when unrelated work is still running.
+		}
+		if retryTimer != nil {
+			retryTimer.Stop()
 		}
 	}
 
@@ -399,25 +452,55 @@ func (s *Scheduler) prepareRun(
 			snapshot.Run.StructuralDigest != structuralDigest {
 			return state.Snapshot{}, errors.New("cannot resume: pipeline structure is incompatible with saved run")
 		}
-		for _, step := range pipeline.Steps() {
+		steps := pipeline.Steps()
+		reset := make(map[string]bool, len(steps))
+		for _, step := range steps {
 			id := string(step.ID)
 			record := snapshot.Run.Steps[id]
-			keep := false
-			if record.Status == state.Succeeded {
-				keep, err = s.Executor.ValidateSuccess(ctx, step, record)
-				if err != nil {
-					return state.Snapshot{}, fmt.Errorf("validate saved success %s: %w", id, err)
-				}
-			}
-			if keep {
+			if record.Status != state.Succeeded {
+				reset[id] = true
 				continue
 			}
+			keep, validateErr := s.Executor.ValidateSuccess(ctx, step, record)
+			if validateErr != nil {
+				return state.Snapshot{}, fmt.Errorf("validate saved success %s: %w", id, validateErr)
+			}
+			reset[id] = !keep
+		}
+		changed := true
+		for changed {
+			changed = false
+			for _, step := range steps {
+				id := string(step.ID)
+				if reset[id] {
+					continue
+				}
+				for _, dependency := range step.Needs {
+					if reset[string(dependency)] {
+						reset[id] = true
+						changed = true
+						break
+					}
+				}
+			}
+		}
+		for _, step := range steps {
+			id := string(step.ID)
+			if !reset[id] {
+				continue
+			}
+			record := snapshot.Run.Steps[id]
 			record.Status = state.Pending
+			record.Attempts = 0
 			record.StartedAt = time.Time{}
 			record.FinishedAt = time.Time{}
 			record.Error = ""
 			record.CacheHit = false
 			record.EnvironmentID = ""
+			record.ExecutionDigest = ""
+			record.CacheKey = ""
+			record.OutputManifest = ""
+			record.CleanupError = ""
 			updated, err := lease.Append(ctx, snapshot.Revision, state.StepStatus(record, now()))
 			if err != nil {
 				return state.Snapshot{}, fmt.Errorf("journal resume reset: %w", err)
