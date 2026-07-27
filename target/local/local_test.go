@@ -46,7 +46,7 @@ func TestEnvironmentExecAndIdentity(t *testing.T) {
 	}
 	identity, err := environment.Identity(context.Background(), target.IdentityRequest{
 		Environment: []string{"VALUE"}, Overrides: map[string]string{"VALUE": "selected"},
-		Toolchains: []target.Probe{{Name: "shell", Program: "sh", Args: []string{"--version"}}},
+		Toolchains: []target.Probe{{Name: "shell", Program: "sh", Args: []string{"-c", "echo posix-shell"}}},
 	})
 	if err != nil {
 		t.Fatalf("Identity() error = %v", err)
