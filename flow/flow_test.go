@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/runner/command"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/runner/command"
 )
 
 func TestDefineBuildsTypedDAG(t *testing.T) {

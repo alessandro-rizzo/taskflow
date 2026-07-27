@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/alessandro-rizzo/taskflow/cache"
+	"github.com/arr/taskflow/cache"
 )
 
 type Store struct {

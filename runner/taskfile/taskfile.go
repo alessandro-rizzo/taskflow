@@ -5,8 +5,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/alessandro-rizzo/taskflow/process"
-	"github.com/alessandro-rizzo/taskflow/runner"
+	"github.com/arr/taskflow/process"
+	"github.com/arr/taskflow/runner"
 )
 
 const adapterName = "taskfile"

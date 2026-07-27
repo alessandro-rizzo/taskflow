@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/alessandro-rizzo/taskflow/cache"
-	cachefile "github.com/alessandro-rizzo/taskflow/cache/file"
+	"github.com/arr/taskflow/cache"
+	cachefile "github.com/arr/taskflow/cache/file"
 )
 
 func TestStoreRoundTrip(t *testing.T) {

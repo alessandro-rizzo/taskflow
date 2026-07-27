@@ -9,7 +9,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/alessandro-rizzo/taskflow/process"
+	"github.com/arr/taskflow/process"
 )
 
 type Capabilities struct {

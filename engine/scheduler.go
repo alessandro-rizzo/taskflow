@@ -10,9 +10,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/event"
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/state"
+	"github.com/arr/taskflow/event"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/state"
 )
 
 // ExecutionRequest includes dependency manifests required for cache identity.

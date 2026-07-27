@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/alessandro-rizzo/taskflow/internal/projectdriver"
+	"github.com/arr/taskflow/internal/projectdriver"
 )
 
 var version = "dev"

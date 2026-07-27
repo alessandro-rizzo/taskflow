@@ -1,3 +1,3 @@
-module github.com/alessandro-rizzo/taskflow
+module github.com/arr/taskflow
 
 go 1.24.0

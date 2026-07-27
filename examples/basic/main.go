@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alessandro-rizzo/taskflow/engine"
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/runner"
-	"github.com/alessandro-rizzo/taskflow/runner/command"
-	"github.com/alessandro-rizzo/taskflow/state"
-	"github.com/alessandro-rizzo/taskflow/target"
-	"github.com/alessandro-rizzo/taskflow/target/local"
-	"github.com/alessandro-rizzo/taskflow/terminal"
+	"github.com/arr/taskflow/engine"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/runner"
+	"github.com/arr/taskflow/runner/command"
+	"github.com/arr/taskflow/state"
+	"github.com/arr/taskflow/target"
+	"github.com/arr/taskflow/target/local"
+	"github.com/arr/taskflow/terminal"
 )
 
 func main() {

@@ -7,7 +7,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/alessandro-rizzo/taskflow/event"
+	"github.com/arr/taskflow/event"
 )
 
 // Verbosity controls which events are rendered.

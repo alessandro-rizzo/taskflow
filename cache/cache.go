@@ -11,10 +11,10 @@ import (
 	"io"
 	"sort"
 
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/runner"
-	"github.com/alessandro-rizzo/taskflow/target"
-	"github.com/alessandro-rizzo/taskflow/workspace"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/runner"
+	"github.com/arr/taskflow/target"
+	"github.com/arr/taskflow/workspace"
 )
 
 type Key string

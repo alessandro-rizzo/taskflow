@@ -6,7 +6,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/alessandro-rizzo/taskflow/state"
+	"github.com/arr/taskflow/state"
 )
 
 type fileLock interface {

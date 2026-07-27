@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/workspace"
+	"github.com/arr/taskflow/workspace"
 )
 
 func TestExtractRejectsSymlinkEscapeAndSymlinkParentTraversal(t *testing.T) {

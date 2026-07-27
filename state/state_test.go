@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/state"
+	"github.com/arr/taskflow/state"
 )
 
 func TestApplyDoesNotMutateUncommittedSnapshot(t *testing.T) {

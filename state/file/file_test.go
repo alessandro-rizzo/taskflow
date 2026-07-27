@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/state"
-	statefile "github.com/alessandro-rizzo/taskflow/state/file"
+	"github.com/arr/taskflow/state"
+	statefile "github.com/arr/taskflow/state/file"
 )
 
 func TestJournalRoundTripAndRevision(t *testing.T) {

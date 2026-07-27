@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/alessandro-rizzo/taskflow/process"
-	"github.com/alessandro-rizzo/taskflow/target"
-	"github.com/alessandro-rizzo/taskflow/target/ssh"
-	"github.com/alessandro-rizzo/taskflow/workspace"
+	"github.com/arr/taskflow/process"
+	"github.com/arr/taskflow/target"
+	"github.com/arr/taskflow/target/ssh"
+	"github.com/arr/taskflow/workspace"
 )
 
 func TestProviderTransfersExecutesAndCleansRemoteWorkspace(t *testing.T) {

@@ -16,12 +16,12 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/alessandro-rizzo/taskflow/engine"
-	"github.com/alessandro-rizzo/taskflow/event"
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/state"
-	statefile "github.com/alessandro-rizzo/taskflow/state/file"
-	"github.com/alessandro-rizzo/taskflow/terminal"
+	"github.com/arr/taskflow/engine"
+	"github.com/arr/taskflow/event"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/state"
+	statefile "github.com/arr/taskflow/state/file"
+	"github.com/arr/taskflow/terminal"
 )
 
 const ProtocolVersion = 1

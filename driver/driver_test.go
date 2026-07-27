@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/alessandro-rizzo/taskflow/driver"
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/runner/command"
+	"github.com/arr/taskflow/driver"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/runner/command"
 )
 
 func TestHandshakeListAndGraph(t *testing.T) {

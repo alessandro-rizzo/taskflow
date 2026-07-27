@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/alessandro-rizzo/taskflow/runner/taskfile"
+	"github.com/arr/taskflow/runner/taskfile"
 )
 
 func TestResolve(t *testing.T) {

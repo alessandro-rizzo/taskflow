@@ -5,9 +5,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/alessandro-rizzo/taskflow/process"
-	"github.com/alessandro-rizzo/taskflow/target"
-	"github.com/alessandro-rizzo/taskflow/target/local"
+	"github.com/arr/taskflow/process"
+	"github.com/arr/taskflow/target"
+	"github.com/arr/taskflow/target/local"
 )
 
 func acquire(t *testing.T, provider *local.Provider) target.Environment {

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/runner"
+	"github.com/arr/taskflow/runner"
 )
 
 // StepID is a stable node identity inside a pipeline.

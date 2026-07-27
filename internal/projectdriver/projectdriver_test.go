@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alessandro-rizzo/taskflow/internal/projectdriver"
+	"github.com/arr/taskflow/internal/projectdriver"
 )
 
 func TestBuildCachesAndRunsCompiledDriver(t *testing.T) {
@@ -22,16 +22,16 @@ func TestBuildCachesAndRunsCompiledDriver(t *testing.T) {
 
 go 1.24.0
 
-require github.com/alessandro-rizzo/taskflow v0.0.0
+require github.com/arr/taskflow v0.0.0
 
-replace github.com/alessandro-rizzo/taskflow => %s
+replace github.com/arr/taskflow => %s
 `, filepath.ToSlash(repository)))
 	writeFile(t, filepath.Join(project, ".taskflow", "main.go"), `package main
 
 import (
 	"os"
 
-	"github.com/alessandro-rizzo/taskflow/driver"
+	"github.com/arr/taskflow/driver"
 	"fixture/pipelines"
 )
 
@@ -42,8 +42,8 @@ func main() {
 	writeFile(t, filepath.Join(project, "pipelines", "pipelines.go"), `package pipelines
 
 import (
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/runner/command"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/runner/command"
 )
 
 func All() []*flow.Pipeline {

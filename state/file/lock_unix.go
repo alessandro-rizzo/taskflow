@@ -8,7 +8,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/alessandro-rizzo/taskflow/state"
+	"github.com/arr/taskflow/state"
 )
 
 type fileLock interface {

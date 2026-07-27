@@ -40,8 +40,8 @@ or a web UI.
 package main
 
 import (
-	"github.com/alessandro-rizzo/taskflow/flow"
-	"github.com/alessandro-rizzo/taskflow/runner/taskfile"
+	"github.com/arr/taskflow/flow"
+	"github.com/arr/taskflow/runner/taskfile"
 )
 
 func verify() *flow.Pipeline {
