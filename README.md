@@ -144,8 +144,10 @@ hermetic development environments.
 - `terminal`: line-oriented terminal renderer.
 
 See [Architecture](docs/architecture.md) and
-[Roadmap](docs/roadmap.md) for the boundaries and implementation order. The
-[Fable 5 adversarial review](docs/reviews/2026-07-27-fable-5.md) records the
+[Roadmap](docs/roadmap.md) for the current boundaries and implementation order.
+The proposed [Product specification](docs/product-specification.md) describes
+the longer-term typed, reproducible, native-target, and agent-first direction.
+The [Fable 5 adversarial review](docs/reviews/2026-07-27-fable-5.md) records the
 second-pass findings and their disposition.
 
 ## Development
