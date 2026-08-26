@@ -1,0 +1,5 @@
+/bin/
+/.taskflow/cache/
+/.taskflow/state/
+*.out
+.DS_Store

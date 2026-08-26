@@ -40,12 +40,14 @@ identity. The sandbox may be a Linux namespace, an overlay filesystem, an APFS
 clone, a warm immutable VM, or a provider-specific native workspace. Isolation
 strength is explicit rather than inferred from the word “container.”
 
-This specification proposes an evolution of the current repository. The
-existing low-level graph, scheduler, durable journal, cache coordinator,
-compiled driver, runner adapters, and target-provider interfaces are the
-kernel. Typed project values, conditional IR, immutable source snapshots,
-`taskflowd`, worktree namespaces, reusable worker pools, native providers, and
-the APIs shown below are proposed and are not implemented yet.
+The isolated architecture-bootstrap prototype demonstrates a low-level graph,
+scheduler, durable journal, cache coordinator, compiled driver, runner
+adapters, and target-provider contract. The new implementation starts from a
+clean foundation and treats those results as evidence rather than API or code
+compatibility constraints. Typed project values, conditional IR, immutable
+source snapshots, `taskflowd`, worktree namespaces, reusable worker pools,
+native providers, and the APIs shown below are proposed and are not implemented
+yet.
 
 ## 2. Product intent
 
@@ -257,7 +259,9 @@ A `Node` is the smallest independently schedulable unit. It has:
 - an executable runner invocation;
 - no hidden Taskflow-level dependency edges.
 
-The existing `flow.Step` is the kernel representation from which this evolves.
+The prototype's `flow.Step` is a useful comparison representation. The new
+`Node` model may reuse its proven semantics, but it is not required to lower to
+or remain compatible with that type.
 
 ### 5.4 Source and source view
 
@@ -846,8 +850,10 @@ execution.
 
 ### 9.4 Durable scheduler
 
-The existing scheduler evolves into a shared, persistent state machine. It
-owns graph state but remains unaware of Taskfile syntax or provider internals.
+The prototype proved the value of an explicit scheduler state machine. The new
+shared scheduler should retain that semantic property while being implemented
+cleanly around the accepted plan IR. It owns graph state but remains unaware of
+Taskfile syntax or provider internals.
 
 Required states include:
 
@@ -881,8 +887,9 @@ starving background agent runs.
 
 ### 9.6 State store
 
-The current revisioned append-only transition journal is retained as the
-correctness model. A shared implementation must provide:
+The prototype's revisioned append-only transition journal is retained as a
+correctness model, not necessarily as reused code. A shared implementation must
+provide:
 
 - exclusive run ownership or distributed compare-and-swap;
 - monotonic revisions and event sequence numbers;
@@ -944,7 +951,7 @@ Every node sees the same logical tree, filtered by declared selection. Remote
 workers receive missing blobs only. The source cannot change under a running
 pipeline even if the developer edits the worktree.
 
-This replaces the current behavior of capturing a live workspace during each
+This replaces the prototype behavior of capturing a live workspace during each
 target acquisition.
 
 ### 10.4 Pinned execution profiles
@@ -1022,9 +1029,9 @@ result identity unless they change execution semantics.
 
 ### 10.8 Cache before provisioning
 
-The current runtime acquires and probes an environment before it can finish the
-cache key. The new architecture resolves the immutable execution profile in the
-plan, so the cache coordinator can look up a result before reserving or
+The prototype runtime acquires and probes an environment before it can finish
+the cache key. The new architecture resolves the immutable execution profile in
+the plan, so the cache coordinator can look up a result before reserving or
 provisioning a worker.
 
 Execution sequence:
@@ -1508,13 +1515,96 @@ assume a terminal is the only client.
 
 ## 18. Module and extension model
 
-### 18.1 Go modules
+### 18.1 Language strategy
+
+Decision:
+
+> Taskflow's engine, daemon, CLI, workers, providers, and first authoring SDK
+> are implemented in Go. Project schema, plan IR, condition IR, daemon RPC,
+> worker protocol, events, and artifact manifests are language-neutral
+> versioned contracts.
+
+This extends rather than replaces ADR 0001. Compiled Go remains the first and
+default pipeline-authoring experience. The daemon must nevertheless execute an
+accepted plan rather than depend directly on Go types or load project Go code
+into its process.
+
+```text
+Go project SDK ---------+
+                       |
+future TypeScript SDK --+--> project schema + plan IR --> taskflowd
+                       |
+future SDK ------------+
+```
+
+Go is the strongest current choice for the operational core because Taskflow
+needs:
+
+- small native binaries without a separately installed runtime;
+- efficient long-running daemon and worker processes;
+- concurrency for scheduling, leases, process supervision, and log streaming;
+- mature filesystem, process, archive, HTTP, RPC, SSH, and observability
+  support;
+- straightforward Linux and macOS distribution;
+- fast builds for cached project drivers;
+- one language shared by the prototype evidence and the initial public SDK.
+
+The principal risk is authoring ergonomics, not engine capability. Go lacks
+some features that make embedded DSLs especially concise: algebraic data types,
+function overloading, decorators, rich compile-time reflection, and
+Kotlin-style builders. A low-level API dominated by generic parameters and
+functional options would be type-safe without feeling natural.
+
+Taskflow mitigates this by making ordinary project operations small and moving
+infrastructure options into reusable modules:
+
+```go
+func Check(ctx flow.Context) flow.Check {
+    return flow.All(
+        app.Backend.Check(ctx.Source()),
+        app.Mobile.Check(ctx.Source()),
+    )
+}
+```
+
+The first typed API prototype must therefore validate Go as an authoring
+language using real operations, not merely prove that generic handles compile.
+It should measure:
+
+- how much low-level option configuration leaks into project code;
+- whether `Artifact[T]`, `Optional[T]`, `Service[T]`, and `Effect[T]` compose
+  naturally;
+- whether operation schemas can be produced reliably and explained clearly;
+- whether agents can generate, inspect, and modify definitions successfully;
+- whether project-driver compilation is effectively invisible;
+- whether diagnostics point back to understandable authored code.
+
+If those tests fail, the correct response is not to rewrite the scheduler. The
+Go engine should remain while another SDK, most plausibly TypeScript, emits the
+same language-neutral plan IR.
+
+Alternative choices have different strengths:
+
+| Language | Operational core | Pipeline authoring | Primary tradeoff for Taskflow |
+| --- | --- | --- | --- |
+| Go | Excellent | Good if modules hide infrastructure | Embedded DSL can become option-heavy |
+| Rust | Excellent | Moderate to difficult | Higher implementation complexity without a clear orchestration benefit |
+| TypeScript | Moderate | Excellent | Runtime/toolchain dependency and weaker native binary deployment |
+| Kotlin | Good | Excellent | JVM distribution, memory, and startup cost |
+| Python | Moderate | Approachable | Weaker static contracts and environment reproducibility |
+| Starlark | Good for deterministic planning | Moderate | Creates a bespoke workflow language and ecosystem |
+
+No second authoring SDK should be started until the Go vertical slice has
+stabilized operation schema, value semantics, and plan IR. Multiple SDKs before
+that point would multiply ambiguity rather than improve accessibility.
+
+### 18.2 Go modules
 
 Extensions remain ordinary versioned Go modules linked into the project
 driver. A module can provide typed operations, profiles, runner adapters,
 provider configuration types, report parsers, and schemas.
 
-### 18.2 Module design requirements
+### 18.3 Module design requirements
 
 A public module should:
 
@@ -1528,9 +1618,9 @@ A public module should:
 - mark effects and secrets explicitly;
 - provide plan-level validation without acquiring a worker.
 
-### 18.3 Kernel API
+### 18.4 Kernel API
 
-The current packages remain useful boundaries:
+The isolated prototype packages provide useful evidence about boundaries:
 
 - `flow`: kernel DAG, validation, and structural identity;
 - `runner`: structured invocation resolution;
@@ -1556,10 +1646,11 @@ worker/          Worker and Sandbox contracts
 provider/...     local, Linux, Sprite, Orchard, device implementations
 ```
 
-Package names are provisional. Early prototypes should avoid moving existing
-kernel packages until the higher-level boundaries are validated.
+Package names are provisional. New product code must not import the isolated
+prototype. Boundaries are reimplemented only after the risk-first roadmap's
+experiments and decision gates validate them.
 
-### 18.4 Protocol versioning
+### 18.5 Protocol versioning
 
 Project schema, plan IR, daemon RPC, state journal, cache key, artifact manifest,
 provider contract, and event stream require independent versions. Before v1,
@@ -1577,6 +1668,8 @@ incompatible versions should fail clearly rather than silently downgrade.
   distinct types.
 - **TYPE-5:** The low-level kernel remains available without being required for
   ordinary project operations.
+- **TYPE-6:** The Go SDK lowers to a language-neutral project schema and plan IR;
+  Go-specific runtime values do not cross the daemon execution boundary.
 
 ### 19.2 Discovery and planning
 
@@ -1639,7 +1732,7 @@ of the differentiating Taskflow features in this document remain proposed.
 
 | Dimension | Taskflow direction | Dagger | Cloudflare CI SDK | GitHub Actions | Bazel | Taskfile / Lefthook |
 | --- | --- | --- | --- | --- | --- | --- |
-| Authoring | Compiled Go, typed project operations | Typed modules in supported SDKs | TypeScript classes/API | YAML plus expression language and actions | BUILD/Starlark rules and macros | YAML recipes / hook config |
+| Authoring | Go-first typed project operations; language-neutral plan IR | Typed modules in supported SDKs | TypeScript classes/API | YAML plus expression language and actions | BUILD/Starlark rules and macros | YAML recipes / hook config |
 | Composition unit | Project artifact, report, service, endpoint, stack, effect | Directory, File, Container, Service, Secret, custom object | Durable runner result and sandbox/workspace state | Workflow, job, step, output, artifact | Target, rule, action, artifact, provider | Task/command and hook job |
 | Execution substrate | Per-node local, native, VM, remote, simulator, device | Container-oriented Dagger engine/runner | Cloudflare Workflows and Sandbox | Hosted or self-hosted runners | Local/remote sandboxed build actions | Current host process |
 | Reproducibility | Explicit profile + immutable source + disposable sandbox; container optional | Strong explicit host boundary and container execution | Fresh managed sandboxes and durable Cloudflare platform | Depends heavily on actions, runner images, and workflow discipline | Strong hermetic build/toolchain model when rules comply | Primarily recipe-level up-to-date checks and host state |
@@ -1795,35 +1888,43 @@ from agent and CI behavior.
 
 ## 21. Incremental development roadmap
 
-The roadmap is deliberately vertical. Each phase should produce usable
-behavior and pressure-test contracts before the next abstraction is committed.
+The canonical delivery plan is the [risk-first roadmap](roadmap.md). It starts
+from a clean implementation, isolates the architecture bootstrap as a
+prototype, and tests the highest-impact uncertainties before initializing the
+new production module. The phases below are a product-level synopsis; the
+detailed roadmap's experiments, gates, branches, and stop criteria take
+precedence.
 
-### Phase 0: align the specification and preserve the kernel
+### Phase 0: isolate evidence and reduce architectural uncertainty
 
-Objective: turn candidate architecture into explicit decisions without
-destabilizing the working bootstrap.
+Objective: preserve the prototype as reproducible evidence, then test the
+authoring model, language-neutral plan, planning trust boundary, lightweight
+isolation, cache identity, daemon economics, and native macOS feasibility
+before selecting the new foundation.
 
 Deliverables:
 
-- review this specification against two real heterogeneous pipelines;
+- review this specification against three representative workflows;
+- run the roadmap's bounded Risk Lab experiments and record branch decisions;
 - add ADRs for typed values, plan IR, worker/sandbox split, reproducibility
-  levels, daemon trust boundary, and namespaces;
-- document which current APIs are kernel/internal versus candidates for public
-  stability;
+  levels, daemon trust boundary, language-neutral protocol boundaries, and
+  namespaces;
+- document which prototype results are proven evidence and which assumptions
+  remain unproven;
 - define benchmarks for no-op plan, cache hit, local sandbox startup, warm VM
   sandbox startup, and agent concurrency;
 - create threat-model and failure-model documents.
 
 Exit criteria:
 
-- two realistic graphs can be expressed on paper without hidden dependencies;
+- all exposure-20 risks have a decision or bounded mitigation;
 - open decisions and non-goals are accepted;
-- no new public API is declared stable prematurely.
+- no new production module or public API is initialized prematurely.
 
 ### Phase 1: typed values and operation schema prototype
 
-Objective: validate that the concise API is genuinely easier for humans and
-agents while lowering to the existing `flow.Step` kernel.
+Objective: implement the semantic model selected by the risk gate and validate
+that the concise API is genuinely easier for humans and agents.
 
 Deliverables:
 
@@ -1831,17 +1932,21 @@ Deliverables:
 - infer dependencies from value handles;
 - register typed operations and arguments;
 - implement `taskflow api --json`, `describe --json`, and `plan --json`;
-- produce immutable plan IR and a plan digest;
+- produce immutable, language-neutral plan IR and a plan digest;
 - keep targets, services, and conditions minimal in the first prototype;
-- dogfood `check` and one artifact-producing pipeline.
+- dogfood `check`, one artifact-producing pipeline, and one typed service
+  consumer.
 
 Exit criteria:
 
 - an agent can discover, validate, plan, and run the dogfood operation without
   reading `.taskflow` source;
 - Go compilation catches incompatible artifact types;
-- the generated graph is equivalent to the existing low-level definition;
-- common project code is materially shorter than direct `flow.Step` usage.
+- the generated graph covers the prototype's representative check semantics
+  without importing prototype code;
+- common project code is materially shorter than direct `flow.Step` usage;
+- a small language-agnostic fixture can consume the emitted schema and plan
+  without interpreting Go-specific values.
 
 ### Phase 2: immutable source and cache-before-provision local execution
 
@@ -2110,52 +2215,52 @@ These questions should be answered through prototypes and ADRs:
    edges?
 2. Can operation schemas be derived reliably from Go signatures and annotations,
    or should registration use explicit typed descriptors?
-3. Which condition/result combinators are necessary before optional values
+3. What evidence and adoption threshold would justify a second authoring SDK,
+   and should TypeScript be the first candidate?
+4. Which condition/result combinators are necessary before optional values
    become cumbersome?
-4. What local sandbox technology gives useful isolation on macOS with low
+5. What local sandbox technology gives useful isolation on macOS with low
    enough startup cost?
-5. Should the first daemon RPC use local HTTP, Connect/gRPC, or a simpler framed
+6. Should the first daemon RPC use local HTTP, Connect/gRPC, or a simpler framed
    protocol?
-6. Is SQLite sufficient for all initial lease and event-stream requirements?
-7. Which Merkle tree/CAS format best balances interoperability, safe extraction,
+7. Is SQLite sufficient for all initial lease and event-stream requirements?
+8. Which Merkle tree/CAS format best balances interoperability, safe extraction,
    and implementation effort?
-8. How should tool caches be partitioned and scrubbed without destroying their
+9. How should tool caches be partitioned and scrubbed without destroying their
    performance value?
-9. What exact trust policy applies to uncommitted agent changes in `.taskflow`?
-10. Which Linux provider best falsifies the worker/sandbox contract before a
+10. What exact trust policy applies to uncommitted agent changes in `.taskflow`?
+11. Which Linux provider best falsifies the worker/sandbox contract before a
     stable protocol is published?
-11. Can a warm macOS VM safely host multiple concurrent sandboxes, or should it
+12. Can a warm macOS VM safely host multiple concurrent sandboxes, or should it
     be single-tenant per active namespace?
-12. How are interactive approval and production effects represented without
+13. How are interactive approval and production effects represented without
     turning Taskflow into a hosted CI service?
-13. What standard provenance and remote-execution protocols should Taskflow
+14. What standard provenance and remote-execution protocols should Taskflow
     adopt rather than invent?
-14. When should an identical caller attach to an active run versus create a new
+15. When should an identical caller attach to an active run versus create a new
     run that reuses node cache entries?
 
 ## 25. Recommended next step
 
-Do not begin with `taskflowd` or a macOS provider. Build a narrow typed vertical
-slice over the current kernel:
+Do not begin with `taskflowd`, a production provider, or a new shared kernel.
+Follow the [risk-first roadmap](roadmap.md): establish representative fixtures
+and measurement contracts, then run the typed-authoring/plan-IR,
+planner-security, immutable-source/sandbox/cache, shared-scheduler simulation,
+and macOS feasibility experiments. Only Gate 1 may authorize the clean
+production module and its first public value contracts.
 
-1. expose one `check` operation with typed inputs and a `Check` result;
-2. lower typed values to existing `flow.Step` nodes;
-3. emit `api` and `plan` JSON;
-4. let a simple agent script discover, plan, run, and read the result;
-5. compare the authored API and plan quality with the current `.taskflow` file;
-6. only then freeze the first value and plan-IR contracts.
-
-The second slice should make source immutable and move cache lookup before
-target acquisition. Together these validate the two highest-risk product
-claims: that Taskflow can be more natural to author and more lightweight to run
-without sacrificing reproducibility.
+This front-loads the claims most capable of invalidating the architecture:
+that Taskflow can be more natural to author, safe for agents, lightweight to
+run, cacheable before provisioning, and credible for native mobile work.
 
 ## 26. References
 
 Taskflow repository documents:
 
-- [Architecture](architecture.md)
-- [Roadmap](roadmap.md)
+- [Risk-first roadmap](roadmap.md)
+- [Architecture-bootstrap prototype](../prototype/bootstrap/README.md)
+- [Prototype architecture](../prototype/bootstrap/docs/architecture.md)
+- [Prototype historical roadmap](../prototype/bootstrap/docs/roadmap.md)
 - [ADR 0001: Pipelines are compiled Go](decisions/0001-code-first-go.md)
 - [ADR 0002: Every dependency edge has one scheduler](decisions/0002-one-owner-per-edge.md)
 
