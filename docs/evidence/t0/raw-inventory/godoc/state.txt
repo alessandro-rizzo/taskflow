@@ -1,0 +1,116 @@
+package state // import "github.com/arr/taskflow/state"
+
+Package state defines the revisioned transition journal used for recovery.
+
+CONSTANTS
+
+const SchemaVersion = 1
+
+VARIABLES
+
+var (
+	ErrNotFound = errors.New("run state not found")
+	ErrLocked   = errors.New("run is locked by another controller")
+	ErrConflict = errors.New("state revision conflict")
+)
+
+TYPES
+
+type Lease interface {
+	Load(context.Context) (Snapshot, error)
+	Append(context.Context, uint64, Transition) (Snapshot, error)
+	Close() error
+}
+    Lease owns one run while a controller is scheduling it.
+
+type MemoryStore struct {
+	// Has unexported fields.
+}
+
+func NewMemory() *MemoryStore
+
+func (s *MemoryStore) Acquire(_ context.Context, id string) (Lease, error)
+
+type Run struct {
+	ID               string          `json:"id"`
+	Pipeline         string          `json:"pipeline"`
+	StructuralDigest string          `json:"structural_digest"`
+	DefinitionDigest string          `json:"definition_digest"`
+	Status           Status          `json:"status"`
+	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
+	Steps            map[string]Step `json:"steps"`
+}
+
+func Clone(run Run) Run
+
+type Snapshot struct {
+	Revision uint64
+	Run      Run
+}
+
+func Apply(snapshot Snapshot, transition Transition) (Snapshot, error)
+    Apply validates and applies one transition.
+
+func CloneSnapshot(snapshot Snapshot) Snapshot
+
+func Replay(transitions []Transition) (Snapshot, error)
+
+type Status string
+
+const (
+	Pending   Status = "pending"
+	Running   Status = "running"
+	Succeeded Status = "succeeded"
+	Failed    Status = "failed"
+	Blocked   Status = "blocked"
+	Cancelled Status = "cancelled"
+)
+type Step struct {
+	ID              string    `json:"id"`
+	Status          Status    `json:"status"`
+	Attempts        int       `json:"attempts"`
+	Target          string    `json:"target,omitempty"`
+	EnvironmentID   string    `json:"environment_id,omitempty"`
+	ExecutionDigest string    `json:"execution_digest,omitempty"`
+	CacheHit        bool      `json:"cache_hit,omitempty"`
+	CacheKey        string    `json:"cache_key,omitempty"`
+	OutputManifest  string    `json:"output_manifest,omitempty"`
+	CleanupError    string    `json:"cleanup_error,omitempty"`
+	StartedAt       time.Time `json:"started_at,omitempty"`
+	FinishedAt      time.Time `json:"finished_at,omitempty"`
+	Error           string    `json:"error,omitempty"`
+}
+    Step records the durable result required for safe resume.
+
+type Store interface {
+	Acquire(context.Context, string) (Lease, error)
+}
+    Store acquires an exclusive run lease. A shared-store implementation must
+    provide equivalent distributed exclusion.
+
+type Transition struct {
+	Schema   int            `json:"schema"`
+	Revision uint64         `json:"revision"`
+	Kind     TransitionKind `json:"kind"`
+	Time     time.Time      `json:"time"`
+	Run      *Run           `json:"run,omitempty"`
+	Status   Status         `json:"status,omitempty"`
+	Step     *Step          `json:"step,omitempty"`
+}
+    Transition is one O(1) journal record. Revision and Schema are assigned by
+    the journal implementation.
+
+func Created(run Run, at time.Time) Transition
+
+func RunStatus(status Status, at time.Time) Transition
+
+func StepStatus(step Step, at time.Time) Transition
+
+type TransitionKind string
+
+const (
+	RunCreated  TransitionKind = "run.created"
+	RunChanged  TransitionKind = "run.changed"
+	StepChanged TransitionKind = "step.changed"
+)

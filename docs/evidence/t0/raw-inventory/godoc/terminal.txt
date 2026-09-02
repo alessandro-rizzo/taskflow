@@ -1,0 +1,26 @@
+package terminal // import "github.com/arr/taskflow/terminal"
+
+Package terminal renders Taskflow events as readable, line-oriented output.
+
+TYPES
+
+type Renderer struct {
+	// Has unexported fields.
+}
+    Renderer is a concurrency-safe event sink. It intentionally does not redraw
+    the screen or require a TTY.
+
+func New(writer io.Writer, verbosity Verbosity) *Renderer
+    New constructs a renderer.
+
+func (r *Renderer) Emit(_ context.Context, value event.Event)
+    Emit renders one lifecycle transition.
+
+type Verbosity int
+    Verbosity controls which events are rendered.
+
+const (
+	Quiet Verbosity = iota
+	Normal
+	Verbose
+)

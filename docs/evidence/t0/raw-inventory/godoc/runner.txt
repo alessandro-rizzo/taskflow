@@ -1,0 +1,61 @@
+package runner // import "github.com/arr/taskflow/runner"
+
+Package runner defines adapters from named task-runner recipes to portable
+process specifications.
+
+TYPES
+
+type Adapter interface {
+	Name() string
+	Resolve(context.Context, Invocation) (Resolved, error)
+}
+    Adapter deterministically resolves an invocation. Identity must include
+    adapter configuration such as a non-default binary or compatibility mode.
+
+type Identity struct {
+	Name          string            `json:"name"`
+	Version       string            `json:"version,omitempty"`
+	Configuration map[string]string `json:"configuration,omitempty"`
+}
+    Identity captures adapter configuration that changes the resolved command.
+
+type Invocation struct {
+	Adapter string            `json:"adapter"`
+	Recipe  string            `json:"recipe"`
+	Args    []string          `json:"args,omitempty"`
+	Dir     string            `json:"dir,omitempty"`
+	Env     map[string]string `json:"env,omitempty"`
+}
+    Invocation is the typed, serializable action stored on a flow step.
+
+func (i Invocation) Validate() error
+
+func (i Invocation) WithDir(dir string) Invocation
+
+func (i Invocation) WithEnv(key, value string) Invocation
+
+type Registry struct {
+	// Has unexported fields.
+}
+
+func NewRegistry() *Registry
+
+func (r *Registry) Names() []string
+
+func (r *Registry) Register(adapter Adapter) error
+
+func (r *Registry) Resolve(ctx context.Context, invocation Invocation) (Resolved, error)
+
+type Resolved struct {
+	Process    process.Spec     `json:"process"`
+	Identity   Identity         `json:"identity"`
+	Toolchains []ToolchainProbe `json:"toolchains,omitempty"`
+}
+    Resolved is the cacheable result of adapter resolution.
+
+type ToolchainProbe struct {
+	Name    string   `json:"name"`
+	Program string   `json:"program"`
+	Args    []string `json:"args,omitempty"`
+}
+

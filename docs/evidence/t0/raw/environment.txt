@@ -1,0 +1,11 @@
+timestamp_utc: 2026-09-02T19:00:16Z
+source_revision: 9ddea886c7b4e368b5bcd8e48c36a9e2e916cb18
+source_revision_short: 9ddea88
+branch: tf-001.01-prototype-gate-evidence
+os: Darwin
+os_version: 26.5.2
+arch: arm64
+kernel: Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:34 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6050
+go_version: go version go1.25.12 darwin/arm64
+mise_version: 2026.4.28 macos-arm64 (2026-04-30)
+mise WARN  mise version 2026.9.1 available

@@ -1,0 +1,20 @@
+package workspace // import "github.com/arr/taskflow/workspace"
+
+Package workspace provides deterministic matching, hashing, and tar transfer
+below a workspace root.
+
+FUNCTIONS
+
+func Digest(ctx context.Context, root string, patterns []string) (string, error)
+func Extract(ctx context.Context, root string, source io.Reader) error
+func Match(root string, patterns []string) ([]string, error)
+func NormalizeArchive(
+	ctx context.Context,
+	source io.Reader,
+	patterns []string,
+	destination io.Writer,
+) error
+    NormalizeArchive validates an archive, optionally filters it using Taskflow
+    workspace patterns, and emits deterministic safe headers.
+
+func Pack(ctx context.Context, root string, patterns []string, destination io.Writer) error
