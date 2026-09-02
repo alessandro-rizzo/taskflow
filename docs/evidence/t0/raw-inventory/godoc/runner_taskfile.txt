@@ -1,0 +1,25 @@
+package taskfile // import "github.com/arr/taskflow/runner/taskfile"
+
+Package taskfile adapts Go Task tasks to Taskflow invocations.
+
+TYPES
+
+type Adapter struct {
+	Binary  string
+	Version string
+}
+    Adapter resolves Task task names.
+
+func New() Adapter
+    New constructs an adapter for the task executable.
+
+func (Adapter) Name() string
+    Name returns the registry name.
+
+func (a Adapter) Resolve(_ context.Context, invocation runner.Invocation) (runner.Resolved, error)
+    Resolve converts a Task invocation into a portable process.
+
+func (Adapter) Run(task string, args ...string) runner.Invocation
+    Run creates an invocation of a named Task task. Extra arguments are passed
+    after Task's argument separator.
+

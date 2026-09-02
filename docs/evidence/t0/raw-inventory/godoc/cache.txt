@@ -1,0 +1,66 @@
+package cache // import "github.com/arr/taskflow/cache"
+
+Package cache defines Taskflow's content-addressed cache and coordinator.
+
+TYPES
+
+type Coordinator struct {
+	Store         Store
+	WorkspaceRoot string
+}
+
+func (c Coordinator) ComputeIdentity(
+	ctx context.Context,
+	pipeline string,
+	step flow.Step,
+	resolved runner.Resolved,
+	environment target.Identity,
+	dependencyManifests map[string]string,
+) (Identity, error)
+    ComputeIdentity uses the command after adapter resolution and the identity
+    observed inside the acquired target.
+
+func (c Coordinator) Publish(
+	ctx context.Context,
+	key Key,
+	environment target.Environment,
+	outputs []string,
+) (Entry, error)
+
+func (c Coordinator) Restore(ctx context.Context, key Key, environment target.Environment) (Entry, bool, error)
+
+func (c Coordinator) RestoreExpected(
+	ctx context.Context,
+	key Key,
+	manifest string,
+	environment target.Environment,
+) error
+
+func (c Coordinator) Valid(ctx context.Context, key, manifest string) (bool, error)
+
+type Entry struct {
+	Key      Key    `json:"key"`
+	Manifest string `json:"manifest"`
+	Size     int64  `json:"size"`
+}
+
+type Identity struct {
+	Key             Key
+	ExecutionDigest string
+	InputDigest     string
+}
+
+type Key string
+
+func NewKey(parts ...[]byte) Key
+
+func RunArtifactKey(runID, pipeline string, stepID flow.StepID, executionDigest string) Key
+
+type Store interface {
+	// Open must return found=false for incomplete, corrupt, or unverifiable
+	// entries. Cache corruption is a miss, not an execution failure.
+	Open(context.Context, Key) (Entry, io.ReadCloser, bool, error)
+	Put(context.Context, Key, io.Reader) (Entry, error)
+	Exists(context.Context, Key, string) (bool, error)
+}
+

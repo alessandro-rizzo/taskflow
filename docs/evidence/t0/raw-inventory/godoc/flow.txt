@@ -1,0 +1,142 @@
+package flow // import "github.com/arr/taskflow/flow"
+
+Package flow provides the typed, code-first Taskflow DAG.
+
+TYPES
+
+type Builder struct {
+	// Has unexported fields.
+}
+    Builder collects typed steps and deferred validation errors.
+
+func (b *Builder) Step(id string, invocation runner.Invocation, options ...StepOption) Ref
+
+type CacheMode string
+    CacheMode controls cache reads and writes for a step.
+
+const (
+	CacheOff       CacheMode = "off"
+	CacheReadOnly  CacheMode = "read-only"
+	CacheReadWrite CacheMode = "read-write"
+)
+type CachePolicy struct {
+	Mode    CacheMode `json:"mode"`
+	Version string    `json:"version,omitempty"`
+}
+    CachePolicy describes a step's cache behavior.
+
+type Pipeline struct {
+	// Has unexported fields.
+}
+    Pipeline is a validated DAG in declaration order.
+
+func Define(name string, define func(*Builder)) (*Pipeline, error)
+
+func MustDefine(name string, define func(*Builder)) *Pipeline
+
+func (p *Pipeline) DefinitionDigest() (string, error)
+    DefinitionDigest fingerprints the complete authored definition for
+    diagnostics. Unlike StructuralDigest, cosmetic and operational tuning
+    changes are visible here.
+
+func (p *Pipeline) Digest() (string, error)
+    Digest is retained as the semantic digest used by execution.
+
+func (p *Pipeline) Name() string
+
+func (p *Pipeline) Step(id StepID) (Step, bool)
+
+func (p *Pipeline) Steps() []Step
+
+func (p *Pipeline) StructuralDigest() (string, error)
+    StructuralDigest fingerprints resume- and cache-relevant semantics. It is
+    independent of descriptions, retry tuning, and declaration order.
+
+type Ref struct {
+	// Has unexported fields.
+}
+    Ref is a pipeline-scoped reference to a previously declared step.
+
+    The owner token prevents a reference from one pipeline being accepted by
+    another pipeline merely because the string IDs happen to match.
+
+func (r Ref) ID() StepID
+    ID returns the referenced step identity.
+
+type Requirements struct {
+	OS           string `json:"os,omitempty"`
+	Architecture string `json:"architecture,omitempty"`
+}
+    Requirements are checked against provider capabilities before admission.
+
+type RetryPolicy struct {
+	MaxRetries     int           `json:"max_retries,omitempty"`
+	InitialBackoff time.Duration `json:"initial_backoff,omitempty"`
+	MaxBackoff     time.Duration `json:"max_backoff,omitempty"`
+	Multiplier     float64       `json:"multiplier,omitempty"`
+}
+    RetryPolicy controls retries after the first attempt.
+
+type Step struct {
+	ID             StepID            `json:"id"`
+	Description    string            `json:"description,omitempty"`
+	Run            runner.Invocation `json:"run"`
+	Needs          []StepID          `json:"needs,omitempty"`
+	Target         string            `json:"target"`
+	ExecutionGroup string            `json:"execution_group,omitempty"`
+	Requirements   Requirements      `json:"requirements,omitempty"`
+	Inputs         []string          `json:"inputs,omitempty"`
+	Outputs        []string          `json:"outputs,omitempty"`
+	Environment    []string          `json:"environment,omitempty"`
+	Toolchains     []ToolchainProbe  `json:"toolchains,omitempty"`
+	Cache          CachePolicy       `json:"cache"`
+	Retry          RetryPolicy       `json:"retry"`
+	Resources      map[string]int64  `json:"resources,omitempty"`
+}
+    Step is an immutable node returned by Pipeline.
+
+type StepID string
+    StepID is a stable node identity inside a pipeline.
+
+type StepOption func(*Builder, *Step) error
+    StepOption configures one step with access to its owning builder.
+
+func Describe(description string) StepOption
+
+func EnvironmentKeys(keys ...string) StepOption
+    EnvironmentKeys declares ambient environment values that affect cache
+    identity. Invocation-level explicit environment is always included.
+
+func InExecutionGroup(group string) StepOption
+    InExecutionGroup requests affinity to one provider-managed workspace.
+
+func Inputs(patterns ...string) StepOption
+
+func Needs(refs ...Ref) StepOption
+
+func On(target string) StepOption
+
+func Outputs(patterns ...string) StepOption
+
+func Requires(osName, architecture string) StepOption
+
+func Resource(name string, amount int64) StepOption
+
+func Retries(maxRetries int) StepOption
+
+func Retry(maxRetries int, initialBackoff, maxBackoff time.Duration, multiplier float64) StepOption
+
+func Toolchain(name, program string, args ...string) StepOption
+    Toolchain declares a command whose output identifies a toolchain on the
+    selected target, for example Toolchain("go", "go", "version").
+
+func WithCache(mode CacheMode, version string) StepOption
+
+type ToolchainProbe struct {
+	Name    string   `json:"name"`
+	Program string   `json:"program"`
+	Args    []string `json:"args,omitempty"`
+}
+    ToolchainProbe captures actual toolchain identity inside the selected
+    target.
+

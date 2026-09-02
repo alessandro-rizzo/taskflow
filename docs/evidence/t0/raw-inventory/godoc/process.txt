@@ -1,0 +1,32 @@
+package process // import "github.com/arr/taskflow/process"
+
+Package process defines the portable process request passed from runner adapters
+to execution targets.
+
+TYPES
+
+type IO struct {
+	Stdin  io.Reader
+	Stdout io.Writer
+	Stderr io.Writer
+}
+    IO carries process streams without embedding them in the serializable Spec.
+
+type Result struct {
+	ExitCode   int
+	StartedAt  time.Time
+	FinishedAt time.Time
+}
+    Result describes a completed process.
+
+type Spec struct {
+	Program string
+	Args    []string
+	Dir     string
+	Env     map[string]string
+}
+    Spec is a target-neutral command description.
+
+    Dir is relative to the acquired target workspace. Env contains overrides,
+    not a complete environment.
+
