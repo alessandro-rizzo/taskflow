@@ -1,0 +1,98 @@
+package engine // import "github.com/arr/taskflow/engine"
+
+Package engine schedules validated Taskflow pipelines.
+
+TYPES
+
+type ArchiveMaterializer struct {
+	Root     string
+	Patterns []string
+}
+    ArchiveMaterializer streams a source snapshot through the target transfer
+    contract. It is intentionally simple and provider-neutral.
+
+func (m ArchiveMaterializer) Materialize(ctx context.Context, environment target.Environment) error
+
+type Execution interface {
+	Run(context.Context) (ExecutionResult, error)
+	// Close releases an admitted execution that could not be started. It must
+	// be idempotent and is also called after Run.
+	Close()
+}
+    Execution owns one provider reservation.
+
+type ExecutionRequest struct {
+	RunID        string
+	Pipeline     string
+	Step         flow.Step
+	Dependencies map[string]state.Step
+}
+    ExecutionRequest includes dependency manifests required for cache identity.
+
+type ExecutionResult struct {
+	EnvironmentID   string
+	ExecutionDigest string
+	CacheHit        bool
+	CacheKey        string
+	OutputManifest  string
+	CleanupError    string
+}
+    ExecutionResult is persisted before success or cache-hit events are emitted.
+
+type Executor interface {
+	TryAdmit(context.Context, ExecutionRequest) (Execution, bool, error)
+	ValidateSuccess(context.Context, flow.Step, state.Step) (bool, error)
+}
+    Executor participates in admission so a saturated target does not consume a
+    global scheduler slot.
+
+type Materializer interface {
+	Materialize(context.Context, target.Environment) error
+}
+
+type Options struct {
+	RunID       string
+	Resume      bool
+	MaxParallel int
+	FailFast    bool
+}
+
+type RunError struct {
+	RunID     string
+	Failed    []string
+	Blocked   []string
+	Cancelled []string
+}
+
+func (e *RunError) Error() string
+
+type RuntimeExecutor struct {
+	Runners        *runner.Registry
+	Targets        *target.Registry
+	Cache          *cache.Coordinator
+	Materializer   Materializer
+	Stdout         io.Writer
+	Stderr         io.Writer
+	CleanupTimeout time.Duration
+}
+
+func (e *RuntimeExecutor) TryAdmit(
+	ctx context.Context,
+	request ExecutionRequest,
+) (Execution, bool, error)
+
+func (e *RuntimeExecutor) ValidateSuccess(
+	ctx context.Context,
+	step flow.Step,
+	record state.Step,
+) (bool, error)
+
+type Scheduler struct {
+	Executor Executor
+	State    state.Store
+	Events   event.Sink
+	Now      func() time.Time
+}
+
+func (s *Scheduler) Run(ctx context.Context, pipeline *flow.Pipeline, options Options) (state.Run, error)
+

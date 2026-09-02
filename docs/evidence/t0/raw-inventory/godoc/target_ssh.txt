@@ -1,0 +1,37 @@
+package ssh // import "github.com/arr/taskflow/target/ssh"
+
+Package ssh is a deliberately small remote provider used to falsify Taskflow's
+target, transfer, cleanup, and identity contracts before provider SDK
+integrations are added.
+
+TYPES
+
+type Config struct {
+	Name           string
+	Host           string
+	User           string
+	Root           string
+	Binary         string
+	OS             string
+	Architecture   string
+	Image          string
+	MaxConcurrency int
+	Resources      map[string]int64
+	Cleanup        bool
+}
+
+type Provider struct {
+	// Has unexported fields.
+}
+
+func New(config Config) (*Provider, error)
+
+func (p *Provider) Capabilities(context.Context) (target.Capabilities, error)
+
+func (p *Provider) Name() string
+
+func (p *Provider) TryReserve(
+	_ context.Context,
+	request target.AcquireRequest,
+) (target.Reservation, bool, error)
+

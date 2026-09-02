@@ -1,0 +1,31 @@
+task: [prototype:check] task check
+task: [lint] go vet ./...
+task: [test:race] go test -race ./...
+task: [fmt:check] files="$(gofmt -l .)"
+test -z "$files" || {
+  printf '%s\n' "$files"
+  exit 1
+}
+
+ok  	github.com/arr/taskflow/cache	(cached)
+ok  	github.com/arr/taskflow/cache/file	(cached)
+?   	github.com/arr/taskflow/cmd/taskflow	[no test files]
+ok  	github.com/arr/taskflow/driver	(cached)
+ok  	github.com/arr/taskflow/engine	(cached)
+?   	github.com/arr/taskflow/event	[no test files]
+?   	github.com/arr/taskflow/examples/basic	[no test files]
+ok  	github.com/arr/taskflow/flow	(cached)
+ok  	github.com/arr/taskflow/internal/projectdriver	(cached)
+?   	github.com/arr/taskflow/process	[no test files]
+?   	github.com/arr/taskflow/runner	[no test files]
+?   	github.com/arr/taskflow/runner/command	[no test files]
+?   	github.com/arr/taskflow/runner/just	[no test files]
+ok  	github.com/arr/taskflow/runner/taskfile	(cached)
+ok  	github.com/arr/taskflow/state	(cached)
+ok  	github.com/arr/taskflow/state/file	(cached)
+?   	github.com/arr/taskflow/target	[no test files]
+ok  	github.com/arr/taskflow/target/local	(cached)
+ok  	github.com/arr/taskflow/target/ssh	(cached)
+?   	github.com/arr/taskflow/terminal	[no test files]
+ok  	github.com/arr/taskflow/workspace	(cached)
+exit_code=0

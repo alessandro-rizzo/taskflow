@@ -1,0 +1,13 @@
+timestamp_utc: 2026-09-02T19:07:44Z
+source_revision: 9ddea886c7b4e368b5bcd8e48c36a9e2e916cb18
+branch: tf-001.03-w1-startup
+os: Darwin
+os_version: 26.5.2
+arch: arm64
+cpu_brand: Apple M5 Max
+cpu_cores_physical: 18
+cpu_cores_logical: 18
+memory_bytes: 68719476736
+go_version: go version go1.25.12 darwin/arm64
+mise_version: 2026.4.28 macos-arm64 (2026-04-30)
+mise WARN  mise version 2026.9.1 available

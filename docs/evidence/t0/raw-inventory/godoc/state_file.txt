@@ -1,0 +1,14 @@
+package file // import "github.com/arr/taskflow/state/file"
+
+Package file persists one atomic file per Taskflow state transition.
+
+TYPES
+
+type Store struct {
+	Dir string
+}
+
+func New(dir string) Store
+
+func (s Store) Acquire(_ context.Context, id string) (state.Lease, error)
+

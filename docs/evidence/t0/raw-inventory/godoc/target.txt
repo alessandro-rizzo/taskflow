@@ -1,0 +1,90 @@
+package target // import "github.com/arr/taskflow/target"
+
+Package target defines replaceable execution targets.
+
+TYPES
+
+type AcquireRequest struct {
+	RunID          string
+	StepID         string
+	ExecutionGroup string
+	// ExclusiveWorkspace prevents overlap with other executions that share a
+	// mutable provider workspace.
+	ExclusiveWorkspace bool
+	Resources          map[string]int64
+}
+
+type Capabilities struct {
+	OS             string
+	Architecture   string
+	MaxConcurrency int
+	Resources      map[string]int64
+	Labels         map[string]string
+}
+
+type Environment interface {
+	ID() string
+	Identity(context.Context, IdentityRequest) (Identity, error)
+	Exec(context.Context, process.Spec, process.IO) (process.Result, error)
+	// Upload extracts a deterministic tar stream at the workspace root.
+	Upload(context.Context, io.Reader) error
+	// Download writes a deterministic tar stream containing matched paths.
+	Download(context.Context, []string, io.Writer) error
+	Release(context.Context, Release) error
+}
+
+type Identity struct {
+	OS           string            `json:"os"`
+	Architecture string            `json:"architecture"`
+	Image        string            `json:"image,omitempty"`
+	Environment  map[string]string `json:"environment,omitempty"`
+	Toolchains   map[string]string `json:"toolchains,omitempty"`
+}
+    Identity contains the target facts used in a cache key.
+
+type IdentityRequest struct {
+	Dir         string
+	Environment []string
+	Overrides   map[string]string
+	Toolchains  []Probe
+}
+
+type Probe struct {
+	Name    string
+	Program string
+	Args    []string
+}
+
+type Provider interface {
+	Name() string
+	// Capabilities returns a locally cached snapshot and must not perform
+	// latency-bearing remote discovery on the scheduler path.
+	Capabilities(context.Context) (Capabilities, error)
+	// TryReserve is non-blocking. Providers refresh remote capacity outside the
+	// scheduler path and return admitted=false when no reservation is ready.
+	TryReserve(context.Context, AcquireRequest) (Reservation, bool, error)
+}
+
+type Registry struct {
+	// Has unexported fields.
+}
+
+func NewRegistry() *Registry
+
+func (r *Registry) Names() []string
+
+func (r *Registry) Provider(name string) (Provider, error)
+
+func (r *Registry) Register(provider Provider) error
+
+type Release struct {
+	Success bool
+}
+
+type Reservation interface {
+	Acquire(context.Context) (Environment, error)
+	Release()
+}
+    Reservation holds provider capacity without provisioning infrastructure.
+    Acquire may perform slow network work after the scheduler has admitted it.
+

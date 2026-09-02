@@ -1,0 +1,33 @@
+package projectdriver // import "github.com/arr/taskflow/internal/projectdriver"
+
+Package projectdriver locates, fingerprints, builds, and invokes a project-local
+.taskflow package.
+
+FUNCTIONS
+
+func FindRoot(start string) (string, error)
+
+TYPES
+
+type ExitError struct {
+	Code int
+}
+
+func (e *ExitError) Error() string
+
+type Loader struct {
+	Version string
+	// CacheDir overrides the platform cache directory, primarily for hermetic
+	// embedding and tests.
+	CacheDir string
+	Stdin    io.Reader
+	Stdout   io.Writer
+	Stderr   io.Writer
+}
+
+func (l Loader) Build(ctx context.Context, root string) (string, error)
+
+func (l Loader) Run(ctx context.Context, root, binary string, args []string) error
+
+func (l Loader) SourceDigest(root string) (string, error)
+
