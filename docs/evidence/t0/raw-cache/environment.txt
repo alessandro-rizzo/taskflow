@@ -1,0 +1,6 @@
+timestamp_utc: 2026-09-02T19:10:20Z
+source_revision: 9ddea886c7b4e368b5bcd8e48c36a9e2e916cb18
+branch: tf-001.04-cache-characterisation
+os: Darwin 26.5.2
+arch: arm64
+go_version: go version go1.25.12 darwin/arm64

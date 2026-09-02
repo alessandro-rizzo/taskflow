@@ -1,0 +1,20 @@
+package local // import "github.com/arr/taskflow/target/local"
+
+Package local executes steps as child processes on the controller.
+
+TYPES
+
+type Provider struct {
+	Root string
+
+	// Has unexported fields.
+}
+
+func New(root string) *Provider
+
+func (p *Provider) Capabilities(context.Context) (target.Capabilities, error)
+
+func (*Provider) Name() string
+
+func (p *Provider) TryReserve(_ context.Context, request target.AcquireRequest) (target.Reservation, bool, error)
+

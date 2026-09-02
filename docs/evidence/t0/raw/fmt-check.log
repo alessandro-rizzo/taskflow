@@ -1,0 +1,7 @@
+task: [fmt:check] files="$(gofmt -l .)"
+test -z "$files" || {
+  printf '%s\n' "$files"
+  exit 1
+}
+
+exit_code=0
