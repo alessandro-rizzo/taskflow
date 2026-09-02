@@ -1,0 +1,16 @@
+{
+  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "status": "specification-only",
+  "scenario": "simulator-profile-mismatch",
+  "description": "A simulator session's attested identity (OS/runtime/device) does not match the profile declared by the macOS artifact build. The mismatch must be rejected before Report[MobileE2E] is produced, not silently tolerated.",
+  "given": {
+    "artifact_declared_profile": { "simulator_runtime": "iOS-18.0", "device": "iPhone16,2" },
+    "simulator_attested_identity": { "simulator_runtime": "iOS-17.4", "device": "iPhone16,2" }
+  },
+  "expected_events": [
+    { "event": "simulator.attestation.compared", "artifact_id": "artifact-ns-a-iosapp", "simulator_id": "sim-ns-a" },
+    { "event": "simulator.attestation.mismatch", "field": "simulator_runtime", "declared": "iOS-18.0", "attested": "iOS-17.4" },
+    { "event": "run.rejected", "reason": "simulator_profile_attestation_mismatch" }
+  ],
+  "expected_outcome": "rejected"
+}

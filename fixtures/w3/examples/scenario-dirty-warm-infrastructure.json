@@ -1,0 +1,20 @@
+{
+  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "status": "specification-only",
+  "scenario": "dirty-warm-infrastructure",
+  "description": "A warm macOS VM/workspace reused from a prior namespace still has leftover mutable state (files, simulator data) when a new namespace acquires it. It must be reset before reuse, not silently reused dirty.",
+  "given": {
+    "warm_resource_id": "macos-vm-warm-pool-1",
+    "previous_owner_namespace_id": "ns-a",
+    "next_owner_namespace_id": "ns-b",
+    "leftover_state_detected": true
+  },
+  "expected_events": [
+    { "event": "warm_resource.acquire.requested", "resource_id": "macos-vm-warm-pool-1", "namespace_id": "ns-b" },
+    { "event": "warm_resource.dirty_state.detected", "resource_id": "macos-vm-warm-pool-1" },
+    { "event": "warm_resource.reset.started", "resource_id": "macos-vm-warm-pool-1" },
+    { "event": "warm_resource.reset.completed", "resource_id": "macos-vm-warm-pool-1" },
+    { "event": "warm_resource.acquire.completed", "resource_id": "macos-vm-warm-pool-1", "namespace_id": "ns-b" }
+  ],
+  "expected_outcome": "reset_before_reuse"
+}
