@@ -2,10 +2,12 @@
 
 Roadmap tranche: T1. Workflow: W3. Task: TF-002.03.
 
-Fixture format version: `t1-w3-fixture-v0-experimental` (roadmap section 3
-rule 3a: this fixture is frozen and reusable, not disposable, and declares an
-explicit experimental version; it must be treated as pre-Gate-1 and may
-change incompatibly).
+Fixture id: `w3-isolated-native-mobile-stack`. Version: `t1-w3-fixture-v0-experimental`
+(roadmap section 3 rule 3a: this fixture is frozen and reusable, not
+disposable, and declares an explicit experimental version; it must be
+treated as pre-Gate-1 and may change incompatibly). Every example under
+`examples/` carries these same `fixture_id`/`version` keys, matching the
+convention `fixtures/w1/manifest.yaml` and `fixtures/w2/graph.json` use.
 
 ## Status: specification only
 
@@ -34,16 +36,25 @@ source -> macOS Xcode build ---------> Artifact[IOSApp]
 Endpoint + IOSApp + simulator -------> Report[MobileE2E]
 ```
 
-This fixture models the five nodes/edges of that shape as records, one
-instance per namespace:
+This fixture models the source input and every node/edge of that shape as
+records, one instance per namespace - including the two `source ->` build
+edges, not only their output artifacts:
 
 | Node/edge | Record field | Example file |
 | --- | --- | --- |
-| Linux database/API stack | `linux_api_service` | `examples/namespace-{a,b}.json` |
-| Endpoint[API] | `endpoint` | `examples/namespace-{a,b}.json` |
+| `source` (immutable source tree) | `source` | `examples/namespace-{a,b}.json` |
+| source -> Linux database/API stack (build edge) | `linux_api_service.produced_by` (`node: "linux-api-build"`, `consumes: <source id>`) | `examples/namespace-{a,b}.json` |
+| Linux database/API stack -> Endpoint[API] | `endpoint` | `examples/namespace-{a,b}.json` |
+| source -> macOS Xcode build (build edge) | `macos_artifact.produced_by` (`node: "macos-xcode-build"`, `consumes: <source id>`) | `examples/namespace-{a,b}.json` |
 | macOS Xcode build -> Artifact[IOSApp] | `macos_artifact` | `examples/namespace-{a,b}.json` |
 | simulator | `simulator_session` | `examples/namespace-{a,b}.json` |
-| Report[MobileE2E] | `mobile_e2e_report`, referencing the endpoint/artifact/simulator ids it consumes | `examples/namespace-{a,b}.json` |
+| Endpoint + IOSApp + simulator -> Report[MobileE2E] | `mobile_e2e_report`, referencing the endpoint/artifact/simulator ids it consumes | `examples/namespace-{a,b}.json` |
+
+`validate.sh` enforces the two build edges referentially: each namespace's
+`linux_api_service.produced_by.consumes` and `macos_artifact.produced_by.consumes`
+must equal that same namespace's own `source.id` (not a foreign or dangling
+id), and `mobile_e2e_report.consumes` must reference ids that actually exist
+in that namespace record.
 
 ## Two-namespace concurrency (AC #2)
 
@@ -52,12 +63,16 @@ concurrent worktree/agent namespaces running W3 at once. Every identifier
 that must not collide between them is deliberately distinct in the two
 examples:
 
+- `source.id`
 - `writable_root` (`/var/lib/taskflow/namespaces/ns-a` vs `ns-b`)
 - `linux_api_service.port` (`41001` vs `41002`)
 - `linux_api_service.database_path`
 - `endpoint.id`
 - `macos_artifact.id`
 - `simulator_session.id` and `simulator_session.lease.id`
+
+`validate.sh` checks this list is actually distinct across `namespace-a.json`
+and `namespace-b.json`, not merely asserted in prose.
 
 `endpoint.authorized_consumers` in each namespace lists only that namespace's
 own consumer (`ns-a-ios-e2e` / `ns-b-ios-e2e`) — this is the explicit
@@ -107,9 +122,14 @@ fixtures/w3/validate.sh
 Dependency-free (uses only `python3`'s standard-library `json` module).
 Checks every `examples/*.json` file is well-formed and contains the fields
 this document declares required for its kind (namespace record vs. scenario
-record). This validates the specification's internal consistency; it does
-not and cannot validate against real W3 infrastructure, because none exists
-yet.
+record), that each namespace's build-edge `produced_by.consumes` references
+its own `source.id` and not a dangling or foreign one, that
+`mobile_e2e_report.consumes` only references ids present in the same
+namespace record, and that the two-namespace-concurrency identifier list
+above is actually distinct across `namespace-a.json`/`namespace-b.json`
+rather than merely asserted in prose. This validates the specification's
+internal consistency; it does not and cannot validate against real W3
+infrastructure, because none exists yet.
 
 ## Limitations and open questions
 

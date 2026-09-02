@@ -1,15 +1,31 @@
 {
-  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "fixture_id": "w3-isolated-native-mobile-stack",
+  "version": "t1-w3-fixture-v0-experimental",
   "status": "specification-only",
   "scenario": "port-collision-attempt",
   "description": "A second namespace's Linux API service requests a port already bound by another namespace's service.",
   "given": {
-    "existing_binding": { "namespace_id": "ns-a", "port": 41001 },
-    "attempted_binding": { "namespace_id": "ns-b", "port": 41001 }
+    "existing_binding": {
+      "namespace_id": "ns-a",
+      "port": 41001
+    },
+    "attempted_binding": {
+      "namespace_id": "ns-b",
+      "port": 41001
+    }
   },
   "expected_events": [
-    { "event": "service.bind.requested", "namespace_id": "ns-b", "port": 41001 },
-    { "event": "service.bind.rejected", "namespace_id": "ns-b", "port": 41001, "reason": "port_in_use_by_other_namespace" }
+    {
+      "event": "service.bind.requested",
+      "namespace_id": "ns-b",
+      "port": 41001
+    },
+    {
+      "event": "service.bind.rejected",
+      "namespace_id": "ns-b",
+      "port": 41001,
+      "reason": "port_in_use_by_other_namespace"
+    }
   ],
   "expected_outcome": "rejected"
 }

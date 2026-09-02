@@ -1,18 +1,36 @@
 {
-  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "fixture_id": "w3-isolated-native-mobile-stack",
+  "version": "t1-w3-fixture-v0-experimental",
   "status": "specification-only",
   "scenario": "caller-loss",
   "description": "The client that started a W3 run disappears (process killed, connection dropped) without cancelling. The lease must expire and orphaned resources must be reclaimed.",
   "given": {
     "namespace_id": "ns-b",
-    "lease": { "id": "lease-sim-ns-b", "ttl_seconds": 900 },
+    "lease": {
+      "id": "lease-sim-ns-b",
+      "ttl_seconds": 900
+    },
     "caller_last_seen_seconds_ago": 1800
   },
   "expected_events": [
-    { "event": "lease.heartbeat.missed", "lease_id": "lease-sim-ns-b" },
-    { "event": "lease.expired", "lease_id": "lease-sim-ns-b" },
-    { "event": "orphan.detected", "namespace_id": "ns-b", "resource_id": "sim-ns-b" },
-    { "event": "orphan.reclaimed", "namespace_id": "ns-b", "resource_id": "sim-ns-b" }
+    {
+      "event": "lease.heartbeat.missed",
+      "lease_id": "lease-sim-ns-b"
+    },
+    {
+      "event": "lease.expired",
+      "lease_id": "lease-sim-ns-b"
+    },
+    {
+      "event": "orphan.detected",
+      "namespace_id": "ns-b",
+      "resource_id": "sim-ns-b"
+    },
+    {
+      "event": "orphan.reclaimed",
+      "namespace_id": "ns-b",
+      "resource_id": "sim-ns-b"
+    }
   ],
   "expected_outcome": "reclaimed"
 }
