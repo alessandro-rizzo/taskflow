@@ -81,7 +81,10 @@ From roadmap section 4's W2 required properties:
 
 ## Versioning
 
-`graph.json`'s `fixture_schema_version` is `t1-w2-experimental-v1`. Per
+`graph.json`'s `version` is `t1-w2-experimental-v1` (the key is named `version`
+to match the same convention `fixtures/w1/manifest.yaml` and
+`fixtures/w3/spec.md` use, per the Codex peer review's cross-fixture
+consistency finding). Per
 `docs/roadmap.md` section 3 rule 3a, this fixture is frozen and reusable
 (not disposable like `experiments/`), stays under this schema version until
 explicitly revised, and graduates into any future production contract only

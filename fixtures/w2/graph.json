@@ -1,9 +1,10 @@
 {
-  "fixture_schema_version": "t1-w2-experimental-v1",
+  "version": "t1-w2-experimental-v1",
   "fixture_id": "w2-cross-target-artifact-pipeline",
   "roadmap_ref": "docs/roadmap.md#w2-cross-target-artifact-pipeline",
   "status": "experimental",
   "description": "Frozen, provider-neutral graph for roadmap workflow W2. Targets are declared as abstract capability roles, not bound to any concrete provider (e.g. neither prototype/bootstrap's target/local nor target/ssh is named here). A future E04/E08 experiment or T3/T6 implementation supplies the actual provider(s) that satisfy each role.",
+  "profile_identity_note": "No real provider exists yet to attest a profile before Gate 1 (see docs/decisions/0003-g0-t0-exit.md and E04's open questions). 'example_profile' below on each target is illustrative, hand-authored example data showing the SHAPE a resolved profile identity must have and what a golden check can compare against once a real provider exists - it is not measured from any execution and does not claim any implementation currently produces it.",
   "targets": [
     {
       "id": "linux-build",
@@ -11,6 +12,11 @@
       "required_capabilities": {
         "os": "linux",
         "toolchain": "go"
+      },
+      "example_profile": {
+        "id": "linux-go1.25-amd64-example",
+        "digest": "sha256:1b1e6c1b7c5b0e8f7d2c1f5a3e9c4b6a0d7f2e8c1a5b3d9f6c0e4a2b8d1f5c3e",
+        "attributes": { "os": "linux", "arch": "amd64", "go_version": "go1.25.12" }
       },
       "notes": "Any provider offering a Linux execution profile capable of compiling the backend binary. Must expose an execution profile identity before this node is placed (AC #2)."
     },
@@ -44,7 +50,13 @@
           "type": "Artifact[BackendBinary]",
           "manifest": {
             "digest_algorithm": "sha256",
-            "required_fields": ["digest", "size_bytes", "produced_by_node", "produced_by_profile"]
+            "required_fields": ["digest", "size_bytes", "produced_by_node", "produced_by_profile"],
+            "example": {
+              "digest": "sha256:9f2c7e4a1d8b6f3c0e5a2d9b7c4f1e8a3d6b0c9f2e5a8d1b4c7f0e3a6d9b2c5f",
+              "size_bytes": 8421376,
+              "produced_by_node": "build",
+              "produced_by_profile": "linux-go1.25-amd64-example"
+            }
           }
         }
       ]
