@@ -1,0 +1,119 @@
+fixture_id: w1-fast-project-check
+roadmap_workflow: W1
+version: t1-experimental-v1
+status: experimental
+description: >
+  Minimal target repository and golden expectations for the W1 workflow
+  (roadmap.md section 4: format check + unit tests + static analysis ->
+  aggregate Check). This fixture is what a future authoring/planning
+  implementation is measured against; it is not itself a Taskflow-authored
+  pipeline, and no current implementation (including prototype/bootstrap) is
+  claimed to satisfy every expectation below - see limitations.
+
+repos:
+  repo:
+    path: repo/
+    description: base repo; passes format, unit tests, and static analysis cleanly.
+  repo-format-failure:
+    path: repo-format-failure/
+    description: >
+      identical to repo except greeter.go has non-canonical formatting
+      (mixed tab/space indentation, missing spaces around a binary +).
+      go vet and go test are unaffected; only gofmt -l flags this file.
+    fails: [format]
+  repo-test-failure:
+    path: repo-test-failure/
+    description: >
+      identical to repo except greeter_test.go asserts an incorrect expected
+      value for Greet("Ada"). gofmt and go vet are unaffected.
+    fails: [test]
+  repo-lint-failure:
+    path: repo-lint-failure/
+    description: >
+      identical to repo except greeter.go has an added unexported function
+      with unreachable code after a return statement. gofmt and go test's
+      built-in vet subset are unaffected; only an explicit `go vet ./...`
+      flags this (go test's default vet subset does not include the
+      "unreachable" analyzer - verified empirically, see README.md).
+    fails: [lint]
+
+expected_graph:
+  nodes:
+    - id: format
+      description: gofmt -l . reports no files
+      command: gofmt -l .
+    - id: test
+      description: go test ./... passes; produces a test report
+      command: go test ./...
+      outputs: [test-report]
+    - id: lint
+      description: go vet ./... reports no findings
+      command: go vet ./...
+    - id: check
+      description: >
+        aggregate node; depends on format, test, and lint; fails if any
+        upstream node fails
+      depends_on: [format, test, lint]
+  edges:
+    - [format, check]
+    - [test, check]
+    - [lint, check]
+
+planning_conditions:
+  - id: test-replan-on-source-or-test-change
+    description: >
+      the test node only needs to re-plan/re-run when a *.go file (source or
+      _test.go) under the target repo changed; unrelated file changes (e.g.
+      this manifest, or a README) must not force a re-run.
+  - id: lint-replan-on-source-change
+    description: >
+      the lint node only needs to re-plan/re-run when a *.go source file
+      changed; a _test.go-only change must not force a lint re-run.
+  - id: format-replan-on-source-or-test-change
+    description: >
+      the format node needs to re-plan/re-run when any *.go file changed.
+
+expected_diagnostics:
+  format-failure: >
+    a human-readable diagnostic naming the non-canonically-formatted file
+    (gofmt -l's own output: the relative file path) and a machine-readable
+    event distinguishing "format" as the failed node.
+  test-failure: >
+    the failing test name, the file:line of the failing assertion, and the
+    got/want values from t.Fatalf (see raw `go test` output in evidence.md);
+    a machine-readable event distinguishing "test" as the failed node.
+  lint-failure: >
+    go vet's own diagnostic (file:line and check name, e.g. "unreachable
+    code"); a machine-readable event distinguishing "lint" as the failed
+    node, distinct from a "test" failure even though both ultimately run
+    against the same repo.
+
+execution_states:
+  description: >
+    cold/warm/ready-cache-hit are external preconditions on cache/driver
+    state, selected without editing any file under repo*/ or this manifest -
+    see README.md "Execution states" for the exact mechanism.
+  states: [cold, warm, ready-cache-hit]
+  ready_cache_hit_target:
+    description: >
+      TARGET for a future implementation: a ready cache hit against the
+      unmodified base `repo` must perform zero worker/environment
+      reservations. This is a golden expectation this fixture declares, not
+      a claim about any implementation that exists today.
+    current_prototype_status: >
+      NOT met by prototype/bootstrap as of docs/evidence/t0/cache-characterisation.md
+      (TF-001.04): the prototype's engine always acquires and probes an
+      environment before cache resolution can complete, even on a
+      guaranteed hit. This is exactly the gap E04 exists to close; this
+      fixture's target is unaffected by that finding, it is what E04's
+      eventual design is measured against.
+
+benchmark_format_integration: >
+  This fixture declares expected nodes/edges/conditions/diagnostics/states
+  above; it does not define a benchmark result schema. TF-002.04 owns the
+  benchmark evidence format and runner. Once it exists, a benchmark run
+  against this fixture is expected to report, per execution_states.states
+  above, the sample data TF-002.04's schema requires (hardware, OS build,
+  toolchain, source revision, fixture_id + version from this file, experiment
+  id, state, sample count, median, p95, raw-result location, and reservation
+  count where applicable).
