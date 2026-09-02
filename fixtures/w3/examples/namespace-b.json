@@ -1,23 +1,38 @@
 {
-  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "fixture_id": "w3-isolated-native-mobile-stack",
+  "version": "t1-w3-fixture-v0-experimental",
   "status": "specification-only",
   "namespace_id": "ns-b",
   "owner": "agent-beta-worktree",
   "writable_root": "/var/lib/taskflow/namespaces/ns-b",
+  "source": {
+    "id": "source-ns-b",
+    "description": "immutable source tree consumed by both the Linux API build and the macOS Xcode build below - the two source->build edges roadmap.md section 4's W3 diagram declares (source -> Linux database/API stack; source -> macOS Xcode build)"
+  },
   "linux_api_service": {
     "name": "ns-b-api",
     "database_path": "/var/lib/taskflow/namespaces/ns-b/db",
     "port": 41002,
-    "endpoint_id": "endpoint-ns-b-api"
+    "endpoint_id": "endpoint-ns-b-api",
+    "produced_by": {
+      "node": "linux-api-build",
+      "consumes": "source-ns-b"
+    }
   },
   "endpoint": {
     "id": "endpoint-ns-b-api",
     "target_namespace": "ns-b",
-    "authorized_consumers": ["ns-b-ios-e2e"],
+    "authorized_consumers": [
+      "ns-b-ios-e2e"
+    ],
     "route": "namespace-private"
   },
   "macos_artifact": {
     "id": "artifact-ns-b-iosapp",
+    "produced_by": {
+      "node": "macos-xcode-build",
+      "consumes": "source-ns-b"
+    },
     "profile_attestation": {
       "macos_build": "modeled-not-attested",
       "xcode_build": "modeled-not-attested",
@@ -35,6 +50,10 @@
   },
   "mobile_e2e_report": {
     "id": "report-ns-b-mobile-e2e",
-    "consumes": ["endpoint-ns-b-api", "artifact-ns-b-iosapp", "sim-ns-b"]
+    "consumes": [
+      "endpoint-ns-b-api",
+      "artifact-ns-b-iosapp",
+      "sim-ns-b"
+    ]
   }
 }

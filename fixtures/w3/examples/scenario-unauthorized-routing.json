@@ -1,15 +1,30 @@
 {
-  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "fixture_id": "w3-isolated-native-mobile-stack",
+  "version": "t1-w3-fixture-v0-experimental",
   "status": "specification-only",
   "scenario": "unauthorized-endpoint-routing",
   "description": "A consumer from namespace ns-b attempts to route to namespace ns-a's private Linux API endpoint without being in its authorized_consumers list.",
   "given": {
-    "endpoint": { "id": "endpoint-ns-a-api", "authorized_consumers": ["ns-a-ios-e2e"] },
+    "endpoint": {
+      "id": "endpoint-ns-a-api",
+      "authorized_consumers": [
+        "ns-a-ios-e2e"
+      ]
+    },
     "requesting_consumer": "ns-b-ios-e2e"
   },
   "expected_events": [
-    { "event": "endpoint.route.requested", "endpoint_id": "endpoint-ns-a-api", "consumer": "ns-b-ios-e2e" },
-    { "event": "endpoint.route.denied", "endpoint_id": "endpoint-ns-a-api", "consumer": "ns-b-ios-e2e", "reason": "consumer_not_authorized" }
+    {
+      "event": "endpoint.route.requested",
+      "endpoint_id": "endpoint-ns-a-api",
+      "consumer": "ns-b-ios-e2e"
+    },
+    {
+      "event": "endpoint.route.denied",
+      "endpoint_id": "endpoint-ns-a-api",
+      "consumer": "ns-b-ios-e2e",
+      "reason": "consumer_not_authorized"
+    }
   ],
   "expected_outcome": "denied"
 }

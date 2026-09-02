@@ -80,8 +80,10 @@ expected_diagnostics:
     event distinguishing "format" as the failed node.
   test-failure: >
     the failing test name, the file:line of the failing assertion, and the
-    got/want values from t.Fatalf (see raw `go test` output in evidence.md);
-    a machine-readable event distinguishing "test" as the failed node.
+    got/want values from t.Fatalf (see the raw `go test` output in
+    raw/repo-test-failure.log, and README.md's "Evidence: verification
+    commands and results" section); a machine-readable event distinguishing
+    "test" as the failed node.
   lint-failure: >
     go vet's own diagnostic (file:line and check name, e.g. "unreachable
     code"); a machine-readable event distinguishing "lint" as the failed
