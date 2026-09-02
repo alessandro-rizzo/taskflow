@@ -1,0 +1,10 @@
+=== RUN   TestT0CacheOrderingAcrossMissThenHit
+    t0_characterization_test.go:229: miss run ordered events: [reserve acquire-start acquire-done identity-probe-start identity-probe-done cache-open-start cache-open-miss]
+    t0_characterization_test.go:230: hit run ordered events: [reserve acquire-start acquire-done identity-probe-start identity-probe-done cache-open-start cache-open-hit environment-upload-start environment-upload-done]
+--- PASS: TestT0CacheOrderingAcrossMissThenHit (0.04s)
+=== RUN   TestT0ConcurrentLocalProvidersDoNotCoordinateAcrossInstances
+    t0_characterization_test.go:340: shared checkout interference: file has 100 bytes, 50 A-writes, 50 B-writes observed (100 attempted)
+--- PASS: TestT0ConcurrentLocalProvidersDoNotCoordinateAcrossInstances (0.34s)
+PASS
+ok  	github.com/arr/taskflow/engine	0.663s
+exit_code=0
