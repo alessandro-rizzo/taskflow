@@ -82,6 +82,7 @@ migration promise starts only when explicitly documented.
 ```text
 docs/                         canonical product decisions and roadmap
 experiments/eNN-*/            disposable, question-specific evidence
+fixtures/                     frozen, reusable T1+ measurement fixtures and harnesses
 prototype/bootstrap/          frozen previous implementation
 cmd/, internal/, pkg/         future clean implementation after Gate 1
 ```
@@ -93,6 +94,12 @@ Rules:
    or support an explicitly named comparison.
 3. Experiments do not share a convenience framework until at least two
    experiments prove the same abstraction is actually common.
+3a. `fixtures/` holds T1+ measurement fixtures and harnesses that multiple
+    Risk Lab experiments reuse repeatedly and that stay frozen once accepted;
+    unlike `experiments/`, entries here are not disposable, and each declares
+    an explicit experimental version. New production packages must not import
+    `fixtures/` either; a fixture graduates the same way an experiment does,
+    per rule 4.
 4. A concept enters production only with an accepted decision record, an owner,
    tests, and a removal/migration plan for any superseded experiment.
 5. Root `task check` verifies all maintained production code and the isolated
