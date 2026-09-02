@@ -1,0 +1,11 @@
+=== repo-test-failure: gofmt -l . ===
+exit=0
+=== repo-test-failure: go vet ./... ===
+exit=0
+=== repo-test-failure: go test ./... ===
+--- FAIL: TestGreet (0.00s)
+    greeter_test.go:7: Greet("Ada") = "Hello, Ada!", want "Hi, Ada!"
+FAIL
+FAIL	fixtures/w1/repo-test-failure	0.175s
+FAIL
+exit=1

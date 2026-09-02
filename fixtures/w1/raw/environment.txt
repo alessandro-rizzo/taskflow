@@ -1,0 +1,7 @@
+timestamp_utc: 2026-09-02T19:41:18Z
+source_revision: 7d3c91fe3346224b42c20f0e0c24d5db6578a377
+branch: tf-002.01-w1-fixture
+os: Darwin
+os_version: 26.5.2
+arch: arm64
+go_version: go version go1.25.12 darwin/arm64

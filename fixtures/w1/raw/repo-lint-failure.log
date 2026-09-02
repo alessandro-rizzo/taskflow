@@ -1,0 +1,10 @@
+=== repo-lint-failure: gofmt -l . ===
+exit=0
+=== repo-lint-failure: go vet ./... ===
+# fixtures/w1/repo-lint-failure
+# [fixtures/w1/repo-lint-failure]
+./greeter.go:12:2: unreachable code
+exit=1
+=== repo-lint-failure: go test ./... ===
+ok  	fixtures/w1/repo-lint-failure	(cached)
+exit=0
