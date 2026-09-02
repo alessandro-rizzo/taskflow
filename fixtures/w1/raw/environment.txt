@@ -5,3 +5,12 @@ os: Darwin
 os_version: 26.5.2
 arch: arm64
 go_version: go version go1.25.12 darwin/arm64
+
+# Note: source_revision above is the branch tip at the moment these commands
+# ran, captured before the commit that adds this fixture (and this file)
+# itself existed - a fixture cannot record the hash of a commit that does not
+# yet exist. It identifies the state of everything else in the repository at
+# capture time, not the fixture content. To verify the fixture content
+# reported in raw/*.log, re-run the commands in README.md's "Reproduction"
+# section directly against the fixture's own committed tree rather than
+# trusting this revision string alone.
