@@ -17,6 +17,12 @@ files may refine them for a subtree.
 - Research the current checkout and add a concrete implementation plan to the
   ticket immediately before coding. Wait for explicit user approval of that
   plan for non-trivial work.
+- Before marking any ticket Done or committing its work, stop and show the
+  user a summary and the diff, and wait for explicit approval. This applies
+  even when implementation and verification (checks green) are already
+  complete, and whether the work was done directly or via a subagent/fork —
+  never let a ticket proceed all the way to Done and committed without this
+  checkpoint.
 - Work on one ticket per agent session. Parallel agents may take only tasks
   whose dependencies are satisfied and whose declared ownership surfaces do
   not overlap. Each agent must record claimed paths in its task notes before
