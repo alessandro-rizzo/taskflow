@@ -1,0 +1,7 @@
+=== repo: gofmt -l . ===
+exit=0
+=== repo: go vet ./... ===
+exit=0
+=== repo: go test ./... ===
+ok  	fixtures/w1/repo	(cached)
+exit=0

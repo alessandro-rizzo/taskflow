@@ -1,0 +1,40 @@
+{
+  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "status": "specification-only",
+  "namespace_id": "ns-a",
+  "owner": "agent-alpha-worktree",
+  "writable_root": "/var/lib/taskflow/namespaces/ns-a",
+  "linux_api_service": {
+    "name": "ns-a-api",
+    "database_path": "/var/lib/taskflow/namespaces/ns-a/db",
+    "port": 41001,
+    "endpoint_id": "endpoint-ns-a-api"
+  },
+  "endpoint": {
+    "id": "endpoint-ns-a-api",
+    "target_namespace": "ns-a",
+    "authorized_consumers": ["ns-a-ios-e2e"],
+    "route": "namespace-private"
+  },
+  "macos_artifact": {
+    "id": "artifact-ns-a-iosapp",
+    "profile_attestation": {
+      "macos_build": "modeled-not-attested",
+      "xcode_build": "modeled-not-attested",
+      "sdk": "modeled-not-attested"
+    }
+  },
+  "simulator_session": {
+    "id": "sim-ns-a",
+    "lease": {
+      "id": "lease-sim-ns-a",
+      "holder": "ns-a",
+      "acquired_at": "modeled-timestamp-1",
+      "ttl_seconds": 900
+    }
+  },
+  "mobile_e2e_report": {
+    "id": "report-ns-a-mobile-e2e",
+    "consumes": ["endpoint-ns-a-api", "artifact-ns-a-iosapp", "sim-ns-a"]
+  }
+}

@@ -1,0 +1,8 @@
+=== repo-format-failure: gofmt -l . ===
+greeter.go
+exit=0
+=== repo-format-failure: go vet ./... ===
+exit=0
+=== repo-format-failure: go test ./... ===
+ok  	fixtures/w1/repo-format-failure	(cached)
+exit=0

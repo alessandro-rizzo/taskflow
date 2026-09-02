@@ -1,0 +1,22 @@
+{
+  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "status": "specification-only",
+  "scenario": "cancellation",
+  "description": "The caller cancels a W3 run while the macOS build and simulator session are active. Cleanup must be bounded and durable.",
+  "given": {
+    "namespace_id": "ns-a",
+    "active_resources": ["endpoint-ns-a-api", "artifact-ns-a-iosapp", "sim-ns-a"],
+    "cleanup_deadline_seconds": 30
+  },
+  "expected_events": [
+    { "event": "run.cancel.received", "namespace_id": "ns-a" },
+    { "event": "resource.cleanup.started", "resource_id": "sim-ns-a" },
+    { "event": "resource.cleanup.started", "resource_id": "artifact-ns-a-iosapp" },
+    { "event": "resource.cleanup.started", "resource_id": "endpoint-ns-a-api" },
+    { "event": "resource.cleanup.completed", "resource_id": "sim-ns-a" },
+    { "event": "resource.cleanup.completed", "resource_id": "artifact-ns-a-iosapp" },
+    { "event": "resource.cleanup.completed", "resource_id": "endpoint-ns-a-api" },
+    { "event": "run.cancel.cleanup.completed", "namespace_id": "ns-a", "within_deadline_seconds": 30 }
+  ],
+  "expected_outcome": "cleaned_up_within_deadline"
+}
