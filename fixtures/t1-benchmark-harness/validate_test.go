@@ -19,20 +19,21 @@ func validRecord(t *testing.T) Record {
 		t.Fatalf("ComputeStatistics: %v", err)
 	}
 	return Record{
-		SchemaVersion:     CurrentSchemaVersion,
-		ExperimentID:      "T1",
-		FixtureID:         "w1-fast-check@v1",
-		SourceRevision:    "9ddea886c7b4e368b5bcd8e48c36a9e2e916cb18",
-		Timestamp:         time.Date(2026, 9, 2, 19, 0, 0, 0, time.UTC).Format(time.RFC3339),
-		Hardware:          Hardware{CPU: "Apple M5 Max", Cores: 18, RAMGiB: 64},
-		OS:                OS{Name: "darwin", Version: "26.5.2", Arch: "arm64"},
-		Toolchain:         []Toolchain{{Name: "go", Version: "go1.25.12"}},
-		State:             StateCold,
-		Samples:           samples,
-		SampleCount:       len(samples),
-		Median:            median,
-		P95:               p95,
-		RawResultLocation: "samples.txt",
+		SchemaVersion:      CurrentSchemaVersion,
+		ExperimentID:       "T1",
+		FixtureID:          "w1-fast-project-check",
+		SourceRevision:     "9ddea886c7b4e368b5bcd8e48c36a9e2e916cb18",
+		Timestamp:          time.Date(2026, 9, 2, 19, 0, 0, 0, time.UTC).Format(time.RFC3339),
+		Hardware:           Hardware{CPU: "Apple M5 Max", Cores: 18, RAMGiB: 64},
+		OS:                 OS{Name: "darwin", Version: "26.5.2", Build: "25F79", Arch: "arm64"},
+		Toolchain:          []Toolchain{{Name: "go", Version: "go1.25.12"}},
+		State:              StateCold,
+		PreparationCommand: "rm -rf \"$TASKFLOW_DRIVER_CACHE\"",
+		Samples:            samples,
+		SampleCount:        len(samples),
+		Median:             median,
+		P95:                p95,
+		RawResultLocation:  "samples.txt",
 	}
 }
 
@@ -87,6 +88,25 @@ func TestNegativeReservationCountRejected(t *testing.T) {
 	}
 }
 
+func TestNegativeLeaseCountRejected(t *testing.T) {
+	r := validRecord(t)
+	r.LeaseCount = validReservationCount(-1)
+	if err := Validate(r); err == nil {
+		t.Fatal("expected an error for a negative lease_count")
+	}
+}
+
+func TestLeaseCountOptionalAcrossAllStates(t *testing.T) {
+	for _, state := range []State{StateCold, StateWarm} {
+		r := validRecord(t)
+		r.State = state
+		// LeaseCount left nil - must not be required for cold/warm.
+		if err := Validate(r); err != nil {
+			t.Fatalf("state %q: expected nil lease_count to be fine, got: %v", state, err)
+		}
+	}
+}
+
 func TestMissingRequiredMetadataRejected(t *testing.T) {
 	cases := []struct {
 		name    string
@@ -104,7 +124,9 @@ func TestMissingRequiredMetadataRejected(t *testing.T) {
 		{"hardware.ram_gib", func(r *Record) { r.Hardware.RAMGiB = 0 }, "hardware.ram_gib"},
 		{"os.name", func(r *Record) { r.OS.Name = "" }, "os.name"},
 		{"os.version", func(r *Record) { r.OS.Version = "" }, "os.version"},
+		{"os.build", func(r *Record) { r.OS.Build = "" }, "os.build"},
 		{"os.arch", func(r *Record) { r.OS.Arch = "" }, "os.arch"},
+		{"preparation_command", func(r *Record) { r.PreparationCommand = "" }, "preparation_command"},
 		{"toolchain empty", func(r *Record) { r.Toolchain = nil }, "toolchain"},
 		{"toolchain entry missing version", func(r *Record) { r.Toolchain = []Toolchain{{Name: "go"}} }, "toolchain[0].version"},
 		{"raw_result_location", func(r *Record) { r.RawResultLocation = "" }, "raw_result_location"},

@@ -7,8 +7,13 @@ package benchmark
 // CurrentSchemaVersion is the only schema version this package accepts.
 // Pre-Gate-1 formats carry no compatibility promise (roadmap section 2.6):
 // a breaking change bumps this string rather than adding optional fields
-// silently.
-const CurrentSchemaVersion = "taskflow-t1-benchmark/v1"
+// silently. v2 adds OS.Build and the required PreparationCommand field: an
+// independent Codex peer review of the T1 wave-1 batch found v1's State
+// (cold/warm/cache-hit) was an unenforced caller-supplied label with no
+// per-sample preparation hook, and that OS.Version alone did not satisfy
+// T1's "OS build" requirement. Both new fields are required, so this is a
+// breaking change per the policy above, not a silent addition.
+const CurrentSchemaVersion = "taskflow-t1-benchmark/v2"
 
 // State distinguishes the cache path a sample set was collected under, per
 // roadmap section 8's exit gate: "distinguish cold, warm, and cache-hit
@@ -33,10 +38,16 @@ type Hardware struct {
 	RAMGiB float64 `json:"ram_gib"`
 }
 
-// OS describes the operating system a benchmark ran on.
+// OS describes the operating system a benchmark ran on. Version and Build
+// are deliberately separate fields: on macOS, sw_vers -productVersion
+// (Version, e.g. "26.5.2") and sw_vers -buildVersion (Build, e.g.
+// "25F79") can differ between two machines running what a human would call
+// "the same" macOS release, and T1's evidence-to-capture list asks for OS
+// build specifically, not just product version.
 type OS struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
+	Build   string `json:"build"`
 	Arch    string `json:"arch"`
 }
 
@@ -58,8 +69,14 @@ type Record struct {
 	// "T1", or one of "E01".."E08".
 	ExperimentID string `json:"experiment_id"`
 
-	// FixtureID identifies the frozen fixture the sampled command exercises,
-	// for example "w1-fast-check@v1" (see TF-002.01/.02/.03).
+	// FixtureID identifies the frozen fixture the sampled command exercises.
+	// It should match the fixture's own declared fixture_id, for example
+	// "w1-fast-project-check" (fixtures/w1/manifest.yaml) or
+	// "w2-cross-target-artifact-pipeline" (fixtures/w2/graph.json) - see
+	// TF-002.01/.02/.03. This package does not itself verify FixtureID
+	// against any fixture's real identity (that would require reading
+	// arbitrary fixture files from an arbitrary path); callers are
+	// responsible for using the fixture's actual declared id.
 	FixtureID string `json:"fixture_id"`
 
 	// SourceRevision is the git commit the benchmark ran against.
@@ -73,6 +90,19 @@ type Record struct {
 	Toolchain []Toolchain `json:"toolchain"`
 
 	State State `json:"state"`
+
+	// PreparationCommand is the shell command run, untimed, before EVERY
+	// sample (not just once before the batch) to establish State for that
+	// sample - for example a command that clears a driver-binary cache
+	// directory before each cold sample, or "true" to explicitly declare
+	// that no preparation is needed. This is required for every State, not
+	// just cold/warm, because a caller must document what "cache-hit" prep
+	// they performed too. Validate only checks this is non-empty; it cannot
+	// verify the command actually produces the declared State (that would
+	// require running the sampled system itself) - it exists so every
+	// record makes its preparation procedure auditable rather than
+	// implicit, per T1's "unambiguous preparation rules" requirement.
+	PreparationCommand string `json:"preparation_command"`
 
 	// CacheDimensions declares any secondary cache states the caller pinned
 	// down before sampling, keyed by cache name (for example
@@ -101,6 +131,16 @@ type Record struct {
 	// budget in roadmap section 8 is specifically "zero worker
 	// reservations" on a cache hit); optional for cold/warm states.
 	ReservationCount *int `json:"reservation_count,omitempty"`
+
+	// LeaseCount is the number of resource leases (e.g. simulator/device
+	// sessions, W3-style namespace leases per fixtures/w3/spec.md) the
+	// sampled run held. Optional and unconstrained beyond non-negative:
+	// unlike ReservationCount it is not tied to a specific State, since
+	// lease-oriented workloads (W3, E05, E06, E07) are relevant across all
+	// three cache states, and no lease budget has been declared yet
+	// (roadmap section 8's initial budgets are all cache/reservation
+	// budgets, not lease-count ones).
+	LeaseCount *int `json:"lease_count,omitempty"`
 
 	// RawResultLocation is a path, relative to this record's own location,
 	// to the raw sample/log data backing it (mirroring the

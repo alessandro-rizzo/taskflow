@@ -40,11 +40,19 @@ middle value, or the average of the two middle values for even N; p95 is the
 nearest-rank value at index `round(0.95*(N-1))`).
 
 `t1bench` does not decide what "cold" or "warm" means for an arbitrary
-command — that is prepared by the caller before invoking it. What the schema
-guarantees is that the resulting record states precisely what was declared:
-a required `state` (cold/warm/cache-hit) for the primary cache dimension
-under test, plus an optional `cache_dimensions` map for any secondary caches
-the caller pinned down (for example `gocache=warm`). This directly answers
+command — that is prepared by the caller, expressed as a required `--prepare`
+shell command `t1bench` runs, untimed, before **every** sample (not once
+before the whole batch). An earlier version of this tool only prepared state
+once up front, which meant a nominally "cold" N-sample run could contain one
+genuinely cold sample followed by N-1 silently-warm ones and still pass
+validation — an independent Codex peer review of the T1 wave-1 batch found
+this; see `CurrentSchemaVersion`'s v2 changelog comment in `record.go`. What
+the schema now guarantees is that the resulting record states precisely what
+was declared and re-established every sample: a required `state`
+(cold/warm/cache-hit) for the primary cache dimension under test, the exact
+`preparation_command` run before each sample, and an optional
+`cache_dimensions` map for any secondary caches the caller pinned down (for
+example `gocache=warm`). The `cache_dimensions` mechanism directly answers
 the ambiguity TF-001.03 hit in practice — that Go's own build cache
 (`GOCACHE`) and the driver's own binary cache (`TASKFLOW_DRIVER_CACHE`) are
 two independent dimensions that both affected its timings — by making both
@@ -70,7 +78,13 @@ acceptance criteria) is binary and mechanical, checked by
   results, not just missing ones);
 - a `state: cache-hit` record without `reservation_count` is rejected (this
   is what lets a later result be checked against the roadmap's "W1 cache hit
-  after planning: p95 below 300 ms and zero worker reservations" budget).
+  after planning: p95 below 300 ms and zero worker reservations" budget);
+- a record missing `os.build` (distinct from `os.version` - see roadmap
+  section 7's "warm and cold project-driver startup" evidence-to-capture
+  item, which asks for OS build specifically) is rejected;
+- a record missing `preparation_command` is rejected, for any state - a
+  caller must always say what (if anything) it ran before each sample;
+- a record with a negative `lease_count` is rejected, when present.
 
 ## Limitations and threats to validity
 
@@ -79,11 +93,16 @@ acceptance criteria) is binary and mechanical, checked by
   exists yet to produce most of the measurements those budgets describe;
   this fixture only makes results comparable and internally valid, it does
   not gate anything against a threshold itself.
-- `t1bench`'s cold/warm/cache-hit "unambiguity" is enforced by requiring the
-  caller to *declare* the state and any secondary cache dimensions — it
-  cannot detect on its own whether a caller mislabeled what they actually
-  cleared or warmed before invoking it. The schema makes preparation
-  auditable, not automatically correct.
+- `t1bench`'s cold/warm/cache-hit "unambiguity" is enforced by (a) actually
+  re-running the caller's declared `--prepare` command before every sample,
+  not just once before the batch, and (b) requiring that command's exact
+  text to be recorded in `preparation_command`. It still cannot detect
+  whether `--prepare`'s *content* actually achieves the declared `state` for
+  an arbitrary command (that would require understanding the semantics of an
+  arbitrary shell command) — a reviewer auditing a record can now at least
+  see exactly what was run and re-run it themselves, rather than trusting an
+  undocumented, unenforced label. The schema makes preparation auditable and
+  consistently re-applied, not semantically verified.
 - Hardware/OS/toolchain auto-detection in `t1bench` covers macOS and Linux
   only (the platforms named across roadmap sections 4 and 9); on any other
   platform the caller must supply `--cpu`/`--ram-gib`/etc. explicitly or

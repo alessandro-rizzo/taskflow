@@ -84,6 +84,9 @@ func Validate(r Record) error {
 	if r.OS.Version == "" {
 		errs = append(errs, errors.New("os.version: required"))
 	}
+	if r.OS.Build == "" {
+		errs = append(errs, errors.New("os.build: required"))
+	}
 	if r.OS.Arch == "" {
 		errs = append(errs, errors.New("os.arch: required"))
 	}
@@ -104,6 +107,10 @@ func Validate(r Record) error {
 	case StateCold, StateWarm, StateCacheHit:
 	default:
 		errs = append(errs, fmt.Errorf("state: must be one of %q, %q, %q, got %q", StateCold, StateWarm, StateCacheHit, r.State))
+	}
+
+	if r.PreparationCommand == "" {
+		errs = append(errs, errors.New("preparation_command: required (state alone is an unenforced label; document what was run before every sample, or \"true\" for explicitly no preparation)"))
 	}
 
 	if len(r.Samples) == 0 {
@@ -141,6 +148,10 @@ func Validate(r Record) error {
 	}
 	if r.ReservationCount != nil && *r.ReservationCount < 0 {
 		errs = append(errs, errors.New("reservation_count: must not be negative"))
+	}
+
+	if r.LeaseCount != nil && *r.LeaseCount < 0 {
+		errs = append(errs, errors.New("lease_count: must not be negative"))
 	}
 
 	if r.RawResultLocation == "" {

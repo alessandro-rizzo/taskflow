@@ -6,11 +6,18 @@
 //
 // t1bench does not know what "cold" or "warm" means for an arbitrary
 // command: preparing the state to sample (clearing or warming whichever
-// caches are relevant) is the caller's job, done before invoking t1bench.
-// What t1bench guarantees is that the resulting record states precisely
-// what was declared (--state, --cache-dim) rather than leaving it implicit,
-// and that every required field is present and internally consistent before
-// anything is written to disk.
+// caches are relevant) is the caller's job, expressed as --prepare, a shell
+// command t1bench runs (untimed) before EVERY sample, not just once before
+// the batch. This matters: a single setup step before an N-sample loop
+// would let the first sample be genuinely cold/warm/cache-hit while every
+// subsequent sample silently drifts into a different state, which a
+// reviewing agent cannot detect from the record alone (this is exactly
+// what an earlier version of this tool did - see CurrentSchemaVersion's
+// v2 changelog comment). What t1bench guarantees is that the resulting
+// record states precisely what was declared (--state, --prepare,
+// --cache-dim) rather than leaving it implicit, and that every required
+// field is present and internally consistent before anything is written to
+// disk.
 package main
 
 import (
@@ -79,17 +86,20 @@ func run(args []string) error {
 	command := fs.String("cmd", "", "shell command to time (required)")
 	n := fs.Int("n", 0, "number of samples to collect (required)")
 	state := fs.String("state", "", "cold, warm, or cache-hit (required)")
+	prepare := fs.String("prepare", "", "shell command run, untimed, before EVERY sample to establish --state; use \"true\" to explicitly declare no preparation is needed (required)")
 	experimentID := fs.String("experiment", "", "roadmap experiment id, e.g. T1 or E04 (required)")
-	fixtureID := fs.String("fixture", "", "frozen fixture id, e.g. w1-fast-check@v1 (required)")
+	fixtureID := fs.String("fixture", "", "frozen fixture id matching the fixture's own declared fixture_id, e.g. w1-fast-project-check (required)")
 	outDir := fs.String("out", "", "output directory for record.json and samples.txt (required)")
 	sourceRevision := fs.String("source-revision", "", "git commit; defaults to `git rev-parse HEAD` in the current directory")
 	reservationCount := fs.Int("reservation-count", -1, "provider/worker reservation count; required when --state=cache-hit")
+	leaseCount := fs.Int("lease-count", -1, "resource lease count (W3/E05/E06/E07-style); optional")
 
 	cpu := fs.String("cpu", "", "hardware.cpu override; auto-detected if omitted")
 	cores := fs.Int("cores", 0, "hardware.cores override; defaults to runtime.NumCPU()")
 	ramGiB := fs.Float64("ram-gib", 0, "hardware.ram_gib override; auto-detected if omitted")
 	osName := fs.String("os-name", "", "os.name override; defaults to GOOS")
 	osVersion := fs.String("os-version", "", "os.version override; auto-detected if omitted")
+	osBuild := fs.String("os-build", "", "os.build override; auto-detected if omitted")
 	osArch := fs.String("os-arch", "", "os.arch override; defaults to GOARCH")
 
 	cacheDims := keyValueFlag{}
@@ -110,6 +120,9 @@ func run(args []string) error {
 	}
 	if *state == "" {
 		missing = append(missing, "--state")
+	}
+	if *prepare == "" {
+		missing = append(missing, "--prepare")
 	}
 	if *experimentID == "" {
 		missing = append(missing, "--experiment")
@@ -150,15 +163,28 @@ func run(args []string) error {
 	if *osVersion == "" {
 		*osVersion = detectOSVersion()
 	}
+	if *osBuild == "" {
+		*osBuild = detectOSBuild()
+	}
 
 	allToolchains := append([]benchmark.Toolchain{}, toolchains...)
 	if goVersion, err := commandOutput("go", "version"); err == nil {
 		allToolchains = append([]benchmark.Toolchain{{Name: "go", Version: parseGoVersion(goVersion)}}, allToolchains...)
 	}
 
-	fmt.Fprintf(os.Stderr, "t1bench: collecting %d sample(s) of %q (state=%s)\n", *n, *command, *state)
+	fmt.Fprintf(os.Stderr, "t1bench: collecting %d sample(s) of %q (state=%s, prepare=%q)\n", *n, *command, *state, *prepare)
 	samples := make([]float64, 0, *n)
 	for i := 0; i < *n; i++ {
+		// Preparation runs before every sample, not once before the batch:
+		// only that guarantees every sample - not just the first - was
+		// actually collected under the declared --state.
+		prep := exec.Command("sh", "-c", *prepare)
+		prep.Stdout = os.Stderr
+		prep.Stderr = os.Stderr
+		if err := prep.Run(); err != nil {
+			return fmt.Errorf("sample %d: --prepare command failed: %w", i+1, err)
+		}
+
 		start := time.Now()
 		cmd := exec.Command("sh", "-c", *command)
 		cmd.Stdout = nil
@@ -178,24 +204,30 @@ func run(args []string) error {
 	if *reservationCount >= 0 {
 		reservationPtr = reservationCount
 	}
+	var leasePtr *int
+	if *leaseCount >= 0 {
+		leasePtr = leaseCount
+	}
 
 	record := benchmark.Record{
-		SchemaVersion:     benchmark.CurrentSchemaVersion,
-		ExperimentID:      *experimentID,
-		FixtureID:         *fixtureID,
-		SourceRevision:    *sourceRevision,
-		Timestamp:         time.Now().UTC().Format(time.RFC3339),
-		Hardware:          benchmark.Hardware{CPU: *cpu, Cores: *cores, RAMGiB: *ramGiB},
-		OS:                benchmark.OS{Name: *osName, Version: *osVersion, Arch: *osArch},
-		Toolchain:         allToolchains,
-		State:             benchmark.State(*state),
-		CacheDimensions:   map[string]string(cacheDims),
-		Samples:           samples,
-		SampleCount:       len(samples),
-		Median:            median,
-		P95:               p95,
-		ReservationCount:  reservationPtr,
-		RawResultLocation: "samples.txt",
+		SchemaVersion:      benchmark.CurrentSchemaVersion,
+		ExperimentID:       *experimentID,
+		FixtureID:          *fixtureID,
+		SourceRevision:     *sourceRevision,
+		Timestamp:          time.Now().UTC().Format(time.RFC3339),
+		Hardware:           benchmark.Hardware{CPU: *cpu, Cores: *cores, RAMGiB: *ramGiB},
+		OS:                 benchmark.OS{Name: *osName, Version: *osVersion, Build: *osBuild, Arch: *osArch},
+		Toolchain:          allToolchains,
+		State:              benchmark.State(*state),
+		PreparationCommand: *prepare,
+		CacheDimensions:    map[string]string(cacheDims),
+		Samples:            samples,
+		SampleCount:        len(samples),
+		Median:             median,
+		P95:                p95,
+		ReservationCount:   reservationPtr,
+		LeaseCount:         leasePtr,
+		RawResultLocation:  "samples.txt",
 	}
 
 	if err := benchmark.Validate(record); err != nil {
@@ -298,6 +330,26 @@ func detectOSVersion() string {
 		}
 	case "linux":
 		if v, err := commandOutput("uname", "-r"); err == nil {
+			return v
+		}
+	}
+	return "unknown"
+}
+
+// detectOSBuild returns the OS build identity, distinct from the product
+// version detectOSVersion returns (e.g. macOS build "25F79" vs. product
+// version "26.5.2" - two machines can share a product version while
+// differing in build). Linux has no macOS-style build/version split; its
+// kernel build string (uname -v) is the closest analogue and is recorded
+// here rather than left unknown.
+func detectOSBuild() string {
+	switch runtime.GOOS {
+	case "darwin":
+		if v, err := commandOutput("sw_vers", "-buildVersion"); err == nil {
+			return v
+		}
+	case "linux":
+		if v, err := commandOutput("uname", "-v"); err == nil {
 			return v
 		}
 	}
