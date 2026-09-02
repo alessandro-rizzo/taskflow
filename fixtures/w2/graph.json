@@ -1,0 +1,84 @@
+{
+  "fixture_schema_version": "t1-w2-experimental-v1",
+  "fixture_id": "w2-cross-target-artifact-pipeline",
+  "roadmap_ref": "docs/roadmap.md#w2-cross-target-artifact-pipeline",
+  "status": "experimental",
+  "description": "Frozen, provider-neutral graph for roadmap workflow W2. Targets are declared as abstract capability roles, not bound to any concrete provider (e.g. neither prototype/bootstrap's target/local nor target/ssh is named here). A future E04/E08 experiment or T3/T6 implementation supplies the actual provider(s) that satisfy each role.",
+  "targets": [
+    {
+      "id": "linux-build",
+      "role": "build",
+      "required_capabilities": {
+        "os": "linux",
+        "toolchain": "go"
+      },
+      "notes": "Any provider offering a Linux execution profile capable of compiling the backend binary. Must expose an execution profile identity before this node is placed (AC #2)."
+    },
+    {
+      "id": "linux-test",
+      "role": "test",
+      "required_capabilities": {
+        "os": "linux",
+        "toolchain": "go"
+      },
+      "notes": "Any Linux-capable provider satisfying the same capability requirement as linux-build. This fixture explicitly does not assume linux-test is the same worker instance as linux-build - a compatible but distinct worker must be an equally valid placement, which is exactly what the downstream-failure-resume and worker-loss scenarios exercise."
+    },
+    {
+      "id": "local-inspect",
+      "role": "local",
+      "required_capabilities": {
+        "execution": "none"
+      },
+      "notes": "The invoking controller/local machine. Read-only inspection of the transferred artifact only - no build or test execution here, so it never needs a Linux execution profile."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "build",
+      "target": "linux-build",
+      "needs": [],
+      "consumes": [{ "from": "source", "as": "source-tree" }],
+      "produces": [
+        {
+          "name": "backend-binary",
+          "type": "Artifact[BackendBinary]",
+          "manifest": {
+            "digest_algorithm": "sha256",
+            "required_fields": ["digest", "size_bytes", "produced_by_node", "produced_by_profile"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "test",
+      "target": "linux-test",
+      "needs": ["build"],
+      "consumes": [{ "from": "build", "output": "backend-binary" }],
+      "produces": [
+        {
+          "name": "go-tests-report",
+          "type": "Report[GoTests]"
+        }
+      ]
+    },
+    {
+      "id": "inspect",
+      "target": "local-inspect",
+      "needs": ["build"],
+      "consumes": [{ "from": "build", "output": "backend-binary" }],
+      "produces": [
+        {
+          "name": "inspection-summary",
+          "type": "LocalInspection"
+        }
+      ]
+    }
+  ],
+  "required_properties": [
+    "execution_profile_known_before_placement",
+    "artifact_manifest_verified_across_targets",
+    "failed_downstream_node_resumes_on_compatible_worker",
+    "successful_work_not_repeated",
+    "provider_outage_and_cancellation_produce_durable_explainable_state"
+  ]
+}
