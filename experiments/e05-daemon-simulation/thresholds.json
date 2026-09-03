@@ -1,0 +1,70 @@
+{
+  "format_version": "e05-thresholds-v1-experimental",
+  "experiment_id": "E05",
+  "statistics": {
+    "p95_method": "sort ascending and select index round(0.95*(n-1))",
+    "jain_formula": "square(sum(service)) / (count * sum(square(service)))",
+    "queue_time_unit": "simulated ticks from ready to admitted",
+    "throughput_unit": "completed nodes per simulated tick",
+    "utilization_unit": "percentage points of capacity-time"
+  },
+  "safety": {
+    "capacity_violation_count_max": 0,
+    "active_lease_count_at_drain_max": 0,
+    "non_cancelled_terminal_ratio_min": 1.0
+  },
+  "weighted_fairness": {
+    "starved_request_count_max": 0,
+    "per_class_jain_service_index_min": 0.95,
+    "max_ready_wait_over_longest_compatible_service_max": 10.0,
+    "interactive_queue_p95_over_fifo_max": 1.0,
+    "background_queue_p95_over_fifo_max": 2.0
+  },
+  "material_shared_benefit": {
+    "throughput_over_safe_independent_min": 1.15,
+    "makespan_over_safe_independent_max": 0.85,
+    "throughput_or_makespan": true,
+    "interactive_queue_p95_over_safe_independent_max": 0.8,
+    "saturated_provider_utilization_regression_percentage_points_max": 2.0
+  },
+  "attachment": {
+    "false_attachment_count_max": 0,
+    "duplicate_active_run_avoided_count_min": 1
+  },
+  "durability": {
+    "fresh_process_case_count": 60,
+    "committed_event_loss_count_max": 0,
+    "committed_event_duplicate_count_max": 0,
+    "visible_uncommitted_transition_count_max": 0,
+    "event_sequence_gap_or_reorder_count_max": 0,
+    "sqlite_integrity_failure_count_max": 0,
+    "post_recovery_capacity_violation_count_max": 0
+  },
+  "cleanup": {
+    "reaper_interval_ticks": 1,
+    "max_ticks_after_expiry": 1,
+    "wall_clock_samples": 30,
+    "wall_clock_p95_seconds_max": 1.0,
+    "wall_clock_max_seconds_max": 2.0
+  },
+  "operations": {
+    "warm_startup_reopen_samples": 30,
+    "warm_startup_reopen_p95_seconds_max": 0.25,
+    "quiescent_sample_seconds": 30,
+    "idle_cpu_p95_percent_max": 1.0,
+    "idle_rss_p95_mib_max": 40.0,
+    "clean_stop_seconds_max": 1.0,
+    "resident_process_count_max": 1,
+    "state_directory_count_max": 1,
+    "external_service_count_max": 0,
+    "manual_pre_run_start_count_max": 0
+  },
+  "full_daemon": {
+    "single_agent_makespan_regression_fraction_max": 0.05
+  },
+  "broker_only": {
+    "throughput_over_full_daemon_min": 0.95,
+    "queue_p95_difference_from_full_daemon_fraction_max": 0.1,
+    "unique_full_run_ownership_passing_result_count_max": 0
+  }
+}

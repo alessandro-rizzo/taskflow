@@ -1,0 +1,77 @@
+{
+  "format_version": "e05-policy-candidates-v1-experimental",
+  "experiment_id": "E05",
+  "common_rules": {
+    "multi_resource_reservation": "atomic-all-or-none",
+    "capacity_wait_consumes_execution_slot": false,
+    "provider_capacity_enforcement": "hard",
+    "terminal_drain_required": true,
+    "within_class_agent_order": "round-robin",
+    "seeded_tie_break_only": true
+  },
+  "candidates": [
+    {
+      "id": "independent-unguarded-negative-control",
+      "kind": "negative-control",
+      "negative_control": true,
+      "throughput_comparator": false,
+      "run_state_owner": "client",
+      "resource_owner": "client",
+      "queue_policy": "none",
+      "retry_ticks": 0
+    },
+    {
+      "id": "independent-provider-guard",
+      "kind": "independent-cli",
+      "negative_control": false,
+      "throughput_comparator": true,
+      "run_state_owner": "client",
+      "resource_owner": "provider-atomic-guard",
+      "queue_policy": "per-client",
+      "retry_ticks": 1
+    },
+    {
+      "id": "broker-only",
+      "kind": "resource-broker",
+      "negative_control": false,
+      "throughput_comparator": false,
+      "run_state_owner": "client",
+      "resource_owner": "shared-broker",
+      "queue_policy": "broker-oldest-eligible",
+      "retry_ticks": 0
+    },
+    {
+      "id": "shared-fifo",
+      "kind": "shared-daemon",
+      "negative_control": false,
+      "throughput_comparator": false,
+      "run_state_owner": "shared-controller",
+      "resource_owner": "shared-controller",
+      "queue_policy": "oldest-ready-eligible",
+      "retry_ticks": 0
+    },
+    {
+      "id": "shared-strict-interactive",
+      "kind": "shared-daemon",
+      "negative_control": false,
+      "throughput_comparator": false,
+      "run_state_owner": "shared-controller",
+      "resource_owner": "shared-controller",
+      "queue_policy": "interactive-before-background",
+      "retry_ticks": 0
+    },
+    {
+      "id": "shared-weighted-aging",
+      "kind": "shared-daemon",
+      "negative_control": false,
+      "throughput_comparator": false,
+      "run_state_owner": "shared-controller",
+      "resource_owner": "shared-controller",
+      "queue_policy": "weighted-round-robin-with-aging",
+      "retry_ticks": 0,
+      "interactive_weight": 3,
+      "background_weight": 1,
+      "age_promotion_ticks": 36
+    }
+  ]
+}

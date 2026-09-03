@@ -1,0 +1,90 @@
+{
+  "format_version": "e05-phase-a-contract-v1-experimental",
+  "experiment_id": "E05",
+  "task_id": "TF-003.12",
+  "status": "phase-a-frozen-contract",
+  "baseline_revision": "834ee0a95eef05a2a4e434bf9095826ee93a8cc5",
+  "question": "Can shared coordination improve saturated multi-agent scheduling without oversubscription, starvation, durable-state loss, or unacceptable local operational cost?",
+  "risks": [
+    "R6",
+    "R7"
+  ],
+  "canonical_requirements": {
+    "exercised": [
+      "AGENT-2",
+      "AGENT-3",
+      "AGENT-5",
+      "EXEC-2",
+      "EXEC-3",
+      "EXEC-5",
+      "DUR-1",
+      "DUR-3"
+    ],
+    "partially_exercised": {
+      "AGENT-4": "Namespace and lease ownership only; no filesystem, service, endpoint, port, volume, or mutable-data isolation is implemented."
+    },
+    "not_claimed": [
+      "AGENT-1",
+      "AGENT-6",
+      "DUR-2"
+    ],
+    "stale_ticket_references": [
+      "CONC-1",
+      "CONC-2",
+      "CONC-3",
+      "CONC-4",
+      "DUR-4"
+    ],
+    "stale_reference_policy": "Do not create aliases; evaluate only current identifiers in docs/product-specification.md."
+  },
+  "scope": {
+    "provider_classes": [
+      "local",
+      "linux",
+      "macos",
+      "simulator",
+      "device"
+    ],
+    "real_builds": false,
+    "real_providers": false,
+    "production_daemon": false,
+    "production_module": false,
+    "prototype_imports": false,
+    "fixture_imports": false,
+    "phase_a_results": false
+  },
+  "phase_boundary": {
+    "phase_a_allows": [
+      "frozen contract",
+      "frozen workload",
+      "frozen policy candidates",
+      "frozen thresholds",
+      "frozen decision matrix",
+      "fixture digest bindings",
+      "contract verifier",
+      "contract verifier tests",
+      "contract-only task command"
+    ],
+    "phase_a_forbids": [
+      "scheduler simulation",
+      "SQLite adapter",
+      "benchmark execution",
+      "raw traces",
+      "measurement summaries",
+      "scorecard results",
+      "selected decision branch"
+    ],
+    "phase_b_precondition": "An accepted, explicitly authorized Phase A contract commit exists on this ticket branch."
+  },
+  "phase_b_evidence_contract": [
+    "deterministic compressed JSONL traces and checksums for every mode and seed",
+    "fresh-process crash and restart logs",
+    "SQLite integrity results",
+    "environment and tool versions",
+    "T1 benchmark-v2 records and raw samples",
+    "queue, utilization, throughput, fairness, cleanup, and recovery distributions",
+    "operational-complexity ledger",
+    "scorecard, limitations, and one E05 branch decision"
+  ],
+  "verification_command": "mise exec -- task --dir experiments/e05-daemon-simulation check:phase-a"
+}

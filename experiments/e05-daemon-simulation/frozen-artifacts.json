@@ -1,0 +1,46 @@
+{
+  "format_version": "e05-phase-a-frozen-artifacts-v1-experimental",
+  "hash_algorithm": "sha256",
+  "artifacts": [
+    {
+      "path": "README.md",
+      "sha256": "b1a4330dd3a9c240fe9370ab04418211ec1f5ac2bbf68a976e7bf267128dc69f"
+    },
+    {
+      "path": "Taskfile.yml",
+      "sha256": "51e57d67562a489e99e6346a97bb8d721fa4137382e2bca2991407d60ff5a9fb"
+    },
+    {
+      "path": "contract.json",
+      "sha256": "73ee4cf4f210a6cd655e8c67d1fa1a98482657770e7021fe3415e450d4cb961e"
+    },
+    {
+      "path": "decision-matrix.json",
+      "sha256": "25275be54400360c861d5c933e9e55bba2353bde19a6918fefe2aea2094f7f9d"
+    },
+    {
+      "path": "fixture-bindings.json",
+      "sha256": "dd72009564482ff186a052c6c36ffa2056097ee6e6cc7fe44c2d642c6de160b3"
+    },
+    {
+      "path": "policies.json",
+      "sha256": "c7c1b4b54a2c74f5355d82460db311bbe46ebbeaabe1906b3c4ac41a2f3127fb"
+    },
+    {
+      "path": "scripts/verify_contract.py",
+      "sha256": "25867199b05d62680a78fdee441a398f6bf2766c2e6e91e046d3da71bf8448df"
+    },
+    {
+      "path": "tests/test_verify_contract.py",
+      "sha256": "9b5acd781cf96cabe39f88fb77d20859bbb3dd4945d7d39f1f43a8e24821ea48"
+    },
+    {
+      "path": "thresholds.json",
+      "sha256": "860bbb206d73d76ab9b2c93efdbd5276df4251b2e9ff164fb1274d50b14ec8f5"
+    },
+    {
+      "path": "workload.json",
+      "sha256": "7824743599797768c7f3d1115d593cfa90305486047947ad2ceac090a1c09884"
+    }
+  ]
+}

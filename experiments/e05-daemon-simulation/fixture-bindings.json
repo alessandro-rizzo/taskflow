@@ -1,0 +1,63 @@
+{
+  "format_version": "e05-fixture-bindings-v1-experimental",
+  "hash_algorithm": "sha256",
+  "bindings": [
+    {
+      "path": "fixtures/w1/manifest.yaml",
+      "sha256": "18a61f791c198e16f3e478243213e6d48bb3223357c14f6a674c2f3862415169",
+      "identity": {
+        "fixture_id": "w1-fast-project-check",
+        "version": "t1-experimental-v1"
+      }
+    },
+    {
+      "path": "fixtures/w2/graph.json",
+      "sha256": "68d599c31ebe04c085610a98ff37e1775db650e2d034d553ac291632fcd7d45b",
+      "identity": {
+        "fixture_id": "w2-cross-target-artifact-pipeline",
+        "version": "t1-w2-experimental-v1"
+      }
+    },
+    {
+      "path": "fixtures/w3/examples/namespace-a.json",
+      "sha256": "b86378913dcc9f7e80c8a47cf387f68a5a6130d88592fa02be72229e85a3583e",
+      "identity": {
+        "fixture_id": "w3-isolated-native-mobile-stack",
+        "version": "t1-w3-fixture-v1-experimental"
+      }
+    },
+    {
+      "path": "fixtures/w3/examples/namespace-b.json",
+      "sha256": "22db508434c6997cc8ec4bd9b0dee4bc0a01181380ca196e0abb875c865ab682",
+      "identity": {
+        "fixture_id": "w3-isolated-native-mobile-stack",
+        "version": "t1-w3-fixture-v1-experimental"
+      }
+    },
+    {
+      "path": "fixtures/w3/examples/scenario-caller-loss.json",
+      "sha256": "88fbb5623f79bfcf572759bfe6f16a5371a423f24b098969a0194923b33800cc",
+      "identity": {
+        "fixture_id": "w3-isolated-native-mobile-stack",
+        "version": "t1-w3-fixture-v1-experimental",
+        "scenario": "caller-loss"
+      }
+    },
+    {
+      "path": "fixtures/t1-lifecycle-faults/lifecycle.go",
+      "sha256": "a8152ae131029baf5110adc58569f7ad2a0e06109781200aec311ceb6b68425c",
+      "identity": {
+        "constant": "ScenarioVersion",
+        "version": "t1-lifecycle-faults-v2-experimental"
+      }
+    },
+    {
+      "path": "fixtures/t1-lifecycle-faults/lease_state.go",
+      "sha256": "4a70cb20e995f9d4b69e29a561c04e3f856113d50c6bef7e557b4e76a1e42e23",
+      "identity": {
+        "constant": "LeaseStateFormatVersion",
+        "version": "t1-lifecycle-lease-state-v1-experimental"
+      }
+    }
+  ]
+}

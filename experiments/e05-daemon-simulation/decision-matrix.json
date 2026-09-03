@@ -1,0 +1,72 @@
+{
+  "format_version": "e05-decision-matrix-v1-experimental",
+  "experiment_id": "E05",
+  "selected_branch": null,
+  "no_post_result_threshold_relaxation": true,
+  "precedence": [
+    {
+      "order": 1,
+      "branch": "stronger-state-model",
+      "when": "Any SQLite durability hard gate fails.",
+      "threshold_refs": [
+        "durability"
+      ]
+    },
+    {
+      "order": 2,
+      "branch": "stop",
+      "when": "No shared-daemon or broker-only candidate satisfies safety, weighted fairness, and cleanup gates.",
+      "threshold_refs": [
+        "safety",
+        "weighted_fairness",
+        "cleanup"
+      ]
+    },
+    {
+      "order": 3,
+      "branch": "full-daemon",
+      "when": "Shared weighted aging passes every hard gate, meets the 20-agent material benefit, stays within the one-agent regression limit, and meets all operations budgets.",
+      "threshold_refs": [
+        "safety",
+        "weighted_fairness",
+        "material_shared_benefit",
+        "attachment",
+        "durability",
+        "cleanup",
+        "operations",
+        "full_daemon"
+      ]
+    },
+    {
+      "order": 4,
+      "branch": "on-demand-daemon",
+      "when": "Shared weighted aging passes hard gates and material benefit at 4 or 20 agents, but the one-agent or always-on operations gate fails while the on-demand path passes.",
+      "threshold_refs": [
+        "safety",
+        "weighted_fairness",
+        "material_shared_benefit",
+        "attachment",
+        "durability",
+        "cleanup",
+        "operations",
+        "full_daemon"
+      ]
+    },
+    {
+      "order": 5,
+      "branch": "broker-only",
+      "when": "Broker-only passes safety and reclamation, remains within the declared full-daemon throughput and queue bounds, and centralized run ownership adds no unique passing durability or attachment result.",
+      "threshold_refs": [
+        "safety",
+        "cleanup",
+        "broker_only"
+      ]
+    },
+    {
+      "order": 6,
+      "branch": "stop-narrow",
+      "when": "No earlier branch matches; do not relax thresholds after observing results.",
+      "threshold_refs": []
+    }
+  ]
+}

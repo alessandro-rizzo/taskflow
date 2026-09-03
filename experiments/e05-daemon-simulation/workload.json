@@ -1,0 +1,135 @@
+{
+  "format_version": "e05-workload-v1-experimental",
+  "experiment_id": "E05",
+  "primary_agent_count": 20,
+  "submission_count": 60,
+  "requested_max_concurrency_per_agent": 32,
+  "scale_sweep_agent_counts": [
+    1,
+    4,
+    20
+  ],
+  "provider_capacities": {
+    "local": 4,
+    "linux": 4,
+    "macos": 2,
+    "simulator": 2,
+    "device": 1
+  },
+  "lease_policy": {
+    "ttl_ticks": 5,
+    "heartbeat_interval_ticks": 2,
+    "reaper_interval_ticks": 1
+  },
+  "agents": [
+    {"id": "agent-01", "class": "interactive", "namespace": "ns-agent-01"},
+    {"id": "agent-02", "class": "interactive", "namespace": "ns-agent-02"},
+    {"id": "agent-03", "class": "interactive", "namespace": "ns-agent-03"},
+    {"id": "agent-04", "class": "interactive", "namespace": "ns-agent-04"},
+    {"id": "agent-05", "class": "interactive", "namespace": "ns-agent-05"},
+    {"id": "agent-06", "class": "interactive", "namespace": "ns-agent-06"},
+    {"id": "agent-07", "class": "interactive", "namespace": "ns-agent-07"},
+    {"id": "agent-08", "class": "interactive", "namespace": "ns-agent-08"},
+    {"id": "agent-09", "class": "interactive", "namespace": "ns-agent-09"},
+    {"id": "agent-10", "class": "interactive", "namespace": "ns-agent-10"},
+    {"id": "agent-11", "class": "background", "namespace": "ns-agent-11"},
+    {"id": "agent-12", "class": "background", "namespace": "ns-agent-12"},
+    {"id": "agent-13", "class": "background", "namespace": "ns-agent-13"},
+    {"id": "agent-14", "class": "background", "namespace": "ns-agent-14"},
+    {"id": "agent-15", "class": "background", "namespace": "ns-agent-15"},
+    {"id": "agent-16", "class": "background", "namespace": "ns-agent-16"},
+    {"id": "agent-17", "class": "background", "namespace": "ns-agent-17"},
+    {"id": "agent-18", "class": "background", "namespace": "ns-agent-18"},
+    {"id": "agent-19", "class": "background", "namespace": "ns-agent-19"},
+    {"id": "agent-20", "class": "background", "namespace": "ns-agent-20"}
+  ],
+  "plans_per_agent": [
+    "W1",
+    "W2",
+    "W3"
+  ],
+  "submission_waves": [
+    {"tick": 0, "class": "background", "workflow": "W1", "agents": 10},
+    {"tick": 2, "class": "interactive", "workflow": "W1", "agents": 10},
+    {"tick": 4, "class": "background", "workflow": "W2", "agents": 10},
+    {"tick": 6, "class": "interactive", "workflow": "W2", "agents": 10},
+    {"tick": 8, "class": "background", "workflow": "W3", "agents": 10},
+    {"tick": 10, "class": "interactive", "workflow": "W3", "agents": 10}
+  ],
+  "workflow_templates": {
+    "W1": {
+      "fixture_id": "w1-fast-project-check",
+      "nodes": [
+        {"id": "format", "duration_ticks": 3, "resources": {"local": 1}, "needs": []},
+        {"id": "test", "duration_ticks": 5, "resources": {"local": 1}, "needs": []},
+        {"id": "lint", "duration_ticks": 4, "resources": {"local": 1}, "needs": []},
+        {"id": "check", "duration_ticks": 1, "resources": {}, "needs": ["format", "test", "lint"]}
+      ]
+    },
+    "W2": {
+      "fixture_id": "w2-cross-target-artifact-pipeline",
+      "nodes": [
+        {"id": "build", "duration_ticks": 8, "resources": {"linux": 1}, "needs": []},
+        {"id": "test", "duration_ticks": 6, "resources": {"linux": 1}, "needs": ["build"]},
+        {"id": "inspect", "duration_ticks": 2, "resources": {"local": 1}, "needs": ["build"]}
+      ]
+    },
+    "W3": {
+      "fixture_id": "w3-isolated-native-mobile-stack",
+      "variant_assignment": "odd-numbered agents use simulator; even-numbered agents use device",
+      "nodes": [
+        {"id": "linux-service", "duration_ticks": 18, "resources": {"linux": 1}, "needs": [], "lease": "namespace-session"},
+        {"id": "macos-build", "duration_ticks": 10, "resources": {"macos": 1}, "needs": []},
+        {"id": "mobile-e2e-simulator", "duration_ticks": 12, "resources": {"macos": 1, "simulator": 1}, "needs": ["linux-service", "macos-build"], "variant": "simulator"},
+        {"id": "mobile-e2e-device", "duration_ticks": 12, "resources": {"macos": 1, "device": 1}, "needs": ["linux-service", "macos-build"], "variant": "device"},
+        {"id": "cleanup", "duration_ticks": 2, "resources": {}, "needs": ["mobile-e2e-selected"]}
+      ]
+    }
+  },
+  "tie_order_seeds": [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+  ],
+  "lifecycle_cases": {
+    "client_disconnect": {
+      "accepted_run_survives_client": true,
+      "abandoned_namespace_expires": true
+    },
+    "attachment": [
+      "all identity and authorization fields match",
+      "project differs",
+      "source differs",
+      "operation differs",
+      "arguments differ",
+      "plan digest differs",
+      "namespace policy differs",
+      "caller is unauthorized"
+    ],
+    "concurrency_groups": [
+      "queue-all",
+      "keep-newest-pending",
+      "cancel-superseded-active"
+    ]
+  },
+  "durability_cases": {
+    "phases": [
+      "admission",
+      "execution",
+      "cleanup"
+    ],
+    "timings": [
+      "before-commit",
+      "after-commit"
+    ],
+    "seeds": [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    ],
+    "expected_case_count": 60
+  },
+  "operational_samples": {
+    "disconnect_reopen": 30,
+    "warm_startup_reopen": 30,
+    "quiescent_seconds": 30
+  }
+}
