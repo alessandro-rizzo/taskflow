@@ -1,0 +1,59 @@
+{
+  "document_kind": "schema",
+  "format_version": "t1-plan-conformance-schema-v1",
+  "fixture_id": "w1-fast-project-check",
+  "fixture_version": "t1-experimental-v1",
+  "status": "experimental",
+  "operations": [
+    {
+      "id": "check",
+      "description": "Format check, unit tests, and static analysis, aggregated into one pass/fail Check.",
+      "arguments": [
+        {
+          "name": "verbosity",
+          "type": "string",
+          "enum": [
+            "quiet",
+            "normal",
+            "verbose"
+          ],
+          "default": "normal",
+          "required": false
+        },
+        {
+          "name": "changed-only",
+          "type": "boolean",
+          "default": false,
+          "required": false
+        },
+        {
+          "name": "verbosity",
+          "type": "string",
+          "enum": [
+            "quiet",
+            "normal",
+            "verbose"
+          ],
+          "default": "normal",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "test-report",
+          "type": "Report[GoTests]",
+          "optional": false
+        },
+        {
+          "id": "diagnostics",
+          "type": "Report[Diagnostics]",
+          "optional": true
+        }
+      ],
+      "required_effects": [],
+      "required_capabilities": [
+        "filesystem-read"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "document_kind": "plan",
+  "format_version": "t1-plan-conformance-plan-v2",
+  "fixture_id": "w1-fast-project-check",
+  "fixture_version": "t1-experimental-v1",
+  "status": "experimental",
+  "nodes": "not-an-array",
+  "artifacts": [
+    {
+      "id": "source-tree",
+      "type": "Tree",
+      "optional": false
+    },
+    {
+      "id": "test-report",
+      "type": "Report[GoTests]",
+      "optional": false
+    }
+  ]
+}

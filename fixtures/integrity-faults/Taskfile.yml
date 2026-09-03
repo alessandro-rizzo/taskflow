@@ -1,0 +1,26 @@
+version: "3"
+
+tasks:
+  fmt:check:
+    desc: Verify Go source formatting
+    cmds:
+      - |
+        files="$(gofmt -l .)"
+        test -z "$files" || {
+          printf '%s\n' "$files"
+          exit 1
+        }
+
+  test:
+    desc: Run all tests
+    cmds:
+      - go test ./...
+
+  lint:
+    desc: Run the standard Go static checks
+    cmds:
+      - go vet ./...
+
+  check:
+    desc: Run formatting, tests, and static checks (this fixture's own verification command)
+    deps: [fmt:check, test, lint]
