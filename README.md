@@ -13,6 +13,7 @@ longer treated as the codebase that the product must incrementally extend.
 ```text
 docs/                         product specification, decisions, and roadmap
 experiments/                  disposable risk-reduction spikes
+fixtures/                     frozen, reusable T1+ fixtures and harnesses
 prototype/bootstrap/          isolated previous implementation
 ```
 
@@ -41,7 +42,8 @@ foundation is selected.
 
 ## Development
 
-The root gate currently verifies the preserved prototype:
+The root gate verifies the preserved prototype and every maintained executable
+T1 fixture or harness under the root-pinned toolchain:
 
 ```sh
 mise trust
@@ -49,14 +51,38 @@ mise install
 mise exec -- task check
 ```
 
+The T1-only portion is also available directly:
+
+```sh
+mise exec -- task t1:check
+```
+
+| Surface | Root-gate coverage |
+| --- | --- |
+| `fixtures/w1/repo` | Formatting, `go vet`, plain `go test`, and a separate race-detector run |
+| `fixtures/w1/repo-*-failure` | Negative fixtures; excluded from the normal green gate and used only by explicit failure probes |
+| `fixtures/w2` | Specification-only; no executable validator exists to delegate to |
+| `fixtures/w3` | The dependency-free JSON specification validator; this does not claim real W3 infrastructure exists |
+| `fixtures/t1-benchmark-harness` | Its fixture-local `task check`, followed separately by `go test -race ./...` |
+| `fixtures/t1-plan-conformance` | Its fixture-local `task check`, followed separately by `go test -race ./...` |
+| `fixtures/t1-lifecycle-faults` | Its fixture-local `task check`, followed separately by `go test -race ./...` |
+| `fixtures/integrity-faults` | Its fixture-local `task check`, followed separately by `go test -race ./...` |
+| `fixtures/malicious-planner` | Its fixture-local `task check`, followed separately by `go test -race ./...` |
+
+The fixture-local Taskfiles remain the authority for their ordinary checks.
+Root delegation invokes `task` and `go` directly inside the environment already
+created by the single root `mise exec`; it does not nest `mise exec` or trust a
+fixture-local `mise.toml`. Named wrapper tasks keep the failing fixture visible
+in Task output, and any delegated non-zero exit fails the root gate.
+
 Run its example with:
 
 ```sh
 mise exec -- task prototype:example
 ```
 
-Experiments will add their own self-contained verification commands as they are
-introduced.
+Experiments add their own self-contained verification commands as they are
+introduced; they are not implicitly part of the maintained root gate.
 
 ## License
 

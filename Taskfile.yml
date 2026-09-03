@@ -2,9 +2,117 @@ version: "3"
 
 tasks:
   check:
-    desc: Verify every maintained implementation in the repository
+    desc: Verify every maintained repository gate
     cmds:
       - task: prototype:check
+      - task: t1:check
+
+  t1:check:
+    desc: Verify every executable frozen T1 fixture and harness
+    cmds:
+      - task: t1:w1:check
+      - task: t1:w3:check
+      - task: t1:benchmark-harness:check
+      - task: t1:plan-conformance:check
+      - task: t1:lifecycle-faults:check
+      - task: t1:integrity-faults:check
+      - task: t1:malicious-planner:check
+      - task: t1:race
+
+  t1:w1:check:
+    desc: Verify the passing W1 repository fixture
+    dir: fixtures/w1/repo
+    cmds:
+      - |
+        files="$(gofmt -l .)"
+        test -z "$files" || {
+          printf '%s\n' "$files"
+          exit 1
+        }
+      - go vet ./...
+      - go test ./...
+
+  t1:w3:check:
+    desc: Validate the specification-only W3 fixture examples
+    dir: fixtures/w3
+    cmds:
+      - ./validate.sh
+
+  t1:benchmark-harness:check:
+    desc: Run the T1 benchmark harness local gate
+    dir: fixtures/t1-benchmark-harness
+    cmds:
+      - task check
+
+  t1:plan-conformance:check:
+    desc: Run the T1 plan-conformance harness local gate
+    dir: fixtures/t1-plan-conformance
+    cmds:
+      - task check
+
+  t1:lifecycle-faults:check:
+    desc: Run the T1 lifecycle-fault harness local gate
+    dir: fixtures/t1-lifecycle-faults
+    cmds:
+      - task check
+
+  t1:integrity-faults:check:
+    desc: Run the T1 integrity-fault harness local gate
+    dir: fixtures/integrity-faults
+    cmds:
+      - task check
+
+  t1:malicious-planner:check:
+    desc: Run the T1 malicious-planner harness local gate
+    dir: fixtures/malicious-planner
+    cmds:
+      - task check
+
+  t1:race:
+    desc: Run the race detector separately across passing T1 Go modules
+    cmds:
+      - task: t1:w1:race
+      - task: t1:benchmark-harness:race
+      - task: t1:plan-conformance:race
+      - task: t1:lifecycle-faults:race
+      - task: t1:integrity-faults:race
+      - task: t1:malicious-planner:race
+
+  t1:w1:race:
+    desc: Race-test the passing W1 repository fixture
+    dir: fixtures/w1/repo
+    cmds:
+      - go test -race ./...
+
+  t1:benchmark-harness:race:
+    desc: Race-test the T1 benchmark harness
+    dir: fixtures/t1-benchmark-harness
+    cmds:
+      - go test -race ./...
+
+  t1:plan-conformance:race:
+    desc: Race-test the T1 plan-conformance harness
+    dir: fixtures/t1-plan-conformance
+    cmds:
+      - go test -race ./...
+
+  t1:lifecycle-faults:race:
+    desc: Race-test the T1 lifecycle-fault harness
+    dir: fixtures/t1-lifecycle-faults
+    cmds:
+      - go test -race ./...
+
+  t1:integrity-faults:race:
+    desc: Race-test the T1 integrity-fault harness
+    dir: fixtures/integrity-faults
+    cmds:
+      - go test -race ./...
+
+  t1:malicious-planner:race:
+    desc: Race-test the T1 malicious-planner harness
+    dir: fixtures/malicious-planner
+    cmds:
+      - go test -race ./...
 
   prototype:check:
     desc: Run the complete architecture-bootstrap prototype gate

@@ -1,0 +1,21 @@
+=== separate T1 fixture race layer ===
+command=env GOCACHE=/tmp/taskflow-tf00301-go-cache mise exec -- task t1:race
+base_revision=9e265f14ebd03f9e7fe7aa2470987d35a43c795e
+execution_note=run outside the managed agent sandbox because the malicious-planner self-test deliberately binds a throwaway loopback listener
+
+task: [t1:w1:race] go test -race ./...
+ok  	fixtures/w1/repo	(cached)
+task: [t1:benchmark-harness:race] go test -race ./...
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness	(cached)
+?   	github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness/cmd/t1bench	[no test files]
+task: [t1:plan-conformance:race] go test -race ./...
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/t1-plan-conformance	(cached)
+?   	github.com/alessandro-rizzo/taskflow/fixtures/t1-plan-conformance/cmd/t1conform	[no test files]
+task: [t1:lifecycle-faults:race] go test -race ./...
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/t1-lifecycle-faults	(cached)
+task: [t1:integrity-faults:race] go test -race ./...
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/integrity-faults	(cached)
+task: [t1:malicious-planner:race] go test -race ./...
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/malicious-planner	(cached)
+?   	github.com/alessandro-rizzo/taskflow/fixtures/malicious-planner/cmd/attackcat	[no test files]
+exit=0

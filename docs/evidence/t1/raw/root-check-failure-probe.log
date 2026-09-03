@@ -1,0 +1,51 @@
+=== root failure-propagation probe ===
+command=env GOCACHE=/tmp/taskflow-tf00301-go-cache mise exec -- task check
+base_revision=9e265f14ebd03f9e7fe7aa2470987d35a43c795e
+probe=temporarily route t1:w1:check to fixtures/w1/repo-test-failure; restore fixtures/w1/repo immediately afterwards
+expected_exit=non-zero
+
+task: [prototype:check] task check
+task: [lint] go vet ./...
+task: [test:race] go test -race ./...
+task: [fmt:check] files="$(gofmt -l .)"
+test -z "$files" || {
+  printf '%s\n' "$files"
+  exit 1
+}
+
+ok  	github.com/arr/taskflow/cache	1.338s
+ok  	github.com/arr/taskflow/cache/file	1.864s
+?   	github.com/arr/taskflow/cmd/taskflow	[no test files]
+ok  	github.com/arr/taskflow/driver	1.727s
+ok  	github.com/arr/taskflow/engine	4.846s
+?   	github.com/arr/taskflow/event	[no test files]
+?   	github.com/arr/taskflow/examples/basic	[no test files]
+ok  	github.com/arr/taskflow/flow	2.222s
+ok  	github.com/arr/taskflow/internal/projectdriver	4.729s
+?   	github.com/arr/taskflow/process	[no test files]
+?   	github.com/arr/taskflow/runner	[no test files]
+?   	github.com/arr/taskflow/runner/command	[no test files]
+?   	github.com/arr/taskflow/runner/just	[no test files]
+ok  	github.com/arr/taskflow/runner/taskfile	2.566s
+ok  	github.com/arr/taskflow/state	3.041s
+ok  	github.com/arr/taskflow/state/file	3.311s
+?   	github.com/arr/taskflow/target	[no test files]
+ok  	github.com/arr/taskflow/target/local	2.808s
+ok  	github.com/arr/taskflow/target/ssh	4.532s
+?   	github.com/arr/taskflow/terminal	[no test files]
+ok  	github.com/arr/taskflow/workspace	3.763s
+task: [t1:w1:check] files="$(gofmt -l .)"
+test -z "$files" || {
+  printf '%s\n' "$files"
+  exit 1
+}
+
+task: [t1:w1:check] go vet ./...
+task: [t1:w1:check] go test ./...
+--- FAIL: TestGreet (0.00s)
+    greeter_test.go:7: Greet("Ada") = "Hello, Ada!", want "Hi, Ada!"
+FAIL
+FAIL	fixtures/w1/repo-test-failure	0.282s
+FAIL
+task: Failed to run task "check": task: Failed to run task "t1:check": task: Failed to run task "t1:w1:check": exit status 1
+exit=201
