@@ -1,0 +1,50 @@
+{
+  "document_kind": "plan",
+  "format_version": "t1-plan-conformance-plan-v2",
+  "fixture_id": "synthetic-wrong-types",
+  "fixture_version": "t1-plan-conformance-negative-v1",
+  "status": "experimental",
+  "nodes": [
+    {
+      "id": "node",
+      "needs": [],
+      "consumes": [],
+      "produces": [],
+      "planning_condition": 1,
+      "outcome_condition": false,
+      "resources": "wrong",
+      "execution_profile": [],
+      "cache_policy": null
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "artifact",
+      "type": false,
+      "optional": "false"
+    }
+  ],
+  "services": [
+    {
+      "id": "service",
+      "name": true,
+      "route": 3
+    }
+  ],
+  "secrets": [
+    {
+      "id": "secret",
+      "capability": false,
+      "resolved_by": 4
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect",
+      "kind": false,
+      "target": 8,
+      "idempotency_key": {},
+      "authorized_actor": []
+    }
+  ]
+}

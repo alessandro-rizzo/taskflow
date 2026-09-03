@@ -1,0 +1,31 @@
+{
+  "document_kind": "schema",
+  "format_version": "t1-plan-conformance-schema-v1",
+  "fixture_id": "synthetic-schema-wrong-types",
+  "fixture_version": "t1-plan-conformance-negative-v1",
+  "status": "experimental",
+  "operations": [
+    {
+      "id": "operation",
+      "description": false,
+      "arguments": [
+        {
+          "name": "argument",
+          "type": 7,
+          "default": {},
+          "enum": "wrong",
+          "required": "false"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "output",
+          "type": false,
+          "optional": "true"
+        }
+      ],
+      "required_effects": [],
+      "required_capabilities": []
+    }
+  ]
+}

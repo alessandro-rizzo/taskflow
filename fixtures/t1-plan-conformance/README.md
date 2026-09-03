@@ -16,6 +16,13 @@ version restructures around an explicit `document_kind` (`plan` |
 and enriches diff evidence. See the "Fixed after review" section below for
 specifics.
 
+**TF-003.02 hardening:** validation now also enforces the outer JSON type of
+every known plan/schema field. Object-shaped condition, resource, profile,
+and cache fields must be objects, but their contents remain deliberately
+opaque until Gate 1. This is a correction to the types already demonstrated
+by the experimental goldens, not a new production schema or compatibility
+promise, so the format versions are unchanged.
+
 ## Question
 
 E01 and E02 (`docs/roadmap.md` section 9) both need a way to compare a
@@ -91,6 +98,7 @@ corresponding golden so they stay in sync with it:
 | `invalid-reference.json` | A `consumes` reference to a nonexistent artifact id is rejected, naming the dangling reference |
 | `non-string-reference.json` | A non-string entry in a reference array (e.g. a number where an id string is expected) is rejected, not silently skipped |
 | `wrongly-typed-nodes.json` | A `nodes` field that is present but not an array (e.g. a string) is rejected, not silently treated as zero nodes |
+| `wrongly-typed-known-fields.json` | The former zero-violation case is frozen: node condition/resource/profile/cache fields reject non-objects, and artifact/service/secret/effect fields reject impossible scalar types with exact paths |
 | `duplicate-node-id.json` / `duplicate-artifact-id.json` | Two entries sharing the same `id` are rejected |
 | (a `conformance_test.go` test) | Canonicalizing the same golden twice produces byte-identical output (AC #2's repeat-generation determinism) |
 | (a `conformance_test.go` test) | Two distinct large integers (`9007199254740993` vs `9007199254740992`, both beyond float64's exact-integer range) canonicalize to different digests - the number-precision fix |
@@ -104,6 +112,7 @@ corresponding golden so they stay in sync with it:
 | `duplicate-argument-name.json` | Two arguments sharing the same `name` are rejected |
 | `missing-argument-name.json` | An argument with no `name` field is rejected |
 | `non-string-capability.json` | A non-string entry in `required_capabilities` is rejected |
+| `wrongly-typed-known-fields.json` | The former zero-violation schema case is frozen: operation, argument, and output fields reject impossible string/boolean/scalar/array types with exact paths |
 | `missing-version.json` / `incompatible-version.json` | Same version-enforcement coverage as the plan side |
 | `unknown-field.json` | An undeclared operation field is rejected |
 | (a `conformance_test.go` test) | `{"required_capabilities":[3,1,2]}` and `{"required_capabilities":[1,2,3]}` canonicalize identically (the `sortScalars` fix below), reproducing the exact case an independent Opus verification pass found |
@@ -157,6 +166,13 @@ An independent Codex peer review of the first version found:
 - **Medium:** `diff.json` evidence lacked fixture identity, input paths,
   and a reproduction command. Fixed - see `cmd/t1conform/main.go`'s
   `evidence` struct.
+- **High (TF-003.02):** known object/scalar fields beyond identifiers and
+  reference arrays accepted impossible JSON types. A plan with numeric
+  conditions, a string resource request, an array execution profile, a null
+  cache policy, and wrongly typed artifact/service/secret/effect fields
+  produced zero validation violations; operation/argument/output fields had
+  the same gap. Fixed with presence-aware outer-type validation and frozen
+  negative candidates for both document kinds.
 
 A second, independent Opus verification pass confirmed the W3-golden and
 number-precision fixes above were genuine, but found the schema-side fix
@@ -208,15 +224,21 @@ was incomplete on its own terms:
   need it, but nothing in this ticket's acceptance criteria requires it
   today.
 - Nested free-form objects (`planning_condition`, `outcome_condition`,
-  `resources`, `execution_profile`, `cache_policy`) are intentionally
-  *not* checked for unknown fields the way top-level/node/artifact/
-  operation/argument objects are - they remain opaque descriptive blobs
-  by design, since their internal shape is exactly the kind of thing
-  E01/E02 are still deciding, not something this harness should freeze
-  prematurely. This means a typo inside e.g. `execution_profile` is not
-  caught by `Validate`; it would still show up as a `Compare` diff
-  against a golden, just not as a strict-schema violation on its own.
-  Flagged (not blocking) by the same review pass as the item above.
+  `resources`, `execution_profile`, `cache_policy`) must now have an object
+  outer shape, but are intentionally *not* checked for unknown fields or
+  internal value types the way top-level/node/artifact/operation/argument
+  objects are. Their contents remain opaque descriptive blobs because E01/E02
+  and Gate 1 still own those semantics. A typo inside e.g.
+  `execution_profile` is therefore not caught by `Validate`; it still appears
+  as a `Compare` diff against a golden.
+- Argument `default` and `enum` validation is deliberately shallow: defaults
+  and enum members must be non-null JSON scalars, but this harness does not
+  correlate their values with the provisional argument `type` string or
+  require one scalar kind across an enum. E01/Gate 1 retain that decision.
+- Except for envelope identity/version fields and item identifiers, this
+  hardening preserves the existing presence rules: it rejects a known field
+  with an impossible type when present, but does not newly require every field
+  shown in a golden. Completeness requirements remain an E01/E02 decision.
 - The goldens are hand-authored best guesses at what a correct future
   candidate's output should contain for each W-fixture, informed by
   `fixtures/w1/w2/w3`'s own declared expectations - they are not derived

@@ -33,6 +33,26 @@ func hasViolationWithMessage(violations []Violation, message string) bool {
 	return false
 }
 
+func assertViolationsExactly(t *testing.T, got, want []Violation) {
+	t.Helper()
+	gotCounts := make(map[Violation]int, len(got))
+	wantCounts := make(map[Violation]int, len(want))
+	for _, violation := range got {
+		gotCounts[violation]++
+	}
+	for _, violation := range want {
+		wantCounts[violation]++
+	}
+	if len(got) != len(want) {
+		t.Fatalf("expected %d violations, got %d: %v", len(want), len(got), got)
+	}
+	for violation, count := range wantCounts {
+		if gotCounts[violation] != count {
+			t.Fatalf("expected violation %v %d time(s), got %d; all violations: %v", violation, count, gotCounts[violation], got)
+		}
+	}
+}
+
 // --- Plan document tests ---
 
 func TestPlanConformantCandidateMatchesGolden(t *testing.T) {
@@ -193,6 +213,56 @@ func TestPlanWronglyTypedNodesFieldRejected(t *testing.T) {
 	}
 	if !hasViolationAtPath(violations, "/nodes") {
 		t.Fatalf("expected a violation at /nodes for a non-array value, got: %v", violations)
+	}
+}
+
+func TestPlanWronglyTypedKnownFieldsRejected(t *testing.T) {
+	candidate := readFile(t, "testdata/plan/wrongly-typed-known-fields.json")
+	violations, err := Validate(candidate)
+	if err != nil {
+		t.Fatalf("Validate: %v", err)
+	}
+	assertViolationsExactly(t, violations, []Violation{
+		{Path: "/nodes/0/planning_condition", Message: "must be an object"},
+		{Path: "/nodes/0/outcome_condition", Message: "must be an object"},
+		{Path: "/nodes/0/resources", Message: "must be an object"},
+		{Path: "/nodes/0/execution_profile", Message: "must be an object"},
+		{Path: "/nodes/0/cache_policy", Message: "must be an object"},
+		{Path: "/artifacts/0/type", Message: "must be a string"},
+		{Path: "/artifacts/0/optional", Message: "must be a boolean"},
+		{Path: "/services/0/name", Message: "must be a string"},
+		{Path: "/services/0/route", Message: "must be a string"},
+		{Path: "/secrets/0/capability", Message: "must be a string"},
+		{Path: "/secrets/0/resolved_by", Message: "must be a string"},
+		{Path: "/effects/0/kind", Message: "must be a string"},
+		{Path: "/effects/0/target", Message: "must be a string"},
+		{Path: "/effects/0/idempotency_key", Message: "must be a string"},
+		{Path: "/effects/0/authorized_actor", Message: "must be a string"},
+	})
+}
+
+func TestPlanUndecidedNestedObjectsRemainOpaque(t *testing.T) {
+	candidate := []byte(`{
+		"document_kind":"plan",
+		"format_version":"t1-plan-conformance-plan-v2",
+		"fixture_id":"opaque-nested-objects",
+		"fixture_version":"experimental-v1",
+		"status":"experimental",
+		"nodes":[{
+			"id":"node",
+			"planning_condition":{"future":{"shape":[null,17,{"anything":true}]}},
+			"outcome_condition":{"not_decided_yet":false},
+			"resources":{"vendor_extension":{"units":"opaque"}},
+			"execution_profile":{"future_profile_form":[1,2,3]},
+			"cache_policy":{"unknown_mode":{"nested":null}}
+		}]
+	}`)
+	violations, err := Validate(candidate)
+	if err != nil {
+		t.Fatalf("Validate: %v", err)
+	}
+	if len(violations) != 0 {
+		t.Fatalf("nested undecided object contents must remain opaque, got: %v", violations)
 	}
 }
 
@@ -415,6 +485,45 @@ func TestSchemaNonStringCapabilityRejected(t *testing.T) {
 	}
 }
 
+func TestSchemaWronglyTypedKnownFieldsRejected(t *testing.T) {
+	candidate := readFile(t, "testdata/schema/wrongly-typed-known-fields.json")
+	violations, err := Validate(candidate)
+	if err != nil {
+		t.Fatalf("Validate: %v", err)
+	}
+	assertViolationsExactly(t, violations, []Violation{
+		{Path: "/operations/0/description", Message: "must be a string"},
+		{Path: "/operations/0/outputs/0/type", Message: "must be a string"},
+		{Path: "/operations/0/outputs/0/optional", Message: "must be a boolean"},
+		{Path: "/operations/0/arguments/0/type", Message: "must be a string"},
+		{Path: "/operations/0/arguments/0/default", Message: "must be a non-null scalar"},
+		{Path: "/operations/0/arguments/0/enum", Message: "must be an array"},
+		{Path: "/operations/0/arguments/0/required", Message: "must be a boolean"},
+	})
+}
+
+func TestSchemaArgumentEnumRejectsNonScalarEntry(t *testing.T) {
+	candidate := []byte(`{
+		"document_kind":"schema",
+		"format_version":"t1-plan-conformance-schema-v1",
+		"fixture_id":"invalid-enum-entry",
+		"fixture_version":"experimental-v1",
+		"status":"experimental",
+		"operations":[{
+			"id":"operation",
+			"arguments":[{"name":"argument","default":1,"enum":["one",true,2,null]}]
+		}]
+	}`)
+	violations, err := Validate(candidate)
+	if err != nil {
+		t.Fatalf("Validate: %v", err)
+	}
+	assertViolationsExactly(t, violations, []Violation{{
+		Path:    "/operations/0/arguments/0/enum/3",
+		Message: "must be a non-null scalar",
+	}})
+}
+
 func TestSchemaMissingFormatVersionRejected(t *testing.T) {
 	candidate := readFile(t, "testdata/schema/missing-version.json")
 	violations, err := Validate(candidate)
@@ -497,6 +606,49 @@ func TestMissingDocumentKindRejected(t *testing.T) {
 	}
 	if !hasViolationAtPath(violations, "/document_kind") {
 		t.Fatalf("expected a violation at /document_kind, got: %v", violations)
+	}
+}
+
+func TestKnownEnvelopeFieldsReportWrongTypes(t *testing.T) {
+	tests := []struct {
+		name string
+		raw  string
+		want Violation
+	}{
+		{
+			name: "document kind",
+			raw:  `{"document_kind":7}`,
+			want: Violation{Path: "/document_kind", Message: "must be a string"},
+		},
+		{
+			name: "format version",
+			raw:  `{"document_kind":"plan","format_version":7,"fixture_id":"fixture","fixture_version":"v1","status":"experimental"}`,
+			want: Violation{Path: "/format_version", Message: "must be a string"},
+		},
+		{
+			name: "fixture id",
+			raw:  `{"document_kind":"plan","format_version":"t1-plan-conformance-plan-v2","fixture_id":false,"fixture_version":"v1","status":"experimental"}`,
+			want: Violation{Path: "/fixture_id", Message: "must be a string"},
+		},
+		{
+			name: "fixture version",
+			raw:  `{"document_kind":"plan","format_version":"t1-plan-conformance-plan-v2","fixture_id":"fixture","fixture_version":[],"status":"experimental"}`,
+			want: Violation{Path: "/fixture_version", Message: "must be a string"},
+		},
+		{
+			name: "status",
+			raw:  `{"document_kind":"plan","format_version":"t1-plan-conformance-plan-v2","fixture_id":"fixture","fixture_version":"v1","status":{}}`,
+			want: Violation{Path: "/status", Message: "must be a string"},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			violations, err := Validate([]byte(test.raw))
+			if err != nil {
+				t.Fatalf("Validate: %v", err)
+			}
+			assertViolationsExactly(t, violations, []Violation{test.want})
+		})
 	}
 }
 

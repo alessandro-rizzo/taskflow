@@ -1,6 +1,7 @@
 package conformance
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -28,9 +29,14 @@ func Validate(raw []byte) ([]Violation, error) {
 		return nil, err
 	}
 
-	kindStr, kindIsString := doc["document_kind"].(string)
+	kindRaw, kindPresent := doc["document_kind"]
+	kindStr, kindIsString := kindRaw.(string)
 	switch {
-	case !kindIsString || kindStr == "":
+	case !kindPresent:
+		return []Violation{{Path: "/document_kind", Message: "required"}}, nil
+	case !kindIsString:
+		return []Violation{{Path: "/document_kind", Message: "must be a string"}}, nil
+	case kindStr == "":
 		return []Violation{{Path: "/document_kind", Message: "required"}}, nil
 	case DocumentKind(kindStr) == DocumentKindPlan:
 		return validatePlan(doc), nil
@@ -52,10 +58,8 @@ func Validate(raw []byte) ([]Violation, error) {
 func validateEnvelope(doc map[string]any, expectedFormatVersion string) []Violation {
 	var violations []Violation
 
-	version, _ := doc["format_version"].(string)
-	if version == "" {
-		violations = append(violations, Violation{Path: "/format_version", Message: "required"})
-	} else if version != expectedFormatVersion {
+	version, validVersion := checkRequiredStringField(&violations, doc, "format_version", "")
+	if validVersion && version != expectedFormatVersion {
 		violations = append(violations, Violation{
 			Path:    "/format_version",
 			Message: fmt.Sprintf("want %q, got %q", expectedFormatVersion, version),
@@ -63,9 +67,7 @@ func validateEnvelope(doc map[string]any, expectedFormatVersion string) []Violat
 	}
 
 	for _, field := range []string{"fixture_id", "fixture_version", "status"} {
-		if s, ok := doc[field].(string); !ok || s == "" {
-			violations = append(violations, Violation{Path: "/" + field, Message: "required"})
-		}
+		checkRequiredStringField(&violations, doc, field, "")
 	}
 
 	return violations
@@ -101,6 +103,39 @@ func validatePlan(doc map[string]any) []Violation {
 		checkRefs(&violations, node, "needs", path, nodeIDs, "node")
 		checkRefs(&violations, node, "consumes", path, artifactIDs, "artifact")
 		checkRefs(&violations, node, "produces", path, artifactIDs, "artifact")
+		for _, field := range []string{"planning_condition", "outcome_condition", "resources", "execution_profile", "cache_policy"} {
+			checkObjectField(&violations, node, field, path)
+		}
+	}
+
+	for i, item := range artifacts {
+		if artifact, ok := item.(map[string]any); ok {
+			path := fmt.Sprintf("/artifacts/%d", i)
+			checkStringField(&violations, artifact, "type", path)
+			checkBoolField(&violations, artifact, "optional", path)
+		}
+	}
+	for i, item := range services {
+		if service, ok := item.(map[string]any); ok {
+			path := fmt.Sprintf("/services/%d", i)
+			checkStringField(&violations, service, "name", path)
+			checkStringField(&violations, service, "route", path)
+		}
+	}
+	for i, item := range secrets {
+		if secret, ok := item.(map[string]any); ok {
+			path := fmt.Sprintf("/secrets/%d", i)
+			checkStringField(&violations, secret, "capability", path)
+			checkStringField(&violations, secret, "resolved_by", path)
+		}
+	}
+	for i, item := range effects {
+		if effect, ok := item.(map[string]any); ok {
+			path := fmt.Sprintf("/effects/%d", i)
+			for _, field := range []string{"kind", "target", "idempotency_key", "authorized_actor"} {
+				checkStringField(&violations, effect, field, path)
+			}
+		}
 	}
 
 	return violations
@@ -120,10 +155,18 @@ func validateSchema(doc map[string]any) []Violation {
 			continue
 		}
 		path := fmt.Sprintf("/operations/%d", i)
+		checkStringField(&violations, op, "description", path)
 
 		outputs, outViolations := typedArrayField(op, "outputs", path)
 		violations = append(violations, outViolations...)
 		collectIdentifiers(&violations, outputs, path+"/outputs", map[string]bool{"id": true, "type": true, "optional": true}, "id")
+		for j, item := range outputs {
+			if output, ok := item.(map[string]any); ok {
+				outputPath := fmt.Sprintf("%s/outputs/%d", path, j)
+				checkStringField(&violations, output, "type", outputPath)
+				checkBoolField(&violations, output, "optional", outputPath)
+			}
+		}
 
 		args, argViolations := typedArrayField(op, "arguments", path)
 		violations = append(violations, argViolations...)
@@ -134,6 +177,15 @@ func validateSchema(doc map[string]any) []Violation {
 		// names, or an argument missing "name" entirely, produced zero
 		// violations).
 		collectIdentifiers(&violations, args, path+"/arguments", knownArgumentFields, "name")
+		for j, item := range args {
+			if argument, ok := item.(map[string]any); ok {
+				argumentPath := fmt.Sprintf("%s/arguments/%d", path, j)
+				checkStringField(&violations, argument, "type", argumentPath)
+				checkScalarField(&violations, argument, "default", argumentPath)
+				checkScalarArrayField(&violations, argument, "enum", argumentPath)
+				checkBoolField(&violations, argument, "required", argumentPath)
+			}
+		}
 
 		checkStringArrayField(&violations, op, "required_effects", path)
 		checkStringArrayField(&violations, op, "required_capabilities", path)
@@ -209,9 +261,18 @@ func collectIdentifiers(violations *[]Violation, items []any, arrayPath string, 
 				*violations = append(*violations, Violation{Path: path + "/" + k, Message: "unknown field"})
 			}
 		}
-		id, idIsString := obj[idField].(string)
-		if !idIsString || id == "" {
+		idRaw, idPresent := obj[idField]
+		if !idPresent {
 			*violations = append(*violations, Violation{Path: path + "/" + idField, Message: "required"})
+			continue
+		}
+		id, idIsString := idRaw.(string)
+		if !idIsString {
+			*violations = append(*violations, Violation{Path: path + "/" + idField, Message: "must be a string"})
+			continue
+		}
+		if id == "" {
+			*violations = append(*violations, Violation{Path: path + "/" + idField, Message: "must not be empty"})
 			continue
 		}
 		seen[id]++
@@ -223,6 +284,101 @@ func collectIdentifiers(violations *[]Violation, items []any, arrayPath string, 
 		}
 	}
 	return ids
+}
+
+// checkRequiredStringField validates a field whose presence and non-empty
+// string value were already part of this harness's envelope/identity rules.
+// It returns the string only when callers may safely apply further semantic
+// checks (for example, the format-version comparison).
+func checkRequiredStringField(violations *[]Violation, obj map[string]any, field, parentPath string) (string, bool) {
+	path := parentPath + "/" + field
+	raw, present := obj[field]
+	if !present {
+		*violations = append(*violations, Violation{Path: path, Message: "required"})
+		return "", false
+	}
+	value, ok := raw.(string)
+	if !ok {
+		*violations = append(*violations, Violation{Path: path, Message: "must be a string"})
+		return "", false
+	}
+	if value == "" {
+		*violations = append(*violations, Violation{Path: path, Message: "must not be empty"})
+		return "", false
+	}
+	return value, true
+}
+
+// The remaining helpers validate a known field only when it is present. This
+// ticket closes impossible-type acceptance without expanding the harness's
+// existing required-field contract before Gate 1.
+func checkStringField(violations *[]Violation, obj map[string]any, field, parentPath string) {
+	raw, present := obj[field]
+	if !present {
+		return
+	}
+	if _, ok := raw.(string); !ok {
+		*violations = append(*violations, Violation{Path: parentPath + "/" + field, Message: "must be a string"})
+	}
+}
+
+func checkBoolField(violations *[]Violation, obj map[string]any, field, parentPath string) {
+	raw, present := obj[field]
+	if !present {
+		return
+	}
+	if _, ok := raw.(bool); !ok {
+		*violations = append(*violations, Violation{Path: parentPath + "/" + field, Message: "must be a boolean"})
+	}
+}
+
+func checkObjectField(violations *[]Violation, obj map[string]any, field, parentPath string) {
+	raw, present := obj[field]
+	if !present {
+		return
+	}
+	if _, ok := raw.(map[string]any); !ok {
+		*violations = append(*violations, Violation{Path: parentPath + "/" + field, Message: "must be an object"})
+	}
+}
+
+func checkScalarField(violations *[]Violation, obj map[string]any, field, parentPath string) {
+	raw, present := obj[field]
+	if !present {
+		return
+	}
+	if !isNonNullScalar(raw) {
+		*violations = append(*violations, Violation{Path: parentPath + "/" + field, Message: "must be a non-null scalar"})
+	}
+}
+
+func checkScalarArrayField(violations *[]Violation, obj map[string]any, field, parentPath string) {
+	raw, present := obj[field]
+	if !present {
+		return
+	}
+	values, ok := raw.([]any)
+	if !ok {
+		*violations = append(*violations, Violation{Path: parentPath + "/" + field, Message: "must be an array"})
+		return
+	}
+	for i, value := range values {
+		if !isNonNullScalar(value) {
+			*violations = append(*violations, Violation{
+				Path:    fmt.Sprintf("%s/%s/%d", parentPath, field, i),
+				Message: "must be a non-null scalar",
+			})
+		}
+	}
+}
+
+func isNonNullScalar(value any) bool {
+	switch value.(type) {
+	case string, bool, json.Number:
+		return true
+	default:
+		return false
+	}
 }
 
 // checkStringArrayField verifies obj[field] (if present) is an array whose
