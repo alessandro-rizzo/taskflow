@@ -3,6 +3,11 @@
 Roadmap tranche: T1. Task: TF-002.06. Version: `t1-lifecycle-faults-v2-experimental`
 (`ScenarioVersion` in `lifecycle.go`, roadmap section 3 rule 3a).
 
+Lease-manager state has its own independent byte-format version,
+`t1-lifecycle-lease-state-v1-experimental` (`LeaseStateFormatVersion` in
+`lease_state.go`). It is pre-Gate-1 evidence, not a migration promise or a
+choice of production storage engine.
+
 Status: pre-Gate-1 experimental fixture/harness. Not a production package,
 carries no compatibility promise, and must not be imported by any production
 code.
@@ -69,7 +74,29 @@ checks - it does not modify either fixture's own files.
 | Daemon restart | `scenario_daemon_restart_test.go` | Genuinely crosses a persistence boundary (`Journal.Snapshot`/`LoadJournal` into a separate object, not the same in-memory journal); zero lost committed events, checked two ways - byte-for-byte pre/post comparison, AND an independent per-checkpoint count anchored to the constant `StandardLifecycle` (the first check alone cannot catch a bug that always drops one checkpoint, since that reproduces identically before and after "restart" - see "Adversarial self-checks" below); covers restarts during admission, execution, and cleanup (E05's explicit requirement) with both injection timings; recovery never repeats work and never resumes a cancelled run |
 | Worker loss | `scenario_worker_loss_test.go` | Loss is detected with a measured, bounded detection latency; the worker's own reservation is durably released; retry starts from scratch; strict event ordering (worker-lost < retry-complete < downstream-placed), not just existence; the detecting controller itself can crash before/after recording the loss (AC #2) |
 | Cancellation | `scenario_cancellation_test.go` | Both W2 golden sub-cases, matching W2's actual setup (primary work already complete in both); cancel-while-running records a resource-released event and retains the completed primary work's record; cancel-before-placement places nothing downstream; a cancelled run is never resumed by daemon-restart recovery; the controller recording cancellation can itself crash before/after that commit (AC #2) |
-| Lease expiry | `scenario_lease_expiry_test.go` | The full w3 record shape (namespace_id, lease_id, resource_id, outcome) per event, not only event names; multiple simultaneously-expiring leases reclaim in deterministic sorted-ID order (not Go map iteration order); an injection seam between each reclamation stage so a crash mid-reclamation resumes without repeating stages (AC #2) |
+| Lease expiry | `lease.go`, `lease_state.go`, `scenario_lease_expiry_test.go` | The full w3 record shape (namespace_id, lease_id, resource_id, outcome) per event, not only event names; multiple simultaneously-expiring leases reclaim in deterministic sorted-ID order (not Go map iteration order); all four reclamation stages can crash before or after commit, then round-trip journal and lease state into distinct objects and resume without repeating or skipping a stage |
+
+## Journal durability versus lease-state durability
+
+The two persistence boundaries deliberately remain distinct:
+
+- `Journal.Snapshot`/`LoadJournal` preserves committed event records and their
+  sequence. It does not preserve the lease manager's clock or its decision
+  about which reclamation stage should execute next.
+- `LeaseManager.LeaseStateSnapshot`/`LoadLeaseManager` preserves the logical
+  clock, lease identity and TTL fields, active state, and the number of
+  reclamation stages already committed. Lease records are serialized in stable
+  ID order. Loading creates a new manager and new lease objects, requires one
+  matching acquisition record per saved lease, validates renewal/release
+  identity and terminal activity, and rejects a saved stage that disagrees
+  with the journal's ordered committed prefix.
+
+The every-stage restart test snapshots both boundaries after each injected
+crash, reloads both from bytes, and resumes only through the new manager. The
+corrected guarantee is therefore precise: for the fixture's deterministic
+state machine, a before- or after-commit crash at any reclamation stage retains
+the exact committed prefix and produces each final event exactly once after
+reload. Reusing the original manager would not satisfy this guarantee.
 
 ## Adversarial self-checks performed during implementation
 
@@ -87,6 +114,18 @@ checks - it does not modify either fixture's own files.
 - Confirmed the lease-expiry sorted-order fix is not order-dependent by
   running the multi-lease test across several iterations with leases
   acquired in non-sorted order.
+- Confirmed lease progress is not surviving by pointer identity: the restart
+  matrix compares the old and new manager, journal, and lease objects, while a
+  separate round-trip test mutates the original after reload and verifies the
+  reconstructed clock and lease remain unchanged.
+- The lease-state loader rejects malformed and trailing JSON, missing or
+  incompatible versions, unknown fields, duplicate or invalid lease records,
+  impossible tick/stage combinations, partial inactive reclamation, missing
+  leases or acquisitions, acquisition/renewal/release identity mismatches,
+  release/reclamation contradictions, and disagreement between journal events
+  and saved stage. A normally released inactive stage-0 lease remains valid,
+  as does the active final-stage state produced by a crash immediately after
+  the last reclamation commit and before in-memory finalization.
 
 ## Limitations
 
@@ -101,6 +140,15 @@ checks - it does not modify either fixture's own files.
   TTL/heartbeat/detection-latency timing budget - the 50-tick bound in
   `scenario_worker_loss_test.go` is this test's own illustrative choice,
   not a roadmap number.
+- Lease and journal snapshots are in-memory JSON byte round-trips. They do not
+  exercise file writes, database transactions, fsync behavior, torn writes,
+  concurrent writers, or process-level crash atomicity. Because the two
+  envelopes are captured separately, this fixture validates their consistency
+  on reload but does not claim a production mechanism for atomically storing
+  them. E05 must measure that mechanism before T4; this fixture intentionally
+  does not select SQLite or any alternative.
+- The lease-state loader rejects incompatible versions; it implements no
+  migrations. Compatibility remains explicitly deferred before Gate 1.
 - This package's checkpoint vocabulary and event shapes are this ticket's
   own abstraction. E05's eventual scheduler simulation (and any real
   daemon after Gate 1) is not obligated to reuse them; they exist so E05

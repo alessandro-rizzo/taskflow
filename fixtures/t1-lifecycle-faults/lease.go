@@ -88,35 +88,30 @@ var reclaimStages = []Checkpoint{
 
 // reclaim runs leaseID's reclamation sequence starting from its current
 // reclaimStage, committing one event per stage with the same
-// namespace_id/resource_id fields fixtures/w3's fixture carries. If timing
-// is non-empty, reclaim simulates a crash immediately before or after the
-// commit for the FIRST stage it processes this call - this is the
-// injection seam AC #2 requires between lease.expired, orphan.detected,
-// and orphan.reclaimed: a controller can die in the middle of reclaiming
-// an expired lease, and a later call (ResumeReclamation) must continue
-// from exactly where it left off rather than re-emitting already-committed
-// stages.
-func (m *LeaseManager) reclaim(leaseID string, timing FaultTiming) error {
+// namespace_id/resource_id fields fixtures/w3's fixture carries. A fault can
+// target either side of any named reclamation-stage commit. This lets the
+// fixture persist both the journal and the manager immediately after the
+// simulated crash, reconstruct a distinct manager, and prove that resumption
+// neither repeats nor skips a committed stage.
+func (m *LeaseManager) reclaim(leaseID string, fault *Fault) error {
 	l, ok := m.leases[leaseID]
 	if !ok {
 		return nil
 	}
-	first := true
 	for l.reclaimStage < len(reclaimStages) {
 		stage := reclaimStages[l.reclaimStage]
 		outcome := "expired"
 		if stage == "orphan.reclaimed" {
 			outcome = "reclaimed"
 		}
-		if first && timing == BeforeCommit {
+		if fault != nil && fault.AtCheckpoint == stage && fault.Timing == BeforeCommit {
 			return ErrCrashed
 		}
 		m.journal.commitFull(leaseID, stage, outcome, "", l.NamespaceID, l.ResourceID)
 		l.reclaimStage++
-		if first && timing == AfterCommit {
+		if fault != nil && fault.AtCheckpoint == stage && fault.Timing == AfterCommit {
 			return ErrCrashed
 		}
-		first = false
 	}
 	l.active = false
 	return nil
@@ -126,7 +121,7 @@ func (m *LeaseManager) reclaim(leaseID string, timing FaultTiming) error {
 // an earlier reclaim call (via CheckExpiry or CheckExpiryOne) left off
 // after a simulated crash, without re-emitting stages already committed.
 func (m *LeaseManager) ResumeReclamation(leaseID string) error {
-	return m.reclaim(leaseID, "")
+	return m.reclaim(leaseID, nil)
 }
 
 // CheckExpiry evaluates every active lease against the current logical
@@ -149,7 +144,7 @@ func (m *LeaseManager) CheckExpiry() []string {
 
 	var reclaimed []string
 	for _, id := range ids {
-		if err := m.reclaim(id, ""); err == nil {
+		if err := m.reclaim(id, nil); err == nil {
 			reclaimed = append(reclaimed, id)
 		}
 	}
@@ -157,15 +152,14 @@ func (m *LeaseManager) CheckExpiry() []string {
 }
 
 // CheckExpiryOne evaluates a single lease for expiry and, if expired, runs
-// its reclamation sequence with the given injected fault timing - the
-// single-lease entry point TestScenarioLeaseExpiry uses to exercise AC #2's
-// before/after injection points for this scenario.
-func (m *LeaseManager) CheckExpiryOne(leaseID string, timing FaultTiming) error {
+// its reclamation sequence with an optional named-stage fault. The Fault's
+// AtCheckpoint must be one of reclaimStages for it to fire.
+func (m *LeaseManager) CheckExpiryOne(leaseID string, fault *Fault) error {
 	l, ok := m.leases[leaseID]
 	if !ok || !l.active || m.now-l.renewedAt < l.TTL {
 		return nil
 	}
-	return m.reclaim(leaseID, timing)
+	return m.reclaim(leaseID, fault)
 }
 
 // Active reports whether leaseID is still tracked as active.
