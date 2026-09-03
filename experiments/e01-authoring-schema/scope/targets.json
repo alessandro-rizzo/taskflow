@@ -1,0 +1,158 @@
+{
+  "contract_version": "e01-measurement-contract-v1",
+  "roadmap_id": "E01",
+  "status": "predeclared-phase-a",
+  "schema_format": "t1-plan-conformance-schema-v1",
+  "candidate_output_names": {
+    "W1": "w1-fast-project-check.schema.json",
+    "W2": "w2-cross-target-artifact-pipeline.schema.json",
+    "W3": "w3-isolated-native-mobile-stack.schema.json",
+    "effect": "e01-effect-probe.schema.json"
+  },
+  "typed_composition_contract": {
+    "applies_to_candidates": ["A", "B", "C", "D"],
+    "positive_controls_must_type_check": true,
+    "negative_cases": [
+      "Artifact[BackendBinary]-as-Artifact[IOSApp]",
+      "Endpoint[API]-as-distinct-endpoint"
+    ],
+    "typescript_requires_pinned_semantic_checker": true,
+    "typescript_transpilation_only_is_accepted": false,
+    "unavailable_checker_result": "reproducible-infeasibility"
+  },
+  "workflows": [
+    {
+      "roadmap_workflow": "W1",
+      "fixture_id": "w1-fast-project-check",
+      "fixture_version": "t1-experimental-v1",
+      "operation_id": "check",
+      "scope": "full schema and W1 authoring control",
+      "golden_path": "fixtures/t1-plan-conformance/goldens/schema/w1-fast-project-check.schema.json",
+      "golden_sha256": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+      "logical_authoring_shape": {
+        "status": "experiment-only-not-plan-ir",
+        "execution": "fake",
+        "composition_rule": "dependencies are authored by passing typed handles, not only string identifiers",
+        "source": {
+          "id": "source",
+          "type": "Source"
+        },
+        "child_work": [
+          {
+            "id": "format",
+            "type": "Check",
+            "consumes": ["source"],
+            "produces": []
+          },
+          {
+            "id": "test",
+            "type": "Report[GoTests]",
+            "consumes": ["source"],
+            "produces": [
+              {
+                "id": "test-report",
+                "type": "Report[GoTests]",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "id": "lint",
+            "type": "Check",
+            "consumes": ["source"],
+            "produces": []
+          }
+        ],
+        "aggregate": {
+          "id": "check",
+          "type": "Check",
+          "depends_on": ["format", "test", "lint"],
+          "exposes": [
+            {
+              "id": "test-report",
+              "from": "test",
+              "type": "Report[GoTests]",
+              "optional": false
+            },
+            {
+              "id": "diagnostics",
+              "from": "check",
+              "type": "Report[Diagnostics]",
+              "optional": true
+            }
+          ]
+        },
+        "typed_handle_relations": [
+          {"from": "source", "to": "format"},
+          {"from": "source", "to": "test"},
+          {"from": "source", "to": "lint"},
+          {"from": "format", "to": "check"},
+          {"from": "test", "to": "check"},
+          {"from": "lint", "to": "check"}
+        ]
+      }
+    },
+    {
+      "roadmap_workflow": "W2",
+      "fixture_id": "w2-cross-target-artifact-pipeline",
+      "fixture_version": "t1-w2-experimental-v1",
+      "operation_id": "build-and-verify",
+      "scope": "build and typed artifact public surface only",
+      "golden_path": "fixtures/t1-plan-conformance/goldens/schema/w2-cross-target-artifact-pipeline.schema.json",
+      "golden_sha256": "877bfcfabfcb7ca9875c55ee913adcb6602c39fe14da5691292a010a6945b9c3"
+    },
+    {
+      "roadmap_workflow": "W3",
+      "fixture_id": "w3-isolated-native-mobile-stack",
+      "fixture_version": "t1-w3-fixture-v1-experimental",
+      "operation_id": "mobile-e2e",
+      "scope": "public operation and typed endpoint composition only",
+      "golden_path": "fixtures/t1-plan-conformance/goldens/schema/w3-isolated-native-mobile-stack.schema.json",
+      "golden_sha256": "ff1d00afc5bf4d284a78db336e8d8d74c2e80ee95614a792321904af2be5f761",
+      "fixture_source_bindings": [
+        {
+          "path": "fixtures/w3/spec.md",
+          "sha256": "3604c22837c2c377309c4d08b1eeeef862fc150b195b545bed981745fd1768a4"
+        },
+        {
+          "path": "fixtures/w3/examples/namespace-a.json",
+          "sha256": "b86378913dcc9f7e80c8a47cf387f68a5a6130d88592fa02be72229e85a3583e"
+        },
+        {
+          "path": "fixtures/w3/examples/namespace-b.json",
+          "sha256": "22db508434c6997cc8ec4bd9b0dee4bc0a01181380ca196e0abb875c865ab682"
+        }
+      ]
+    }
+  ],
+  "synthetic_effect_probe": {
+    "path": "experiments/e01-authoring-schema/scope/effect-probe.schema.json",
+    "fixture_id": "e01-effect-probe",
+    "fixture_version": "e01-effect-probe-v1",
+    "operation_id": "publish-preview",
+    "status": "experimental-synthetic"
+  },
+  "low_level_control": {
+    "path": "experiments/e01-authoring-schema/scope/w1-low-level-control.go.txt",
+    "language": "go",
+    "syntax_must_parse": true,
+    "formatter_command": "gofmt -d experiments/e01-authoring-schema/scope/w1-low-level-control.go.txt",
+    "formatter_must_be_stable": true,
+    "authored_loc": 56,
+    "maximum_passing_candidate_loc": 42,
+    "low_level_concept_count": 10,
+    "maximum_passing_candidate_concepts": 7,
+    "concepts": [
+      "operation-registration",
+      "argument-schema",
+      "output-schema",
+      "capability-request",
+      "graph-builder",
+      "runner-binding",
+      "node-definition",
+      "source-selection",
+      "dependency-edge",
+      "aggregate-join"
+    ]
+  }
+}

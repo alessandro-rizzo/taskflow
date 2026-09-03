@@ -1,0 +1,48 @@
+{
+  "document_kind": "schema",
+  "format_version": "t1-plan-conformance-schema-v1",
+  "fixture_id": "e01-effect-probe",
+  "fixture_version": "e01-effect-probe-v1",
+  "status": "experimental-synthetic",
+  "operations": [
+    {
+      "id": "publish-preview",
+      "description": "Describe a policy-gated release publication without evaluating or authorizing its operation body.",
+      "arguments": [
+        {
+          "name": "environment",
+          "type": "string",
+          "enum": [
+            "staging",
+            "production"
+          ],
+          "required": true
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "enum": [
+            "beta",
+            "stable"
+          ],
+          "default": "beta",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "id": "published-release",
+          "type": "Effect[PublishedRelease]",
+          "optional": false
+        }
+      ],
+      "required_effects": [
+        "publish-release"
+      ],
+      "required_capabilities": [
+        "network:app-store-connect",
+        "secret:app-store-signing"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+version: "3"
+
+tasks:
+  check:
+    desc: Verify the E01 Phase A contract without candidate implementation
+    cmds:
+      - python3 scripts/verify-phase-a.py
+      - task: validate:effect-probe
+
+  validate:effect-probe:
+    desc: Validate the synthetic effect schema through the frozen T1 harness
+    dir: ../../fixtures/t1-plan-conformance
+    cmds:
+      - >-
+        go run ./cmd/t1conform
+        --candidate ../../experiments/e01-authoring-schema/scope/effect-probe.schema.json
+        --golden ../../experiments/e01-authoring-schema/scope/effect-probe.schema.json

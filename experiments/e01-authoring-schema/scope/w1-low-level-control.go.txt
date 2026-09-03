@@ -1,0 +1,77 @@
+package e01control
+
+// Experiment-only comparison fixture. This resembles explicit low-level graph
+// and discovery registration but intentionally imports nothing and does not
+// compile. It is not an API proposal or candidate implementation.
+//
+// E01-CONCEPT: operation-registration
+// E01-CONCEPT: argument-schema
+// E01-CONCEPT: output-schema
+// E01-CONCEPT: capability-request
+// E01-CONCEPT: graph-builder
+// E01-CONCEPT: runner-binding
+// E01-CONCEPT: node-definition
+// E01-CONCEPT: source-selection
+// E01-CONCEPT: dependency-edge
+// E01-CONCEPT: aggregate-join
+
+// E01-COUNT-BEGIN
+type CheckArguments struct {
+	Verbosity   string
+	ChangedOnly bool
+}
+
+func registerW1(project *LowLevelProject) {
+	project.RegisterOperation(LowLevelOperation{
+		ID:          "check",
+		Description: "Format check, unit tests, and static analysis, aggregated into one pass/fail Check.",
+		Arguments: []ArgumentSchema{
+			{
+				Name:     "verbosity",
+				Type:     "string",
+				Enum:     []string{"quiet", "normal", "verbose"},
+				Default:  "normal",
+				Required: false,
+			},
+			{
+				Name:     "changed-only",
+				Type:     "boolean",
+				Default:  false,
+				Required: false,
+			},
+		},
+		Outputs: []OutputSchema{
+			{ID: "test-report", Type: "Report[GoTests]", Optional: false},
+			{ID: "diagnostics", Type: "Report[Diagnostics]", Optional: true},
+		},
+		RequiredCapabilities: []string{"filesystem-read"},
+		Build: func(ctx LowLevelBuildContext, _ CheckArguments) LowLevelValue {
+			source := ctx.SelectSource("**/*.go", "go.mod", "go.sum")
+			task := ctx.BindRunner("taskfile")
+			format := ctx.Node(LowLevelNode{
+				ID:     "format",
+				Inputs: []LowLevelValue{source},
+				Run:    task.Invoke("fmt:check"),
+			})
+			tests := ctx.Node(LowLevelNode{
+				ID:      "test",
+				Inputs:  []LowLevelValue{source},
+				Run:     task.Invoke("test"),
+				Outputs: []string{"test-report"},
+			})
+			lint := ctx.Node(LowLevelNode{
+				ID:     "lint",
+				Inputs: []LowLevelValue{source},
+				Run:    task.Invoke("lint"),
+			})
+			return ctx.Node(LowLevelNode{
+				ID:      "check",
+				Needs:   []LowLevelValue{format, tests, lint},
+				Run:     ctx.AggregateChecks(),
+				Outputs: []string{"test-report", "diagnostics"},
+			})
+		},
+	})
+}
+
+// E01-COUNT-END
