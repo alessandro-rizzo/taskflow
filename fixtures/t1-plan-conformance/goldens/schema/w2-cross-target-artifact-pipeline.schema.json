@@ -1,0 +1,21 @@
+{
+  "document_kind": "schema",
+  "format_version": "t1-plan-conformance-schema-v1",
+  "fixture_id": "w2-cross-target-artifact-pipeline",
+  "fixture_version": "t1-w2-experimental-v1",
+  "status": "experimental",
+  "operations": [
+    {
+      "id": "build-and-verify",
+      "description": "Build the backend binary on Linux, run its Go test suite on a compatible Linux worker, and produce a local inspection summary.",
+      "arguments": [],
+      "outputs": [
+        { "id": "backend-binary", "type": "Artifact[BackendBinary]", "optional": false },
+        { "id": "go-tests-report", "type": "Report[GoTests]", "optional": false },
+        { "id": "inspection-summary", "type": "LocalInspection", "optional": false }
+      ],
+      "required_effects": [],
+      "required_capabilities": ["linux-execution-profile"]
+    }
+  ]
+}
