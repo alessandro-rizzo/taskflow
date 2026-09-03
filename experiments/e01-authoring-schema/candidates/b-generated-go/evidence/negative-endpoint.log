@@ -1,0 +1,4 @@
+FAIL	e01/candidateb/verify-TEMP/endpoint [build failed]
+FAIL
+# e01/candidateb/verify-TEMP/endpoint
+verify-TEMP/endpoint/endpoint.go:3:34: cannot use b.Endpoint[b.API]{} (value of struct type candidateb.Endpoint[candidateb.API]) as candidateb.Endpoint[candidateb.OtherAPI] value in argument to b.ConnectOther

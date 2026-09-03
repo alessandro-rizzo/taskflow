@@ -1,0 +1,12 @@
+{
+  "authored_source": "project.go",
+  "authored_source_sha256": "e759b5b113a99a9eecce901e2f66b0c133dae417d3380dff1eea5f1a786f9c96",
+  "generator": "generator.go",
+  "generated": [
+    "w1-fast-project-check.schema.json",
+    "w2-cross-target-artifact-pipeline.schema.json",
+    "w3-isolated-native-mobile-stack.schema.json",
+    "e01-effect-probe.schema.json",
+    "w1-logical-trace.json"
+  ]
+}

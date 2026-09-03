@@ -1,0 +1,5 @@
+package compilefail
+
+import c "e01/candidatec"
+
+func incompatibleArtifact() { c.AcceptIOS(c.Artifact[c.BackendBinary]{}) }

@@ -1,0 +1,7 @@
+{
+  "candidate": "A",
+  "plan_ir": false,
+  "real_execution": false,
+  "hostile_code_sandbox": false,
+  "known_burden": "Explicit schema metadata and registration remain author-visible."
+}

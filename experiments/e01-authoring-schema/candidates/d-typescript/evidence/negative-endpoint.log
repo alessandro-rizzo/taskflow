@@ -1,0 +1,10 @@
+typefail/endpoint.ts(3,14): error TS2345: Argument of type 'Endpoint<API>' is not assignable to parameter of type 'Endpoint<OtherAPI>'.
+  Types of property 'invariant' are incompatible.
+    Type '(value: API) => API' is not assignable to type '(value: OtherAPI) => OtherAPI'.
+      Types of parameters 'value' and 'value' are incompatible.
+        Property '__api' is missing in type 'OtherAPI' but required in type 'API'.
+typefail/endpoint.ts(4,7): error TS2322: Type 'Endpoint<API>' is not assignable to type 'Endpoint<OtherAPI>'.
+  Types of property 'invariant' are incompatible.
+    Type '(value: API) => API' is not assignable to type '(value: OtherAPI) => OtherAPI'.
+      Types of parameters 'value' and 'value' are incompatible.
+        Property '__api' is missing in type 'OtherAPI' but required in type 'API'.

@@ -1,0 +1,15 @@
+{
+  "candidate": "D",
+  "approach": "minimal TypeScript descriptors",
+  "verification": "task check",
+  "discovery": "bun run cli.ts discover SCOPE",
+  "validation": "bun run cli.ts validate SCOPE JSON",
+  "w1_trace": "bun run cli.ts trace",
+  "prewarm": "bun run cli.ts discover W1",
+  "warm_measurement": "bun run cli.ts discover W1",
+  "formatter": "bun run scripts/format-source.mjs candidate.ts",
+  "authored_regions": ["candidate.ts:E01-AUTHOR-BEGIN..E01-AUTHOR-END"],
+  "generated_paths": [],
+  "dependencies": ["typescript@5.9.3"],
+  "forbidden_generation_inputs": ["fixtures/**", "prototype/bootstrap/**", "../other-candidate/**"]
+}

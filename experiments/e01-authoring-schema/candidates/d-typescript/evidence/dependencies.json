@@ -1,0 +1,9 @@
+{
+  "candidate": "D",
+  "runtime": ["Bun 1.3.13"],
+  "semantic_checker": "typescript@5.9.3",
+  "lockfile": "bun.lock",
+  "imports_prototype": false,
+  "imports_fixtures": false,
+  "imports_other_candidates": false
+}

@@ -1,0 +1,63 @@
+{
+  "candidate": "D",
+  "approach": "minimal-typescript-descriptors",
+  "semantic_checker": "Version 5.9.3",
+  "checker_lock_sha256": "932b7150918d4627faa4be7c29ece9c28f56892c50cfb098c5b0d35dec1bf11d",
+  "formatter": "TypeScript compiler API printer",
+  "formatter_idempotent": true,
+  "authored_loc": 35,
+  "low_level_concepts": [
+    "operation-registration",
+    "argument-schema",
+    "output-schema",
+    "capability-request"
+  ],
+  "nominal_typing_phantom_members": 3,
+  "determinism_runs_per_scope": 10,
+  "body_sentinel_absent": true,
+  "positive_typing": "bun run typecheck",
+  "negative_typing": [
+    "artifact",
+    "endpoint"
+  ],
+  "diagnostic_cases": [
+    {
+      "operation": "check",
+      "path": "unknown",
+      "expected": "known argument",
+      "actual": true,
+      "human": "operation check argument unknown expected known argument; got true"
+    },
+    {
+      "operation": "check",
+      "path": "changed-only",
+      "expected": "boolean",
+      "actual": "yes",
+      "human": "operation check argument changed-only expected boolean; got yes"
+    },
+    {
+      "operation": "check",
+      "path": "verbosity",
+      "expected": "one of [quiet normal verbose]",
+      "actual": "loud",
+      "human": "operation check argument verbosity expected one of [quiet normal verbose]; got loud"
+    },
+    {
+      "operation": "publish-preview",
+      "path": "environment",
+      "expected": "required string",
+      "actual": null,
+      "human": "operation publish-preview argument environment expected required string; got null"
+    }
+  ],
+  "output_hashes": {
+    "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+    "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+    "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+    "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820"
+  },
+  "versions": {
+    "bun": "1.3.13",
+    "python": "Python 3.9.6"
+  }
+}

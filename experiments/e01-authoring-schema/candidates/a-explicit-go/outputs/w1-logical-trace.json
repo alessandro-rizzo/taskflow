@@ -1,0 +1,90 @@
+{
+  "status": "experiment-only-not-plan-ir",
+  "execution": "fake",
+  "composition_rule": "dependencies are authored by passing typed handles, not only string identifiers",
+  "source": {
+    "id": "source",
+    "type": "Source"
+  },
+  "child_work": [
+    {
+      "id": "format",
+      "type": "Check",
+      "consumes": [
+        "source"
+      ],
+      "produces": []
+    },
+    {
+      "id": "test",
+      "type": "Report[GoTests]",
+      "consumes": [
+        "source"
+      ],
+      "produces": [
+        {
+          "id": "test-report",
+          "type": "Report[GoTests]",
+          "optional": false
+        }
+      ]
+    },
+    {
+      "id": "lint",
+      "type": "Check",
+      "consumes": [
+        "source"
+      ],
+      "produces": []
+    }
+  ],
+  "aggregate": {
+    "id": "check",
+    "type": "Check",
+    "depends_on": [
+      "format",
+      "test",
+      "lint"
+    ],
+    "exposes": [
+      {
+        "id": "test-report",
+        "from": "test",
+        "type": "Report[GoTests]",
+        "optional": false
+      },
+      {
+        "id": "diagnostics",
+        "from": "check",
+        "type": "Report[Diagnostics]",
+        "optional": true
+      }
+    ]
+  },
+  "typed_handle_relations": [
+    {
+      "from": "source",
+      "to": "format"
+    },
+    {
+      "from": "source",
+      "to": "test"
+    },
+    {
+      "from": "source",
+      "to": "lint"
+    },
+    {
+      "from": "format",
+      "to": "check"
+    },
+    {
+      "from": "test",
+      "to": "check"
+    },
+    {
+      "from": "lint",
+      "to": "check"
+    }
+  ]
+}

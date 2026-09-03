@@ -2,8 +2,9 @@
 
 Roadmap experiment: E01. Task: TF-003.06. Risks: R1, R2, R10.
 
-Status: Phase A measurement contract only. No authoring candidate exists in
-this directory yet.
+Status: Phase B smoke implementation complete against the separately committed
+Phase A contract (`1c88ddb`). Comparative measurement and the branch decision
+remain owned by TF-003.07.
 
 Time-box: Phase B stops when all four candidate verification results exist or
 after five working days from the Phase A commit, whichever comes first.
@@ -15,7 +16,7 @@ Can a concise typed project API emit a complete, language-neutral operation
 schema without evaluating operation bodies or inheriting privileged execution
 authority?
 
-The later implementation phase will compare four disposable approaches:
+The experiment contains four disposable approaches:
 
 - A: generic Go values with explicit typed operation registration;
 - B: generic Go values plus code generation from Go declarations;
@@ -23,8 +24,29 @@ The later implementation phase will compare four disposable approaches:
 - D: a minimal TypeScript comparison emitting the same provisional schema.
 
 This experiment does not select an SDK, define a production package, or create
-a new root Go module. Candidate code may begin only after the Phase A contract
-has been reviewed and committed separately.
+a new root Go module.
+
+## Phase B smoke results
+
+All four candidates emit canonically identical W1-W3 and synthetic-effect
+schemas, reproduce the corrected W1 typed composition trace, reject both
+artifact and endpoint misuse, return the required argument diagnostics, remain
+byte-deterministic over ten fresh processes, and avoid evaluating operation
+bodies during discovery or validation.
+
+| Candidate | W1 authored LOC | Low-level concepts | Separately reported burden |
+| --- | ---: | ---: | --- |
+| A explicit Go | 31 | 4 | explicit schema registration |
+| B generated Go | 21 | 3 | 7 annotation lines, 171 generator LOC, 158 generated LOC, 1 tag-reflection site |
+| C reflected Go | 30 | 4 | 4 tag lines, 13 reflection sites |
+| D TypeScript | 35 | 4 | locked TypeScript checker and 3 nominal-typing phantom members |
+
+These are smoke and ergonomics results, not the E01 decision. TF-003.07 still
+must run the predeclared warm/cold measurements and blinded agent trials, review
+the generator/reflection/toolchain burdens, and apply the committed branch
+rules. In particular, B's LOC advantage does not become a recommendation until
+its other gates are assessed, and C cannot win under the contract even though
+it is concise.
 
 ## Phase A contents
 
@@ -51,23 +73,17 @@ From the repository root:
 mise exec -- task --dir experiments/e01-authoring-schema check
 ```
 
-The check validates the Phase A files, passes the synthetic schema through the
-T1 conformance validator, checks the W1 schema/control against the logical
-authoring shape, and fails if a candidate directory exists before the contract
-commit.
+The check runs every standalone candidate gate and then compares completed
+outputs through the T1 conformance harness and the candidate-neutral Phase A
+oracles. Each candidate retains its own schemas, W1 trace, type-failure logs,
+diagnostic results, dependency/count manifest, and limitations.
 
 ## Phase gate
 
-The next action is review, not candidate implementation. Reviewers should
-decide whether the selected defaults in the contract are acceptable,
-especially the 25% authored-line reduction, 30% low-level-concept reduction,
-A-versus-B tie-break, synthetic effect shape, and two-trial agent protocol.
-The typing bar is no longer asymmetric: TypeScript D must use a pinned semantic
-checker for the same positive controls and Artifact/Endpoint negative cases as
-the Go candidates, or record reproducible infeasibility.
-The W3 target is now bound to the landed v1 specification, namespace examples,
-and v1 conformance golden. Only an explicitly approved, standalone Phase A
-commit unlocks Phase B.
+The next action is the TF-003.06 implementation review. TF-003.07 may measure
+and decide only after these candidate implementations and their retained smoke
+evidence are accepted. The W3 target remains hash-bound to its landed v1
+specification, namespace examples, and conformance golden.
 
 The W1 ergonomics result includes both discovery metadata and the authored fake
 composition. A candidate that emits schema but does not author source ->

@@ -1,0 +1,12 @@
+{
+  "candidate": "C",
+  "headline": "formatted non-blank non-comment lines in all listed W1 author regions",
+  "authored_regions": ["candidate.go:E01-AUTHOR-BEGIN..E01-AUTHOR-END"],
+  "closure": ["W1 source", "format child", "test child and report", "lint child", "aggregate check", "six typed relations", "W1 reflected argument/output structs", "W1 operation metadata"],
+  "separate_burdens": {
+    "annotations_or_tags": "measured by scripts/verify.py",
+    "reflection_sites": "measured by scripts/verify.py",
+    "generator_lines": 0,
+    "generated_lines": 0
+  }
+}

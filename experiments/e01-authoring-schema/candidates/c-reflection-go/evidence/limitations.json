@@ -1,0 +1,8 @@
+{
+  "candidate": "C",
+  "plan_ir": false,
+  "real_execution": false,
+  "hostile_code_sandbox": false,
+  "stable_protocol_identity": false,
+  "known_burden": "Runtime reflection and struct-tag metadata remain part of discovery correctness."
+}

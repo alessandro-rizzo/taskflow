@@ -1,0 +1,3 @@
+package compilefail
+import b "e01/candidateb"
+func artifact() { b.AcceptIOS(b.Artifact[b.BackendBinary]{}) }

@@ -1,0 +1,62 @@
+{
+  "candidate": "C",
+  "approach": "reflection-heavy-go",
+  "determinism_runs_per_scope": 10,
+  "body_sentinel_absent": true,
+  "positive_typing": "go test ./...",
+  "negative_typing": [
+    "artifact",
+    "endpoint"
+  ],
+  "diagnostic_cases": [
+    {
+      "operation": "check",
+      "path": "unknown",
+      "expected": "known argument",
+      "actual": true,
+      "human": "operation check argument unknown expected known argument; got true"
+    },
+    {
+      "operation": "check",
+      "path": "changed-only",
+      "expected": "boolean",
+      "actual": "yes",
+      "human": "operation check argument changed-only expected boolean; got yes"
+    },
+    {
+      "operation": "check",
+      "path": "verbosity",
+      "expected": "one of [quiet normal verbose]",
+      "actual": "loud",
+      "human": "operation check argument verbosity expected one of [quiet normal verbose]; got loud"
+    },
+    {
+      "operation": "publish-preview",
+      "path": "environment",
+      "expected": "required string",
+      "actual": null,
+      "human": "operation publish-preview argument environment expected required string; got <nil>"
+    }
+  ],
+  "authored_loc": 30,
+  "annotation_or_tag_lines": 4,
+  "reflection_sites": 13,
+  "generator_loc": 0,
+  "generated_loc": 0,
+  "low_level_concepts": [
+    "operation-registration",
+    "argument-schema",
+    "output-schema",
+    "capability-request"
+  ],
+  "output_hashes": {
+    "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+    "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+    "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+    "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820"
+  },
+  "versions": {
+    "go": "go version go1.25.12 darwin/arm64",
+    "python": "Python 3.9.6"
+  }
+}

@@ -1,0 +1,11 @@
+version: "3"
+
+tasks:
+  check:
+    cmds:
+      - go test ./...
+      - python3 scripts/verify.py
+
+  discover:w1:
+    cmds:
+      - go run ./cmd/e01a discover W1

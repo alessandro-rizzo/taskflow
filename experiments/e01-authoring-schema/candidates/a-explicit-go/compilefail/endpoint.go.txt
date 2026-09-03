@@ -1,0 +1,3 @@
+package compilefail
+import a "e01/candidatea"
+func incompatibleEndpoint() { a.ConnectOther(a.Endpoint[a.API]{}) }

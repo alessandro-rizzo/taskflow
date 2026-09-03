@@ -1,0 +1,8 @@
+{
+  "candidate": "D",
+  "plan_ir": false,
+  "real_execution": false,
+  "hostile_code_sandbox": false,
+  "second_toolchain": true,
+  "known_burden": "Requires a pinned semantic checker and explicit nominal-typing machinery."
+}

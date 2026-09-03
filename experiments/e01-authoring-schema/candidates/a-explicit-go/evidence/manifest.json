@@ -1,0 +1,14 @@
+{
+  "candidate": "A",
+  "approach": "explicit generic Go registration",
+  "verification": "task check",
+  "discovery": "go run ./cmd/e01a discover SCOPE",
+  "validation": "go run ./cmd/e01a validate SCOPE JSON",
+  "w1_trace": "go run ./cmd/e01a trace",
+  "prewarm": "go build -o /tmp/e01a ./cmd/e01a && /tmp/e01a discover W1",
+  "warm_measurement": "/tmp/e01a discover W1",
+  "authored_regions": ["candidate.go:E01-AUTHOR-BEGIN..E01-AUTHOR-END"],
+  "generated_paths": [],
+  "dependencies": ["Go standard library"],
+  "forbidden_generation_inputs": ["fixtures/**", "prototype/bootstrap/**", "../other-candidate/**"]
+}

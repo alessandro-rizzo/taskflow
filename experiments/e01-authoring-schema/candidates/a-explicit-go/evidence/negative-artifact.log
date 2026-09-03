@@ -1,0 +1,4 @@
+FAIL	e01/candidatea/verify-TEMP/artifact [build failed]
+FAIL
+# e01/candidatea/verify-TEMP/artifact
+verify-TEMP/artifact/artifact.go:3:43: cannot use a.Artifact[a.BackendBinary]{} (value of struct type candidatea.Artifact[candidatea.BackendBinary]) as candidatea.Artifact[candidatea.IOSApp] value in argument to a.AcceptIOS

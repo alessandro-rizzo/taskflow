@@ -1,0 +1,5 @@
+package compilefail
+
+import c "e01/candidatec"
+
+func incompatibleEndpoint() { c.ConnectOther(c.Endpoint[c.API]{}) }

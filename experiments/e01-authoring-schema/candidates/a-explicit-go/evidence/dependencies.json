@@ -1,0 +1,9 @@
+{
+  "candidate": "A",
+  "module": "e01/candidatea",
+  "runtime": ["Go standard library"],
+  "external": [],
+  "imports_prototype": false,
+  "imports_fixtures": false,
+  "imports_other_candidates": false
+}

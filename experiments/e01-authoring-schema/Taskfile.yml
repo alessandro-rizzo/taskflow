@@ -2,7 +2,39 @@ version: "3"
 
 tasks:
   check:
-    desc: Verify the E01 Phase A contract without candidate implementation
+    desc: Run the implemented E01 candidate gates
+    cmds:
+      - task: check:a
+      - task: check:b
+      - task: check:c
+      - task: check:d
+
+  check:a:
+    desc: Verify standalone candidate A, then compare its completed outputs
+    cmds:
+      - task --dir candidates/a-explicit-go check
+      - python3 scripts/verify-candidate-a.py
+
+  check:b:
+    desc: Verify standalone candidate B and compare A/B completed outputs
+    cmds:
+      - task --dir candidates/b-generated-go check
+      - python3 scripts/verify-candidate-b.py
+
+  check:c:
+    desc: Verify standalone candidate C and compare A/B/C completed outputs
+    cmds:
+      - task --dir candidates/c-reflection-go check
+      - python3 scripts/verify-candidate-c.py
+
+  check:d:
+    desc: Verify standalone candidate D and compare all completed outputs
+    cmds:
+      - task --dir candidates/d-typescript check
+      - python3 scripts/verify-candidate-d.py
+
+  check:phase-a:
+    desc: Historical pre-candidate Phase A verification; fails once candidates exist
     cmds:
       - python3 scripts/verify-phase-a.py
       - task: validate:effect-probe
