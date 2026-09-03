@@ -1,0 +1,8 @@
+{
+  "document_kind": "schema",
+  "format_version": "t1-plan-conformance-schema-v1",
+  "fixture_id": "w1-fast-project-check",
+  "fixture_version": "t1-experimental-v1",
+  "status": "experimental",
+  "operations": []
+}

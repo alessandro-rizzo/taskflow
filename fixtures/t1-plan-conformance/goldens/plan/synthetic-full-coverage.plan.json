@@ -1,0 +1,63 @@
+{
+  "document_kind": "plan",
+  "format_version": "t1-plan-conformance-plan-v2",
+  "fixture_id": "synthetic",
+  "fixture_version": "t1-plan-conformance-synthetic-v1",
+  "status": "experimental",
+  "nodes": [
+    {
+      "id": "build",
+      "needs": [],
+      "consumes": ["source-tree"],
+      "produces": ["release-binary"],
+      "planning_condition": { "type": "changed-paths", "patterns": ["**/*.go"] },
+      "outcome_condition": { "type": "always" },
+      "resources": { "cpu_millicores": 1000, "memory_mib": 1024 },
+      "execution_profile": { "os": "linux", "toolchain": "go1.25.12" },
+      "cache_policy": { "mode": "content-addressed", "key_inputs": ["source-tree"] }
+    },
+    {
+      "id": "sign",
+      "needs": ["build"],
+      "consumes": ["release-binary"],
+      "produces": ["signed-binary"],
+      "planning_condition": { "type": "always" },
+      "outcome_condition": { "type": "conditional" },
+      "resources": { "cpu_millicores": 250, "memory_mib": 128 },
+      "execution_profile": { "os": "linux", "toolchain": "cosign" },
+      "cache_policy": { "mode": "none" }
+    },
+    {
+      "id": "publish",
+      "needs": ["sign"],
+      "consumes": ["signed-binary"],
+      "produces": ["release-manifest"],
+      "planning_condition": { "type": "always" },
+      "outcome_condition": { "type": "always" },
+      "resources": { "cpu_millicores": 100, "memory_mib": 64 },
+      "execution_profile": { "os": "any", "toolchain": "none" },
+      "cache_policy": { "mode": "none" }
+    }
+  ],
+  "artifacts": [
+    { "id": "source-tree", "type": "Tree", "optional": false },
+    { "id": "release-binary", "type": "Artifact[BackendBinary]", "optional": false },
+    { "id": "signed-binary", "type": "Artifact[SignedBackendBinary]", "optional": false },
+    { "id": "release-manifest", "type": "Report[ReleaseManifest]", "optional": true }
+  ],
+  "secrets": [
+    { "id": "signing-key", "capability": "code-signing-key", "resolved_by": "daemon" }
+  ],
+  "services": [
+    { "id": "artifact-registry-endpoint", "name": "artifact-registry", "route": "authorized-external" }
+  ],
+  "effects": [
+    {
+      "id": "publish-release",
+      "kind": "publish",
+      "target": "artifact-registry-endpoint",
+      "idempotency_key": "release-manifest-digest",
+      "authorized_actor": "release-bot"
+    }
+  ]
+}

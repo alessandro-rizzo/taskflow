@@ -1,0 +1,61 @@
+{
+  "document_kind": "plan",
+  "format_version": "t1-plan-conformance-plan-v2",
+  "fixture_id": "w1-fast-project-check",
+  "fixture_version": "t1-experimental-v1",
+  "status": "experimental",
+  "nodes": [
+    {
+      "id": "format",
+      "needs": [],
+      "consumes": ["source-tree"],
+      "produces": [],
+      "planning_condition": { "type": "changed-paths", "patterns": ["**/*.go"] },
+      "outcome_condition": { "type": "always" },
+      "resources": { "cpu_millicores": 250, "memory_mib": 128 },
+      "execution_profile": { "os": "any", "toolchain": "go1.25.12" },
+      "cache_policy": { "mode": "content-addressed", "key_inputs": ["source-tree"] }
+    },
+    {
+      "id": "test",
+      "needs": [],
+      "consumes": ["source-tree"],
+      "produces": ["test-report"],
+      "planning_condition": { "type": "changed-paths", "patterns": ["**/*.go"] },
+      "outcome_condition": { "type": "always" },
+      "resources": { "cpu_millicores": 500, "memory_mib": 256 },
+      "execution_profile": { "os": "any", "toolchain": "go1.25.12" },
+      "cache_policy": { "mode": "content-addressed", "key_inputs": ["source-tree"] }
+    },
+    {
+      "id": "lint",
+      "needs": [],
+      "consumes": ["source-tree"],
+      "produces": [],
+      "planning_condition": {
+        "type": "changed-paths",
+        "patterns": ["**/*.go"],
+        "exclude_patterns": ["**/*_test.go"]
+      },
+      "outcome_condition": { "type": "always" },
+      "resources": { "cpu_millicores": 250, "memory_mib": 128 },
+      "execution_profile": { "os": "any", "toolchain": "go1.25.12" },
+      "cache_policy": { "mode": "content-addressed", "key_inputs": ["source-tree"] }
+    },
+    {
+      "id": "check",
+      "needs": ["format", "test", "lint"],
+      "consumes": [],
+      "produces": [],
+      "planning_condition": { "type": "always" },
+      "outcome_condition": { "type": "all-upstream-pass" },
+      "resources": { "cpu_millicores": 0, "memory_mib": 0 },
+      "execution_profile": { "os": "any", "toolchain": "none" },
+      "cache_policy": { "mode": "none" }
+    }
+  ],
+  "artifacts": [
+    { "id": "source-tree", "type": "Tree", "optional": false },
+    { "id": "test-report", "type": "Report[GoTests]", "optional": false }
+  ]
+}

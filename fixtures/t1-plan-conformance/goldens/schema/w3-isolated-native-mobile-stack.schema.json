@@ -1,0 +1,19 @@
+{
+  "document_kind": "schema",
+  "format_version": "t1-plan-conformance-schema-v1",
+  "fixture_id": "w3-isolated-native-mobile-stack",
+  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "status": "experimental",
+  "operations": [
+    {
+      "id": "mobile-e2e",
+      "description": "Bring up a namespace-private Linux API stack, build the iOS app on macOS/Xcode, and run the end-to-end suite against a simulator.",
+      "arguments": [],
+      "outputs": [
+        { "id": "mobile-e2e-report", "type": "Report[MobileE2E]", "optional": false }
+      ],
+      "required_effects": [],
+      "required_capabilities": ["linux-execution-profile", "macos-execution-profile", "simulator-session"]
+    }
+  ]
+}
