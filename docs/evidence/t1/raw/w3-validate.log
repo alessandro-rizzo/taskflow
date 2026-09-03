@@ -1,0 +1,12 @@
+=== w3 validate.sh ===
+checking namespace-a.json
+checking namespace-b.json
+checking cross-namespace uniqueness (AC #2)
+checking scenario-caller-loss.json
+checking scenario-cancellation.json
+checking scenario-dirty-warm-infrastructure.json
+checking scenario-port-collision.json
+checking scenario-simulator-profile-mismatch.json
+checking scenario-unauthorized-routing.json
+PASS: all fixtures/w3/examples/*.json are well-formed and complete
+exit=0

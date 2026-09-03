@@ -1,0 +1,77 @@
+=== t1-plan-conformance ===
+=== RUN   TestPlanConformantCandidateMatchesGolden
+--- PASS: TestPlanConformantCandidateMatchesGolden (0.01s)
+=== RUN   TestPlanReorderedButEquivalentMatchesGoldenDigest
+--- PASS: TestPlanReorderedButEquivalentMatchesGoldenDigest (0.01s)
+=== RUN   TestPlanConditionChangeAltersDigest
+--- PASS: TestPlanConditionChangeAltersDigest (0.01s)
+=== RUN   TestPlanMissingFormatVersionRejected
+--- PASS: TestPlanMissingFormatVersionRejected (0.01s)
+=== RUN   TestPlanIncompatibleFormatVersionRejected
+--- PASS: TestPlanIncompatibleFormatVersionRejected (0.00s)
+=== RUN   TestPlanMissingFixtureIDRejected
+--- PASS: TestPlanMissingFixtureIDRejected (0.00s)
+=== RUN   TestPlanUnknownNodeFieldRejected
+--- PASS: TestPlanUnknownNodeFieldRejected (0.00s)
+=== RUN   TestPlanInvalidReferenceRejected
+--- PASS: TestPlanInvalidReferenceRejected (0.01s)
+=== RUN   TestPlanNonStringReferenceRejected
+--- PASS: TestPlanNonStringReferenceRejected (0.01s)
+=== RUN   TestPlanWronglyTypedNodesFieldRejected
+--- PASS: TestPlanWronglyTypedNodesFieldRejected (0.01s)
+=== RUN   TestPlanDuplicateNodeIDRejected
+--- PASS: TestPlanDuplicateNodeIDRejected (0.00s)
+=== RUN   TestPlanDuplicateArtifactIDRejected
+--- PASS: TestPlanDuplicateArtifactIDRejected (0.01s)
+=== RUN   TestPlanRepeatedCanonicalizationIsByteEquivalent
+--- PASS: TestPlanRepeatedCanonicalizationIsByteEquivalent (0.00s)
+=== RUN   TestAllPlanGoldensValidateAndCanonicalizeCleanly
+=== RUN   TestAllPlanGoldensValidateAndCanonicalizeCleanly/w1-fast-project-check.plan.json
+=== RUN   TestAllPlanGoldensValidateAndCanonicalizeCleanly/w2-cross-target-artifact-pipeline.plan.json
+=== RUN   TestAllPlanGoldensValidateAndCanonicalizeCleanly/w3-isolated-native-mobile-stack.plan.json
+=== RUN   TestAllPlanGoldensValidateAndCanonicalizeCleanly/synthetic-full-coverage.plan.json
+--- PASS: TestAllPlanGoldensValidateAndCanonicalizeCleanly (0.02s)
+    --- PASS: TestAllPlanGoldensValidateAndCanonicalizeCleanly/w1-fast-project-check.plan.json (0.00s)
+    --- PASS: TestAllPlanGoldensValidateAndCanonicalizeCleanly/w2-cross-target-artifact-pipeline.plan.json (0.01s)
+    --- PASS: TestAllPlanGoldensValidateAndCanonicalizeCleanly/w3-isolated-native-mobile-stack.plan.json (0.00s)
+    --- PASS: TestAllPlanGoldensValidateAndCanonicalizeCleanly/synthetic-full-coverage.plan.json (0.01s)
+=== RUN   TestSchemaConformantCandidateMatchesGolden
+--- PASS: TestSchemaConformantCandidateMatchesGolden (0.00s)
+=== RUN   TestSchemaReorderedOutputsMatchGoldenDigest
+--- PASS: TestSchemaReorderedOutputsMatchGoldenDigest (0.00s)
+=== RUN   TestSchemaArgumentTypeChangeAltersDigest
+--- PASS: TestSchemaArgumentTypeChangeAltersDigest (0.01s)
+=== RUN   TestSchemaMissingOperationAltersDigest
+--- PASS: TestSchemaMissingOperationAltersDigest (0.01s)
+=== RUN   TestSchemaDuplicateArgumentNameRejected
+--- PASS: TestSchemaDuplicateArgumentNameRejected (0.01s)
+=== RUN   TestSchemaMissingArgumentNameRejected
+--- PASS: TestSchemaMissingArgumentNameRejected (0.01s)
+=== RUN   TestSchemaNonStringCapabilityRejected
+--- PASS: TestSchemaNonStringCapabilityRejected (0.00s)
+=== RUN   TestSchemaMissingFormatVersionRejected
+--- PASS: TestSchemaMissingFormatVersionRejected (0.00s)
+=== RUN   TestSchemaIncompatibleFormatVersionRejected
+--- PASS: TestSchemaIncompatibleFormatVersionRejected (0.01s)
+=== RUN   TestSchemaUnknownOperationFieldRejected
+--- PASS: TestSchemaUnknownOperationFieldRejected (0.01s)
+=== RUN   TestAllSchemaGoldensValidateAndCanonicalizeCleanly
+=== RUN   TestAllSchemaGoldensValidateAndCanonicalizeCleanly/w1-fast-project-check.schema.json
+=== RUN   TestAllSchemaGoldensValidateAndCanonicalizeCleanly/w2-cross-target-artifact-pipeline.schema.json
+=== RUN   TestAllSchemaGoldensValidateAndCanonicalizeCleanly/w3-isolated-native-mobile-stack.schema.json
+--- PASS: TestAllSchemaGoldensValidateAndCanonicalizeCleanly (0.01s)
+    --- PASS: TestAllSchemaGoldensValidateAndCanonicalizeCleanly/w1-fast-project-check.schema.json (0.00s)
+    --- PASS: TestAllSchemaGoldensValidateAndCanonicalizeCleanly/w2-cross-target-artifact-pipeline.schema.json (0.01s)
+    --- PASS: TestAllSchemaGoldensValidateAndCanonicalizeCleanly/w3-isolated-native-mobile-stack.schema.json (0.00s)
+=== RUN   TestUnrecognizedDocumentKindRejected
+--- PASS: TestUnrecognizedDocumentKindRejected (0.00s)
+=== RUN   TestMissingDocumentKindRejected
+--- PASS: TestMissingDocumentKindRejected (0.00s)
+=== RUN   TestNonStringScalarArrayReorderingIsCanonicalizedConsistently
+--- PASS: TestNonStringScalarArrayReorderingIsCanonicalizedConsistently (0.00s)
+=== RUN   TestLargeIntegersSurviveCanonicalization
+--- PASS: TestLargeIntegersSurviveCanonicalization (0.00s)
+PASS
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/t1-plan-conformance	1.502s
+?   	github.com/alessandro-rizzo/taskflow/fixtures/t1-plan-conformance/cmd/t1conform	[no test files]
+exit=0

@@ -1,0 +1,26 @@
+=== integrity-faults ===
+=== RUN   TestSourceMutationAfterSnapshotDoesNotAlterDeclaredSource
+--- PASS: TestSourceMutationAfterSnapshotDoesNotAlterDeclaredSource (0.01s)
+=== RUN   TestTakeIsOrderIndependent
+--- PASS: TestTakeIsOrderIndependent (0.01s)
+=== RUN   TestLookupSucceedsOnValidEntry
+--- PASS: TestLookupSucceedsOnValidEntry (0.00s)
+=== RUN   TestLookupMissLogsNoVerificationEvents
+--- PASS: TestLookupMissLogsNoVerificationEvents (0.00s)
+=== RUN   TestLookupRejectsUnrecognizedManifestSchemaVersion
+--- PASS: TestLookupRejectsUnrecognizedManifestSchemaVersion (0.00s)
+=== RUN   TestLookupDetectsCorruptContentIndependentlyOfManifest
+--- PASS: TestLookupDetectsCorruptContentIndependentlyOfManifest (0.00s)
+=== RUN   TestLookupDetectsCorruptManifestIndependentlyOfContent
+--- PASS: TestLookupDetectsCorruptManifestIndependentlyOfContent (0.00s)
+=== RUN   TestLookupDetectsMissingDeclaredOutput
+--- PASS: TestLookupDetectsMissingDeclaredOutput (0.00s)
+=== RUN   TestLookupDetectsAlteredDeclaredOutputIndependentlyOfMissing
+--- PASS: TestLookupDetectsAlteredDeclaredOutputIndependentlyOfMissing (0.00s)
+=== RUN   TestLookupRejectsStaleEntryUnderSameIdentityAfterSourceMutation
+--- PASS: TestLookupRejectsStaleEntryUnderSameIdentityAfterSourceMutation (0.00s)
+=== RUN   TestLookupMissOnDifferentIdentityIsOrdinaryNotStale
+--- PASS: TestLookupMissOnDifferentIdentityIsOrdinaryNotStale (0.01s)
+PASS
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/integrity-faults	1.391s
+exit=0

@@ -1,0 +1,2 @@
+t1bench: collecting 3 sample(s) of "cd /private/tmp/taskflow-tf-002.09/fixtures/w1/repo && go test ./..." (state=cold, prepare="cd /private/tmp/taskflow-tf-002.09/fixtures/w1/repo && go clean -testcache")
+t1bench: wrote /private/tmp/taskflow-tf-002.09/docs/evidence/t1/raw/t1demo-cold/record.json (median=0.436s p95=0.464s)

@@ -1,0 +1,37 @@
+=== malicious-planner ===
+=== RUN   TestCatalogueCoversAllSixCategories
+--- PASS: TestCatalogueCoversAllSixCategories (0.00s)
+=== RUN   TestCatalogueEntriesAreWellFormed
+--- PASS: TestCatalogueEntriesAreWellFormed (0.00s)
+=== RUN   TestEveryAttemptCompletesWithinItsBound
+=== RUN   TestEveryAttemptCompletesWithinItsBound/fs-read-outside-source
+=== RUN   TestEveryAttemptCompletesWithinItsBound/env-read-ambient
+=== RUN   TestEveryAttemptCompletesWithinItsBound/net-dial-loopback
+=== RUN   TestEveryAttemptCompletesWithinItsBound/process-spawn-and-persist
+=== RUN   TestEveryAttemptCompletesWithinItsBound/resource-unbounded-growth
+=== RUN   TestEveryAttemptCompletesWithinItsBound/output-secret-leak
+--- PASS: TestEveryAttemptCompletesWithinItsBound (0.01s)
+    --- PASS: TestEveryAttemptCompletesWithinItsBound/fs-read-outside-source (0.00s)
+    --- PASS: TestEveryAttemptCompletesWithinItsBound/env-read-ambient (0.00s)
+    --- PASS: TestEveryAttemptCompletesWithinItsBound/net-dial-loopback (0.00s)
+    --- PASS: TestEveryAttemptCompletesWithinItsBound/process-spawn-and-persist (0.00s)
+    --- PASS: TestEveryAttemptCompletesWithinItsBound/resource-unbounded-growth (0.00s)
+    --- PASS: TestEveryAttemptCompletesWithinItsBound/output-secret-leak (0.00s)
+=== RUN   TestOutputAttemptActuallyEmbedsSecretBeforeRedaction
+--- PASS: TestOutputAttemptActuallyEmbedsSecretBeforeRedaction (0.00s)
+=== RUN   TestRedactStripsSecretEverywhere
+--- PASS: TestRedactStripsSecretEverywhere (0.00s)
+=== RUN   TestRunSuiteNeverPersistsSecret
+--- PASS: TestRunSuiteNeverPersistsSecret (0.01s)
+=== RUN   TestAttemptThatIgnoresContextIsReportedAsTimedOut
+--- PASS: TestAttemptThatIgnoresContextIsReportedAsTimedOut (2.00s)
+=== RUN   TestPanickingAttemptIsRecoveredAndRedacted
+--- PASS: TestPanickingAttemptIsRecoveredAndRedacted (0.00s)
+=== RUN   TestRunSuiteCompletesWellWithinSuiteTimeout
+--- PASS: TestRunSuiteCompletesWellWithinSuiteTimeout (0.02s)
+=== RUN   TestRunSuiteCleansUpItsTempDirectory
+--- PASS: TestRunSuiteCleansUpItsTempDirectory (0.02s)
+PASS
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/malicious-planner	3.444s
+?   	github.com/alessandro-rizzo/taskflow/fixtures/malicious-planner/cmd/attackcat	[no test files]
+exit=0

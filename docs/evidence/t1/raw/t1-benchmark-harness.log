@@ -1,0 +1,71 @@
+=== t1-benchmark-harness ===
+=== RUN   TestValidRecordPasses
+--- PASS: TestValidRecordPasses (0.00s)
+=== RUN   TestValidRecordRoundTripsThroughJSON
+--- PASS: TestValidRecordRoundTripsThroughJSON (0.00s)
+=== RUN   TestCacheHitRequiresReservationCount
+--- PASS: TestCacheHitRequiresReservationCount (0.00s)
+=== RUN   TestNegativeReservationCountRejected
+--- PASS: TestNegativeReservationCountRejected (0.00s)
+=== RUN   TestNegativeLeaseCountRejected
+--- PASS: TestNegativeLeaseCountRejected (0.00s)
+=== RUN   TestLeaseCountOptionalAcrossAllStates
+--- PASS: TestLeaseCountOptionalAcrossAllStates (0.00s)
+=== RUN   TestMissingRequiredMetadataRejected
+=== RUN   TestMissingRequiredMetadataRejected/schema_version
+=== RUN   TestMissingRequiredMetadataRejected/experiment_id
+=== RUN   TestMissingRequiredMetadataRejected/fixture_id
+=== RUN   TestMissingRequiredMetadataRejected/source_revision
+=== RUN   TestMissingRequiredMetadataRejected/timestamp_missing
+=== RUN   TestMissingRequiredMetadataRejected/timestamp_malformed
+=== RUN   TestMissingRequiredMetadataRejected/hardware.cpu
+=== RUN   TestMissingRequiredMetadataRejected/hardware.cores
+=== RUN   TestMissingRequiredMetadataRejected/hardware.ram_gib
+=== RUN   TestMissingRequiredMetadataRejected/os.name
+=== RUN   TestMissingRequiredMetadataRejected/os.version
+=== RUN   TestMissingRequiredMetadataRejected/os.build
+=== RUN   TestMissingRequiredMetadataRejected/os.arch
+=== RUN   TestMissingRequiredMetadataRejected/preparation_command
+=== RUN   TestMissingRequiredMetadataRejected/toolchain_empty
+=== RUN   TestMissingRequiredMetadataRejected/toolchain_entry_missing_version
+=== RUN   TestMissingRequiredMetadataRejected/raw_result_location
+--- PASS: TestMissingRequiredMetadataRejected (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/schema_version (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/experiment_id (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/fixture_id (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/source_revision (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/timestamp_missing (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/timestamp_malformed (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/hardware.cpu (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/hardware.cores (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/hardware.ram_gib (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/os.name (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/os.version (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/os.build (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/os.arch (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/preparation_command (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/toolchain_empty (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/toolchain_entry_missing_version (0.00s)
+    --- PASS: TestMissingRequiredMetadataRejected/raw_result_location (0.00s)
+=== RUN   TestInvalidStateRejected
+--- PASS: TestInvalidStateRejected (0.00s)
+=== RUN   TestEmptySamplesRejected
+--- PASS: TestEmptySamplesRejected (0.00s)
+=== RUN   TestNonFiniteSampleRejected
+--- PASS: TestNonFiniteSampleRejected (0.00s)
+=== RUN   TestNegativeSampleRejected
+--- PASS: TestNegativeSampleRejected (0.00s)
+=== RUN   TestSampleCountMismatchRejected
+--- PASS: TestSampleCountMismatchRejected (0.00s)
+=== RUN   TestMislabeledMedianRejected
+--- PASS: TestMislabeledMedianRejected (0.00s)
+=== RUN   TestMislabeledP95Rejected
+--- PASS: TestMislabeledP95Rejected (0.00s)
+=== RUN   TestComputeStatisticsMatchesDocumentedMethod
+--- PASS: TestComputeStatisticsMatchesDocumentedMethod (0.00s)
+=== RUN   TestComputeStatisticsRejectsEmptyInput
+--- PASS: TestComputeStatisticsRejectsEmptyInput (0.00s)
+PASS
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness	1.364s
+?   	github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness/cmd/t1bench	[no test files]
+exit=0

@@ -1,0 +1,35 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "T1",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "279fe0096b44e8bc23b2c756a55749fa93201a66",
+  "timestamp": "2026-09-03T10:49:12Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "cold",
+  "preparation_command": "cd /private/tmp/taskflow-tf-002.09/fixtures/w1/repo \u0026\u0026 go clean -testcache",
+  "samples": [
+    0.464208042,
+    0.436451166,
+    0.422150125
+  ],
+  "sample_count": 3,
+  "median": 0.436451166,
+  "p95": 0.464208042,
+  "raw_result_location": "samples.txt"
+}

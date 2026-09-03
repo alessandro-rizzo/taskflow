@@ -1,0 +1,86 @@
+=== t1-lifecycle-faults ===
+=== RUN   TestScenarioCancellation
+=== RUN   TestScenarioCancellation/cancel-while-running
+=== RUN   TestScenarioCancellation/cancel-before-placement
+=== RUN   TestScenarioCancellation/cancel-crash/before-commit
+=== RUN   TestScenarioCancellation/cancel-crash/after-commit
+=== RUN   TestScenarioCancellation/cancelled_distinct_from_worker-lost_and_ordinary_crash
+=== RUN   TestScenarioCancellation/a_cancelled_run_is_never_resumed_by_daemon_restart_recovery
+--- PASS: TestScenarioCancellation (0.00s)
+    --- PASS: TestScenarioCancellation/cancel-while-running (0.00s)
+    --- PASS: TestScenarioCancellation/cancel-before-placement (0.00s)
+    --- PASS: TestScenarioCancellation/cancel-crash/before-commit (0.00s)
+    --- PASS: TestScenarioCancellation/cancel-crash/after-commit (0.00s)
+    --- PASS: TestScenarioCancellation/cancelled_distinct_from_worker-lost_and_ordinary_crash (0.00s)
+    --- PASS: TestScenarioCancellation/a_cancelled_run_is_never_resumed_by_daemon_restart_recovery (0.00s)
+=== RUN   TestScenarioDaemonRestart
+--- PASS: TestScenarioDaemonRestart (0.00s)
+=== RUN   TestScenarioDaemonRestartDuringAdmission
+=== RUN   TestScenarioDaemonRestartDuringAdmission/before-commit
+=== RUN   TestScenarioDaemonRestartDuringAdmission/after-commit
+--- PASS: TestScenarioDaemonRestartDuringAdmission (0.00s)
+    --- PASS: TestScenarioDaemonRestartDuringAdmission/before-commit (0.00s)
+    --- PASS: TestScenarioDaemonRestartDuringAdmission/after-commit (0.00s)
+=== RUN   TestScenarioDaemonRestartDuringCleanup
+=== RUN   TestScenarioDaemonRestartDuringCleanup/before-commit
+=== RUN   TestScenarioDaemonRestartDuringCleanup/after-commit
+--- PASS: TestScenarioDaemonRestartDuringCleanup (0.00s)
+    --- PASS: TestScenarioDaemonRestartDuringCleanup/before-commit (0.00s)
+    --- PASS: TestScenarioDaemonRestartDuringCleanup/after-commit (0.00s)
+=== RUN   TestScenarioLeaseExpiry
+=== RUN   TestScenarioLeaseExpiry/renewed_lease_never_expires
+=== RUN   TestScenarioLeaseExpiry/unrenewed_lease_expires_and_is_reclaimed_with_the_full_w3_record_shape
+=== RUN   TestScenarioLeaseExpiry/late_renewal_after_expiry_does_not_resurrect_the_lease
+=== RUN   TestScenarioLeaseExpiry/multiple_simultaneously-expiring_leases_reclaim_in_deterministic_order
+=== RUN   TestScenarioLeaseExpiry/crash_during_reclamation_resumes_without_repeating_stages
+=== RUN   TestScenarioLeaseExpiry/crash_during_reclamation_resumes_without_repeating_stages/before-commit
+=== RUN   TestScenarioLeaseExpiry/crash_during_reclamation_resumes_without_repeating_stages/after-commit
+--- PASS: TestScenarioLeaseExpiry (0.00s)
+    --- PASS: TestScenarioLeaseExpiry/renewed_lease_never_expires (0.00s)
+    --- PASS: TestScenarioLeaseExpiry/unrenewed_lease_expires_and_is_reclaimed_with_the_full_w3_record_shape (0.00s)
+    --- PASS: TestScenarioLeaseExpiry/late_renewal_after_expiry_does_not_resurrect_the_lease (0.00s)
+    --- PASS: TestScenarioLeaseExpiry/multiple_simultaneously-expiring_leases_reclaim_in_deterministic_order (0.00s)
+    --- PASS: TestScenarioLeaseExpiry/crash_during_reclamation_resumes_without_repeating_stages (0.00s)
+        --- PASS: TestScenarioLeaseExpiry/crash_during_reclamation_resumes_without_repeating_stages/before-commit (0.00s)
+        --- PASS: TestScenarioLeaseExpiry/crash_during_reclamation_resumes_without_repeating_stages/after-commit (0.00s)
+=== RUN   TestScenarioProcessCrash
+=== RUN   TestScenarioProcessCrash/admit/before-commit
+=== RUN   TestScenarioProcessCrash/admit/after-commit
+=== RUN   TestScenarioProcessCrash/execute-start/before-commit
+=== RUN   TestScenarioProcessCrash/execute-start/after-commit
+=== RUN   TestScenarioProcessCrash/execute-complete/before-commit
+=== RUN   TestScenarioProcessCrash/execute-complete/after-commit
+=== RUN   TestScenarioProcessCrash/downstream-placed/before-commit
+=== RUN   TestScenarioProcessCrash/downstream-placed/after-commit
+=== RUN   TestScenarioProcessCrash/downstream-complete/before-commit
+=== RUN   TestScenarioProcessCrash/downstream-complete/after-commit
+=== RUN   TestScenarioProcessCrash/cleanup-start/before-commit
+=== RUN   TestScenarioProcessCrash/cleanup-start/after-commit
+=== RUN   TestScenarioProcessCrash/cleanup-complete/before-commit
+=== RUN   TestScenarioProcessCrash/cleanup-complete/after-commit
+--- PASS: TestScenarioProcessCrash (0.00s)
+    --- PASS: TestScenarioProcessCrash/admit/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/admit/after-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/execute-start/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/execute-start/after-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/execute-complete/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/execute-complete/after-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/downstream-placed/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/downstream-placed/after-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/downstream-complete/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/downstream-complete/after-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/cleanup-start/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/cleanup-start/after-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/cleanup-complete/before-commit (0.00s)
+    --- PASS: TestScenarioProcessCrash/cleanup-complete/after-commit (0.00s)
+=== RUN   TestScenarioWorkerLoss
+=== RUN   TestScenarioWorkerLoss/clean-detection
+=== RUN   TestScenarioWorkerLoss/detection-crash/before-commit
+=== RUN   TestScenarioWorkerLoss/detection-crash/after-commit
+--- PASS: TestScenarioWorkerLoss (0.00s)
+    --- PASS: TestScenarioWorkerLoss/clean-detection (0.00s)
+    --- PASS: TestScenarioWorkerLoss/detection-crash/before-commit (0.00s)
+    --- PASS: TestScenarioWorkerLoss/detection-crash/after-commit (0.00s)
+PASS
+ok  	github.com/alessandro-rizzo/taskflow/fixtures/t1-lifecycle-faults	1.413s
+exit=0

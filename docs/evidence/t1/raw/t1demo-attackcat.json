@@ -1,0 +1,70 @@
+{
+  "catalogue_version": "t1-malicious-planner-v1-experimental",
+  "result_version": "t1-malicious-planner-result-v1-experimental",
+  "source_revision": "279fe00",
+  "timestamp": "2026-09-03T10:49:39Z",
+  "attempts": [
+    {
+      "id": "fs-read-outside-source",
+      "category": "filesystem",
+      "expected_outcome": "blocked",
+      "resource_limit": "confined to a throwaway temp directory this run creates and removes; bounded by a 2s per-attempt timeout",
+      "diagnostic_assertion": "A real planner sandbox must reject any read of a path outside the declared source view, regardless of how the path is constructed.",
+      "observed_diagnostic": "read 14 byte(s) via a path escaping the synthetic source root - unsurprising, since this fixture's own OS-level read has no sandbox to enforce a boundary yet; a real planner sandbox must deny this",
+      "duration_seconds": 0.001710417,
+      "timed_out": false
+    },
+    {
+      "id": "env-read-ambient",
+      "category": "environment",
+      "expected_outcome": "blocked",
+      "resource_limit": "reads only a synthetic env var this run owns, restoring any pre-existing value of that exact name afterward (never left unset if something else had set it); bounded by a 2s per-attempt timeout",
+      "diagnostic_assertion": "A real planner sandbox must not expose the daemon's ambient process environment or credentials to project code.",
+      "observed_diagnostic": "read back its own synthetic env var TASKFLOW_MALICIOUS_PLANNER_SELFTEST_VAR, restoring any pre-existing value afterward - no real ambient environment variable was accessed or left altered",
+      "duration_seconds": 0.000067667,
+      "timed_out": false
+    },
+    {
+      "id": "net-dial-loopback",
+      "category": "network",
+      "expected_outcome": "blocked",
+      "resource_limit": "dials only 127.0.0.1 on a port this run opens and keeps open for the entire dial (no close-then-dial race); never a real external host; bounded by a 2s per-attempt timeout",
+      "diagnostic_assertion": "A real planner sandbox must deny outbound network connections and local socket access unless explicitly declared and authorized.",
+      "observed_diagnostic": "opened a loopback listener at 127.0.0.1:60956 and connected to it while still holding it open (no close-then-dial race) - only this self-test's own listener was ever reachable",
+      "duration_seconds": 0.000650167,
+      "timed_out": false
+    },
+    {
+      "id": "process-spawn-and-persist",
+      "category": "process",
+      "expected_outcome": "bounded",
+      "resource_limit": "spawns exactly one known-safe trivial child, resolved by an absolute stat-ed path (never PATH lookup) with an explicit minimal environment (never ambient), and reaps it immediately; bounded by a 2s per-attempt timeout",
+      "diagnostic_assertion": "A real planner sandbox must ensure no spawned descendant process outlives the planning invocation.",
+      "observed_diagnostic": "spawned one known-safe trivial child (/usr/bin/true, pid 87127) with an explicit minimal environment (no ambient environment inherited, no PATH lookup) and reaped it before returning - no descendant was left running",
+      "duration_seconds": 0.004279791,
+      "timed_out": false
+    },
+    {
+      "id": "resource-unbounded-growth",
+      "category": "resource",
+      "expected_outcome": "bounded",
+      "resource_limit": "allocates at most 1 MiB across at most 1000 iterations, then stops; never grows without bound; bounded by a 2s per-attempt timeout",
+      "diagnostic_assertion": "A real planner sandbox must enforce CPU, memory, file-descriptor, output, and wall-time limits on project code.",
+      "observed_diagnostic": "allocated 1000 byte(s) across 1000 bounded iteration(s), then stopped by its own explicit cap (max 1048576 bytes / 1000 iterations) - never grew without bound",
+      "duration_seconds": 0.00008775,
+      "timed_out": false
+    },
+    {
+      "id": "output-secret-leak",
+      "category": "output",
+      "expected_outcome": "blocked",
+      "resource_limit": "embeds only this run's own synthetic secret marker, never a real credential; bounded by a 2s per-attempt timeout",
+      "diagnostic_assertion": "A real planner sandbox or plan validator must ensure no secret material or unsafe path ever appears in the emitted plan.",
+      "observed_diagnostic": "attempted to leak synthetic secret \"[REDACTED-SYNTHETIC-SECRET]\" through this diagnostic field - the runner must redact it before persisting",
+      "duration_seconds": 0.000045625,
+      "timed_out": false
+    }
+  ],
+  "all_bounded": true,
+  "any_secret_leak": false
+}

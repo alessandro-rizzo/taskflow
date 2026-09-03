@@ -1,0 +1,2 @@
+t1bench: missing required flags: --fixture
+exit=2

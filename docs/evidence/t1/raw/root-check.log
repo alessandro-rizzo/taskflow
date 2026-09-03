@@ -1,0 +1,32 @@
+=== root gate ===
+task: [prototype:check] task check
+task: [lint] go vet ./...
+task: [test:race] go test -race ./...
+task: [fmt:check] files="$(gofmt -l .)"
+test -z "$files" || {
+  printf '%s\n' "$files"
+  exit 1
+}
+
+ok  	github.com/arr/taskflow/cache	1.576s
+ok  	github.com/arr/taskflow/cache/file	1.831s
+?   	github.com/arr/taskflow/cmd/taskflow	[no test files]
+ok  	github.com/arr/taskflow/driver	1.950s
+ok  	github.com/arr/taskflow/engine	4.840s
+?   	github.com/arr/taskflow/event	[no test files]
+?   	github.com/arr/taskflow/examples/basic	[no test files]
+ok  	github.com/arr/taskflow/flow	3.637s
+ok  	github.com/arr/taskflow/internal/projectdriver	4.891s
+?   	github.com/arr/taskflow/process	[no test files]
+?   	github.com/arr/taskflow/runner	[no test files]
+?   	github.com/arr/taskflow/runner/command	[no test files]
+?   	github.com/arr/taskflow/runner/just	[no test files]
+ok  	github.com/arr/taskflow/runner/taskfile	2.670s
+ok  	github.com/arr/taskflow/state	3.400s
+ok  	github.com/arr/taskflow/state/file	3.219s
+?   	github.com/arr/taskflow/target	[no test files]
+ok  	github.com/arr/taskflow/target/local	3.982s
+ok  	github.com/arr/taskflow/target/ssh	4.656s
+?   	github.com/arr/taskflow/terminal	[no test files]
+ok  	github.com/arr/taskflow/workspace	2.487s
+exit=0

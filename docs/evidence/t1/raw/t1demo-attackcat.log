@@ -1,0 +1,2 @@
+attackcat: running the malicious-planner self-test catalogue (synthetic, bounded, no real target)
+attackcat: wrote /private/tmp/taskflow-tf-002.09/docs/evidence/t1/raw/t1demo-attackcat.json (6 attempt(s), all_bounded=true, any_secret_leak=false)

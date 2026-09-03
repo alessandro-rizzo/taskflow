@@ -1,0 +1,36 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "T1",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "279fe0096b44e8bc23b2c756a55749fa93201a66",
+  "timestamp": "2026-09-03T10:49:28Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "cache-hit",
+  "preparation_command": "true",
+  "samples": [
+    0.147326709,
+    0.134634084,
+    0.132163375
+  ],
+  "sample_count": 3,
+  "median": 0.134634084,
+  "p95": 0.147326709,
+  "reservation_count": 0,
+  "raw_result_location": "samples.txt"
+}

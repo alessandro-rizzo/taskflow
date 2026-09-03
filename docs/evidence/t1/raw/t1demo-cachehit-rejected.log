@@ -1,0 +1,4 @@
+t1bench: collecting 1 sample(s) of "true" (state=cache-hit, prepare="true")
+t1bench: collected record failed validation, nothing written:
+reservation_count: required when state is "cache-hit"
+exit=2
