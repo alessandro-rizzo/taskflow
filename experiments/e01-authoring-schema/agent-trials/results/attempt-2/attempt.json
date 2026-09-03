@@ -1,0 +1,33 @@
+{
+  "schema_version": "taskflow-e01-agent-attempt/v1",
+  "attempt": 2,
+  "bundle_digest": "dbc05e5d86ecf0237bbc0c8102ea46b0f91685bee9918908b65c123300746261",
+  "command": [
+    "sandbox-exec",
+    "-f",
+    "/private/tmp/e01-seatbelt-4b77693a513a/source-deny.sb",
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--ignore-user-config",
+    "--ignore-rules",
+    "--skip-git-repo-check",
+    "--sandbox",
+    "danger-full-access",
+    "--cd",
+    "/private/tmp/e01-sealed-attempt-2-4b77693a513a",
+    "--output-schema",
+    "/private/tmp/e01-sealed-attempt-2-4b77693a513a/response-schema.json",
+    "--output-last-message",
+    "/private/tmp/e01-sealed-attempt-2-4b77693a513a/final-response.json",
+    "--json",
+    "You are independently testing whether an agent can use a Taskflow operation\nschema without reading implementation source.\n\nWork only with files in your current sealed directory. Do not inspect parent\ndirectories, repository paths, hidden user configuration, memories, or the\ninternet. The directory contains schema JSON, interface help, an invalid W1\nargument object, and a compiled fake `taskflow-e01` interface. It deliberately\ncontains no candidate source.\n\nComplete all three tasks using shell commands:\n\n1. Identify the W3 operation ID, every typed output (ID, type, optional flag),\n   and every required capability from the schema.\n2. Diagnose `invalid-w1-args.json`, create `repaired-w1-args.json`, and prove it\n   valid with the interface. Preserve the successful command.\n3. Invoke W1 through the fake interface using the repaired arguments, save the\n   exact JSON response as `invocation-result.json`, and report its typed\n   outputs. Preserve the successful command.\n\nReturn only the JSON shape required by `response-schema.json`. Set\n`source_read_attempted` true if you attempted any read outside the sealed\ndirectory, even if it was blocked.\n"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 44.260162083000004,
+  "fresh_ephemeral_session": true,
+  "codex_inner_sandbox": "danger-full-access; enclosing Seatbelt profile is the enforcement boundary",
+  "seatbelt_profile_sha256": "fe462cbdf1e1d374476e70457c1b57772ffa37eddca657692582c7600bf218b8",
+  "denied_source_path_mentions_in_transcript": [],
+  "blocked_source_read_attempt": false
+}

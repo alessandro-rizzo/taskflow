@@ -2,9 +2,9 @@
 
 Roadmap experiment: E01. Task: TF-003.06. Risks: R1, R2, R10.
 
-Status: Phase B smoke implementation complete against the separately committed
-Phase A contract (`1c88ddb`). Comparative measurement and the branch decision
-remain owned by TF-003.07.
+Status: TF-003.07 comparative measurement and the proposed E01 decision are
+complete against the separately committed Phase A contract (`1c88ddb`). The
+result is awaiting review and has not been accepted or committed.
 
 Time-box: Phase B stops when all four candidate verification results exist or
 after five working days from the Phase A commit, whichever comes first.
@@ -41,12 +41,32 @@ bodies during discovery or validation.
 | C reflected Go | 30 | 4 | 4 tag lines, 13 reflection sites |
 | D TypeScript | 35 | 4 | locked TypeScript checker and 3 nominal-typing phantom members |
 
-These are smoke and ergonomics results, not the E01 decision. TF-003.07 still
-must run the predeclared warm/cold measurements and blinded agent trials, review
-the generator/reflection/toolchain burdens, and apply the committed branch
-rules. In particular, B's LOC advantage does not become a recommendation until
-its other gates are assessed, and C cannot win under the contract even though
-it is concise.
+These Phase B values are inputs rather than a decision on their own. TF-003.07
+has now measured latency, run the blinded agent trials, reviewed the separate
+burdens, and applied the committed branch rules.
+
+## TF-003.07 measured result
+
+All candidates pass the strict warm-discovery p95 budget:
+
+| Candidate | Warm discovery p95 |
+| --- | ---: |
+| A explicit Go | 10.81 ms |
+| B generated Go | 8.57 ms |
+| C reflected Go | 6.70 ms |
+| D TypeScript | 19.50 ms |
+
+Two of two fresh, source-confined agents also completed the shared schema
+discovery, invalid-argument repair, and fake invocation tasks. See
+[`measurements/summary.md`](measurements/summary.md) for the complete cold/warm
+results and [`agent-trials/`](agent-trials/) for the sealed-bundle protocol and
+raw transcripts.
+
+The frozen branch rule therefore recommends **B**: it passes every common and
+generator-specific gate and reduces A's 31 authored W1 lines to 21 (32.3%) and
+four low-level concepts to three (25%). The proposed decision is
+[`ADR 0005`](../../docs/decisions/0005-e01-authoring-schema.md). This does not
+stabilize B's implementation, tags, generator, schema, or any public SDK.
 
 ## Phase A contents
 
@@ -80,10 +100,9 @@ diagnostic results, dependency/count manifest, and limitations.
 
 ## Phase gate
 
-The next action is the TF-003.06 implementation review. TF-003.07 may measure
-and decide only after these candidate implementations and their retained smoke
-evidence are accepted. The W3 target remains hash-bound to its landed v1
-specification, namespace examples, and conformance golden.
+The next action is review of TF-003.07's measurements, retained setup failures,
+generator-burden assessment, and proposed ADR. Acceptance permits the B branch
+to inform Gate 1; it does not authorize a production Go module or public SDK.
 
 The W1 ergonomics result includes both discovery metadata and the authored fake
 composition. A candidate that emits schema but does not author source ->

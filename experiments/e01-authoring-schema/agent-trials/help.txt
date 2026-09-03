@@ -1,0 +1,11 @@
+Taskflow E01 sealed interface
+
+Commands:
+  ./taskflow-e01 api W1|W2|W3|effect
+  ./taskflow-e01 validate W1 @arguments.json
+  ./taskflow-e01 invoke W1 @arguments.json
+
+`api` prints the operation schema. `validate` checks an argument object without
+running an operation. `invoke` performs a fake invocation and returns the typed
+outputs declared by the schema. This interface performs no real build, service,
+device, signing, publication, or other external effect.

@@ -1,0 +1,132 @@
+{
+  "schema_version": "taskflow-e01-measurement-protocol/v1",
+  "roadmap_id": "E01",
+  "task_id": "TF-003.07",
+  "candidate_source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "phase_a_contract_commit": "1c88ddb",
+  "benchmark_schema": "taskflow-t1-benchmark/v2",
+  "benchmark_fixture": "w1-fast-project-check",
+  "control": {
+    "authored_loc": 56,
+    "low_level_concepts": 10
+  },
+  "thresholds": {
+    "maximum_authored_loc": 42,
+    "maximum_low_level_concepts": 7,
+    "warm_discovery_p95_seconds_exclusive": 0.15,
+    "near_budget_seconds_inclusive": 0.01,
+    "b_further_improvement_fraction_inclusive": 0.15
+  },
+  "candidate_order": {
+    "algorithm": "ascending SHA-256(candidate_source_revision + ':' + candidate_id)",
+    "primary": ["C", "D", "B", "A"],
+    "reverse_if_near_budget": ["A", "B", "D", "C"],
+    "score_when_repeated": "maximum primary/reverse warm-discovery p95"
+  },
+  "metrics": [
+    {
+      "id": "warm-discovery",
+      "samples": 30,
+      "state": "warm",
+      "decision_metric": true,
+      "preparation": "candidate driver/runtime is prewarmed and one successful W1 discovery runs before every timed fresh process"
+    },
+    {
+      "id": "cold-discovery",
+      "samples": 15,
+      "state": "cold",
+      "decision_metric": false,
+      "preparation": "built dependency closure is available; candidate discovery/runtime cache is empty and no discovery runs before the timed fresh process"
+    },
+    {
+      "id": "cold-driver-build-or-typecheck",
+      "samples": 15,
+      "state": "cold",
+      "decision_metric": false,
+      "preparation": "candidate output and compiler cache are absent before every Go build; TypeScript uses a fresh no-emit checker process with runtime transpiler caching disabled"
+    },
+    {
+      "id": "warm-driver-build-or-typecheck",
+      "samples": 15,
+      "state": "warm",
+      "decision_metric": false,
+      "preparation": "candidate output is absent and the same build/type-check succeeds untimed before every timed fresh process"
+    }
+  ],
+  "candidates": {
+    "A": {
+      "directory": "experiments/e01-authoring-schema/candidates/a-explicit-go",
+      "kind": "go",
+      "entrypoint": "./cmd/e01a",
+      "driver_name": "e01a",
+      "authored_loc": 31,
+      "low_level_concepts": 4,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      }
+    },
+    "B": {
+      "directory": "experiments/e01-authoring-schema/candidates/b-generated-go",
+      "kind": "go",
+      "entrypoint": "./cmd/e01b",
+      "driver_name": "e01b",
+      "authored_loc": 21,
+      "low_level_concepts": 3,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      }
+    },
+    "C": {
+      "directory": "experiments/e01-authoring-schema/candidates/c-reflection-go",
+      "kind": "go",
+      "entrypoint": "./cmd/e01c",
+      "driver_name": "e01c",
+      "authored_loc": 30,
+      "low_level_concepts": 4,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      }
+    },
+    "D": {
+      "directory": "experiments/e01-authoring-schema/candidates/d-typescript",
+      "kind": "typescript",
+      "entrypoint": "cli.ts",
+      "driver_name": "bun",
+      "authored_loc": 35,
+      "low_level_concepts": 4,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      }
+    }
+  },
+  "rerun_rules": {
+    "failed_sample_set": "retain the failure record and rerun only after recording the cause and exact correction",
+    "near_budget": "repeat all 30-sample warm-discovery sets in reverse candidate order when any primary p95 is within 0.010 seconds of 0.150 seconds",
+    "other": "no discretionary reruns"
+  },
+  "agent_trial": {
+    "attempts": 2,
+    "candidate_specific_repetitions": 0,
+    "bundle": "one canonically shared schema bundle",
+    "sessions": "fresh sequential ephemeral Codex CLI sessions with identical prompts",
+    "source_control": "macOS Seatbelt denies the primary repository, every known Taskflow worktree, and Codex memory reads",
+    "success": "two of two complete all three tasks without a blocked source-read attempt"
+  },
+  "decision_branches": ["A-wins", "B-wins", "C-only-stop-redesign", "bounded-typescript-pivot", "stop-or-narrow"]
+}

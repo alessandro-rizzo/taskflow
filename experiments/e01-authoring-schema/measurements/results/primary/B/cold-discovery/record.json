@@ -1,0 +1,53 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E01",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "timestamp": "2026-09-03T21:17:35Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "cold",
+  "preparation_command": "env GOCACHE=/tmp/taskflow-e01-tf00307/B/go-cold-discovery-build-cache go build -o /tmp/taskflow-e01-tf00307/B/cold-discovery-driver ./cmd/e01b",
+  "cache_dimensions": {
+    "discovery_cache": "none",
+    "driver_binary": "prebuilt-each-sample",
+    "gocache": "candidate-isolated-warm",
+    "process": "fresh-no-preinvoke"
+  },
+  "samples": [
+    0.253504209,
+    0.102908833,
+    0.029605333,
+    0.028779375,
+    0.028661292,
+    0.029014708,
+    0.047500042,
+    0.028434959,
+    0.042085625,
+    0.104807916,
+    0.028055792,
+    0.127785041,
+    0.028059792,
+    0.028434416,
+    0.028333625
+  ],
+  "sample_count": 15,
+  "median": 0.029014708,
+  "p95": 0.127785041,
+  "raw_result_location": "samples.txt"
+}

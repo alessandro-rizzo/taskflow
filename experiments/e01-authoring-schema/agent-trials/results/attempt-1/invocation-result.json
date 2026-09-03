@@ -1,0 +1,16 @@
+{
+  "operation": "check",
+  "outputs": [
+    {
+      "id": "test-report",
+      "type": "Report[GoTests]",
+      "optional": false
+    },
+    {
+      "id": "diagnostics",
+      "type": "Report[Diagnostics]",
+      "optional": true
+    }
+  ],
+  "status": "fake-success"
+}

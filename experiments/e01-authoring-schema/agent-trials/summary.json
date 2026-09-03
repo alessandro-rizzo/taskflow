@@ -1,0 +1,34 @@
+{
+  "attempts_required": 2,
+  "attempts_succeeded": 2,
+  "outcomes": [
+    {
+      "attempt": 1,
+      "bundle_digest": "dbc05e5d86ecf0237bbc0c8102ea46b0f91685bee9918908b65c123300746261",
+      "elapsed_seconds": 49.360219958,
+      "source_read_attempted": false,
+      "success": true,
+      "tasks": {
+        "discover_w3": "pass",
+        "invoke_w1": "pass",
+        "repair_w1": "pass"
+      }
+    },
+    {
+      "attempt": 2,
+      "bundle_digest": "dbc05e5d86ecf0237bbc0c8102ea46b0f91685bee9918908b65c123300746261",
+      "elapsed_seconds": 44.260162083000004,
+      "source_read_attempted": false,
+      "success": true,
+      "tasks": {
+        "discover_w3": "pass",
+        "invoke_w1": "pass",
+        "repair_w1": "pass"
+      }
+    }
+  ],
+  "schema_version": "taskflow-e01-agent-trial-summary/v1",
+  "shared_schema_trial": true,
+  "source_access_control": "macOS Seatbelt denied primary repository, known worktrees, and Codex memory",
+  "success": true
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "taskflow-e01-source-control-preflight/v1",
+  "denied_roots": [
+    "/Users/alessandro.rizzo/personal/taskflow",
+    "/private/tmp/taskflow-peer-review",
+    "/private/tmp/taskflow-tf-003.07",
+    "/Users/alessandro.rizzo/.codex/memories"
+  ],
+  "bundle_root": "/private/tmp/e01-sealed-4b77693a513a",
+  "bundle_readable_and_executable": true,
+  "denied_roots_unreadable": true,
+  "command": [
+    "sandbox-exec",
+    "-f",
+    "/private/tmp/e01-seatbelt-4b77693a513a/source-deny.sb",
+    "/bin/sh",
+    "-c",
+    "test -r help.txt && test -x taskflow-e01 && ./taskflow-e01 api W3 >/dev/null && test ! -r /Users/alessandro.rizzo/personal/taskflow/README.md && test ! -r /private/tmp/taskflow-peer-review/README.md && test ! -r /private/tmp/taskflow-tf-003.07/README.md && test ! -r /Users/alessandro.rizzo/.codex/memories/README.md"
+  ],
+  "exit_code": 0,
+  "output": ""
+}

@@ -1,0 +1,5 @@
+{"arguments":["validate","W1","@repaired-w1-args.json"],"cwd":"e01-sealed-attempt-2-4b77693a513a"}
+{"arguments":["invoke","W1","@repaired-w1-args.json"],"cwd":"e01-sealed-attempt-2-4b77693a513a"}
+{"arguments":["validate","W1","@repaired-w1-args.json"],"cwd":"e01-sealed-attempt-2-4b77693a513a"}
+{"arguments":["invoke","W1","@repaired-w1-args.json"],"cwd":"e01-sealed-attempt-2-4b77693a513a"}
+{"arguments":["invoke","W1","@repaired-w1-args.json"],"cwd":"e01-sealed-attempt-2-4b77693a513a"}

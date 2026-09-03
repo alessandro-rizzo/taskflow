@@ -1,0 +1,13 @@
+{
+  "schema_version": "taskflow-e01-benchmark-execution/v1",
+  "primary_order": [
+    "C",
+    "D",
+    "B",
+    "A"
+  ],
+  "near_budget_candidates": [],
+  "reverse_run": false,
+  "reverse_order": [],
+  "decision_p95_rule": "maximum primary/reverse warm-discovery p95"
+}

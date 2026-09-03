@@ -1,0 +1,68 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E01",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "timestamp": "2026-09-03T21:16:20Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "env GOCACHE=/tmp/taskflow-e01-tf00307/C/go-warm-discovery-cache go build -o /tmp/taskflow-e01-tf00307/C/warm-discovery-driver ./cmd/e01c \u0026\u0026 /tmp/taskflow-e01-tf00307/C/warm-discovery-driver discover W1 \u003e/dev/null",
+  "cache_dimensions": {
+    "discovery_cache": "none",
+    "driver_binary": "prebuilt-each-sample",
+    "gocache": "candidate-isolated-warm",
+    "process": "fresh"
+  },
+  "samples": [
+    0.0065705,
+    0.006322708,
+    0.006123209,
+    0.006294875,
+    0.00644075,
+    0.0062475,
+    0.006289584,
+    0.006198125,
+    0.006034167,
+    0.006303584,
+    0.006262208,
+    0.006375792,
+    0.006404666,
+    0.006134875,
+    0.0063375,
+    0.006353125,
+    0.006178333,
+    0.00660375,
+    0.00645325,
+    0.006006792,
+    0.00674775,
+    0.0061975,
+    0.006702833,
+    0.006187125,
+    0.006142,
+    0.006647083,
+    0.006139208,
+    0.006411542,
+    0.006356167,
+    0.006133125
+  ],
+  "sample_count": 30,
+  "median": 0.0062992295,
+  "p95": 0.006702833,
+  "raw_result_location": "samples.txt"
+}

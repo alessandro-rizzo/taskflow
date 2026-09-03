@@ -1,0 +1,20 @@
+{
+  "bundle_digest": "ea26025bd37cbe98dd65f29b04d9d8a4b92d31d49a92de418afd1d0bdf0971a5",
+  "candidate_source_included": false,
+  "candidate_source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "files": {
+    "help.txt": "83b25385f3fcb24ca7f44d9ec266b709c7ef4cf24526535dd34eda6a36b26a95",
+    "invalid-w1-args.json": "3cb2891b5e4bede1d9af908f2c31f928451fbef3ea4d27ee4057a0233d41b35c",
+    "prompt.md": "f8389ced82b21dea24f8f1f5a75bc682227f83fe8fa649046387f2fde2941f18",
+    "response-schema.json": "c1cfc5cf8fe729b33b44d42cbbaaeeb701efdc037814c7899b36f19abc9546d4",
+    "schemas/effect.schema.json": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+    "schemas/w1.schema.json": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+    "schemas/w2.schema.json": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+    "schemas/w3.schema.json": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+    "taskflow-e01": "50e0ab295f861bea77264f5bedecf7e5f678837fa69f0fabbb1565e5f2f55e5a"
+  },
+  "protocol_sha256": "4b77693a513a4fe7d74500f52eae5fccd339af59666ec3773a60d6946e4a02c2",
+  "repository_documentation_included": false,
+  "schema_version": "taskflow-e01-sealed-bundle/v1",
+  "shared_schema_source": "canonically identical A-D output; copied from A only after cross-candidate audit"
+}

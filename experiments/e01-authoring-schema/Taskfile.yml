@@ -8,6 +8,7 @@ tasks:
       - task: check:b
       - task: check:c
       - task: check:d
+      - task: check:tf00307
 
   check:a:
     desc: Verify standalone candidate A, then compare its completed outputs
@@ -47,3 +48,11 @@ tasks:
         go run ./cmd/t1conform
         --candidate ../../experiments/e01-authoring-schema/scope/effect-probe.schema.json
         --golden ../../experiments/e01-authoring-schema/scope/effect-probe.schema.json
+
+  check:tf00307:
+    desc: Verify frozen E01 measurements, agent trials, scorecard, and decision
+    cmds:
+      - python3 measurements/scripts/verify_protocol.py
+      - python3 measurements/scripts/audit_candidates.py
+      - python3 agent-trials/scripts/verify_trials.py
+      - python3 measurements/scripts/verify_results.py

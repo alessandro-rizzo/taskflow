@@ -1,0 +1,6 @@
+$ /tmp/taskflow-e01-tf00307/harness/t1bench --cmd 'env GOCACHE=/tmp/taskflow-e01-tf00307/C/go-cold-build-cache go build -o /tmp/taskflow-e01-tf00307/C/cold-build-driver ./cmd/e01c' --n 15 --state cold --prepare 'python3 ../../measurements/scripts/prepare_state.py --mode go-cold-build --candidate C' --experiment E01 --fixture w1-fast-project-check --out /private/tmp/taskflow-tf-003.07/experiments/e01-authoring-schema/measurements/results/primary/C/cold-driver-build-or-typecheck --source-revision ca87b81869b3b22630a3772da481d5088b0816ef --cpu 'Apple M5 Max' --cores 18 --ram-gib 64 --os-name darwin --os-version 26.5.2 --os-build 25F84 --os-arch arm64 --cache-dim driver_binary=absent-before-sample --cache-dim gocache=candidate-isolated-empty-each-sample
+t1bench: collecting 15 sample(s) of "env GOCACHE=/tmp/taskflow-e01-tf00307/C/go-cold-build-cache go build -o /tmp/taskflow-e01-tf00307/C/cold-build-driver ./cmd/e01c" (state=cold, prepare="python3 ../../measurements/scripts/prepare_state.py --mode go-cold-build --candidate C")
+t1bench: wrote /private/tmp/taskflow-tf-003.07/experiments/e01-authoring-schema/measurements/results/primary/C/cold-driver-build-or-typecheck/record.json (median=2.074s p95=2.133s)
+
+exit_code=0
+elapsed_seconds=33.180183125

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "w3_operation",
+    "w3_outputs",
+    "w3_capabilities",
+    "invalid_w1_diagnosis",
+    "repaired_w1_arguments",
+    "validation_command",
+    "invocation_command",
+    "invocation_status",
+    "w1_outputs",
+    "source_read_attempted"
+  ],
+  "properties": {
+    "w3_operation": {"type": "string"},
+    "w3_outputs": {"type": "array", "items": {"$ref": "#/$defs/output"}},
+    "w3_capabilities": {"type": "array", "items": {"type": "string"}},
+    "invalid_w1_diagnosis": {"type": "array", "items": {"type": "string"}},
+    "repaired_w1_arguments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verbosity", "changed-only"],
+      "properties": {
+        "verbosity": {"type": "string", "enum": ["quiet", "normal", "verbose"]},
+        "changed-only": {"type": "boolean"}
+      }
+    },
+    "validation_command": {"type": "string"},
+    "invocation_command": {"type": "string"},
+    "invocation_status": {"type": "string"},
+    "w1_outputs": {"type": "array", "items": {"$ref": "#/$defs/output"}},
+    "source_read_attempted": {"type": "boolean"}
+  },
+  "$defs": {
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "optional"],
+      "properties": {
+        "id": {"type": "string"},
+        "type": {"type": "string"},
+        "optional": {"type": "boolean"}
+      }
+    }
+  }
+}

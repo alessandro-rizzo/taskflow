@@ -1,0 +1,7 @@
+{
+  "candidate": "C",
+  "metric": "warm-discovery",
+  "phase": "primary",
+  "error": "command failed; see /private/tmp/taskflow-tf-003.07/experiments/e01-authoring-schema/measurements/results/primary/C/warm-discovery.log",
+  "rerun_allowed_only_after_dated_amendment": true
+}

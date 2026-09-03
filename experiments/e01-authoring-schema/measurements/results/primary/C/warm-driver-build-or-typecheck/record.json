@@ -1,0 +1,51 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E01",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "timestamp": "2026-09-03T21:17:05Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "python3 ../../measurements/scripts/prepare_state.py --mode go-warm-build --candidate C --entrypoint ./cmd/e01c",
+  "cache_dimensions": {
+    "driver_binary": "absent-before-sample",
+    "gocache": "candidate-isolated-prewarmed-each-sample"
+  },
+  "samples": [
+    0.52795525,
+    0.184068709,
+    0.176474292,
+    0.158550625,
+    0.180835083,
+    0.155518833,
+    0.168243375,
+    0.296702958,
+    0.152751125,
+    0.152711083,
+    0.151631333,
+    0.149336083,
+    0.151591958,
+    0.168129209,
+    0.15528075
+  ],
+  "sample_count": 15,
+  "median": 0.158550625,
+  "p95": 0.296702958,
+  "raw_result_location": "samples.txt"
+}

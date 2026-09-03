@@ -1,0 +1,143 @@
+{
+  "candidate_b_additional_gates": {
+    "diagnostic_maps_to_authored_declaration": true,
+    "stale_output_rejected": true
+  },
+  "candidate_d_semantic_checker": "typescript@5.9.3 locked",
+  "candidate_source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "candidates": {
+    "A": {
+      "approach": "explicit-generic-go",
+      "authored_loc": 31,
+      "authored_regions": [
+        "candidate.go:E01-AUTHOR-BEGIN..E01-AUTHOR-END"
+      ],
+      "body_sentinel_absent": true,
+      "determinism_runs_per_scope": 10,
+      "hard_gates": "pass",
+      "low_level_concepts": [
+        "operation-registration",
+        "argument-schema",
+        "output-schema",
+        "capability-request"
+      ],
+      "material_threshold_pass": true,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      },
+      "recomputed_authored_loc": 31
+    },
+    "B": {
+      "approach": "go-ast-tag-generator",
+      "authored_loc": 21,
+      "authored_regions": [
+        "project.go:E01-AUTHOR-BEGIN..E01-AUTHOR-END"
+      ],
+      "body_sentinel_absent": true,
+      "determinism_runs_per_scope": 10,
+      "hard_gates": "pass",
+      "low_level_concepts": [
+        "argument-schema",
+        "output-schema",
+        "capability-request"
+      ],
+      "material_threshold_pass": true,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      },
+      "recomputed_authored_loc": 21
+    },
+    "C": {
+      "approach": "reflection-heavy-go",
+      "authored_loc": 30,
+      "authored_regions": [
+        "candidate.go:E01-AUTHOR-BEGIN..E01-AUTHOR-END"
+      ],
+      "body_sentinel_absent": true,
+      "determinism_runs_per_scope": 10,
+      "hard_gates": "pass",
+      "low_level_concepts": [
+        "operation-registration",
+        "argument-schema",
+        "output-schema",
+        "capability-request"
+      ],
+      "material_threshold_pass": true,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      },
+      "recomputed_authored_loc": 30
+    },
+    "D": {
+      "approach": "minimal-typescript-descriptors",
+      "authored_loc": 35,
+      "authored_regions": [
+        "candidate.ts:E01-AUTHOR-BEGIN..E01-AUTHOR-END"
+      ],
+      "body_sentinel_absent": true,
+      "determinism_runs_per_scope": 10,
+      "hard_gates": "pass",
+      "low_level_concepts": [
+        "operation-registration",
+        "argument-schema",
+        "output-schema",
+        "capability-request"
+      ],
+      "material_threshold_pass": true,
+      "output_hashes": {
+        "W1": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878",
+        "W2": "ba5293bd5fb0b027623e333dcb9b216aa02b4267a8fdcac145eca5bfa536a0da",
+        "W3": "5f8f9d2b38634315432bb32ed0597e674c0473679361bb97e29e8ca1e4e121b7",
+        "effect": "cfeabc5e008716020b0ae6c5946ec7b18b7de4be686cd2dae1a3a72ac906b820",
+        "w1_trace": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+      },
+      "recomputed_authored_loc": 35
+    }
+  },
+  "cross_candidate_canonical_equality": true,
+  "protocol_sha256": "4b77693a513a4fe7d74500f52eae5fccd339af59666ec3773a60d6946e4a02c2",
+  "review_limitations": {
+    "A": "31-line result carries explicit registration metadata.",
+    "B": "21-line result is accompanied by 7 annotation lines, 171 generator lines, 158 generated lines, and one tag-reflection site.",
+    "C": "30-line result depends on 13 reflection sites and cannot win under the frozen branch rule.",
+    "D": "35-line result needs a second locked toolchain and three nominal-typing phantom members."
+  },
+  "roadmap_id": "E01",
+  "same_scope": [
+    "W1",
+    "W2",
+    "W3",
+    "effect",
+    "w1_trace"
+  ],
+  "schema_version": "taskflow-e01-candidate-audit/v1",
+  "separate_burdens_recomputed": {
+    "B": {
+      "annotation_lines": 7,
+      "generated_loc": 158,
+      "generator_loc": 171,
+      "reflection_sites": 1
+    },
+    "C": {
+      "annotation_or_tag_lines": 4,
+      "reflection_sites": 13
+    },
+    "D": {
+      "nominal_typing_phantom_members": 3,
+      "second_toolchain": true
+    }
+  },
+  "task_id": "TF-003.07"
+}

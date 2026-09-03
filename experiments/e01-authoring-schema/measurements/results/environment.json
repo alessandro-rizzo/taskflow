@@ -1,0 +1,24 @@
+{
+  "bun": "1.3.13",
+  "candidate_source_revision": "ca87b81869b3b22630a3772da481d5088b0816ef",
+  "codex": "codex-cli 0.153.0",
+  "go": "go version go1.25.12 darwin/arm64",
+  "hardware": {
+    "cores": 18,
+    "cpu": "Apple M5 Max",
+    "ram_gib": 64
+  },
+  "machine": "arm64",
+  "mise": "2026.4.28 macos-arm64 (2026-04-30)",
+  "os": {
+    "arch": "arm64",
+    "build": "25F84",
+    "name": "darwin",
+    "version": "26.5.2"
+  },
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "protocol_sha256": "4b77693a513a4fe7d74500f52eae5fccd339af59666ec3773a60d6946e4a02c2",
+  "python": "3.9.6",
+  "schema_version": "taskflow-e01-measurement-environment/v1",
+  "task": "3.50.0"
+}
