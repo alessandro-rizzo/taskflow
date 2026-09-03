@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  check:
+    desc: Verify the frozen E04 Phase A contract and reject Phase B content
+    cmds:
+      - python3 scripts/verify_contract.py --phase-a-only
+
+  check:contract:
+    desc: Verify the frozen E04 protocol and repository bindings
+    cmds:
+      - python3 scripts/verify_contract.py
