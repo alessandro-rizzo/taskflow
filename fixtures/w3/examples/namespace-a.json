@@ -1,6 +1,6 @@
 {
   "fixture_id": "w3-isolated-native-mobile-stack",
-  "version": "t1-w3-fixture-v0-experimental",
+  "version": "t1-w3-fixture-v1-experimental",
   "status": "specification-only",
   "namespace_id": "ns-a",
   "owner": "agent-alpha-worktree",
@@ -50,6 +50,7 @@
   },
   "mobile_e2e_report": {
     "id": "report-ns-a-mobile-e2e",
+    "consumer_id": "ns-a-ios-e2e",
     "consumes": [
       "endpoint-ns-a-api",
       "artifact-ns-a-iosapp",

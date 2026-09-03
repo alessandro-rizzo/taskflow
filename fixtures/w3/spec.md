@@ -1,8 +1,8 @@
 # W3 isolated native-mobile stack fixture
 
-Roadmap tranche: T1. Workflow: W3. Task: TF-002.03.
+Roadmap tranche: T1. Workflow: W3. Tasks: TF-002.03, TF-003.05.
 
-Fixture id: `w3-isolated-native-mobile-stack`. Version: `t1-w3-fixture-v0-experimental`
+Fixture id: `w3-isolated-native-mobile-stack`. Version: `t1-w3-fixture-v1-experimental`
 (roadmap section 3 rule 3a: this fixture is frozen and reusable, not
 disposable, and declares an explicit experimental version; it must be
 treated as pre-Gate-1 and may change incompatibly). Every example under
@@ -48,13 +48,15 @@ edges, not only their output artifacts:
 | source -> macOS Xcode build (build edge) | `macos_artifact.produced_by` (`node: "macos-xcode-build"`, `consumes: <source id>`) | `examples/namespace-{a,b}.json` |
 | macOS Xcode build -> Artifact[IOSApp] | `macos_artifact` | `examples/namespace-{a,b}.json` |
 | simulator | `simulator_session` | `examples/namespace-{a,b}.json` |
-| Endpoint + IOSApp + simulator -> Report[MobileE2E] | `mobile_e2e_report`, referencing the endpoint/artifact/simulator ids it consumes | `examples/namespace-{a,b}.json` |
+| Endpoint + IOSApp + simulator -> Report[MobileE2E] | `mobile_e2e_report`, declaring the consuming operation identity and referencing the endpoint/artifact/simulator ids it consumes | `examples/namespace-{a,b}.json` |
 
-`validate.sh` enforces the two build edges referentially: each namespace's
-`linux_api_service.produced_by.consumes` and `macos_artifact.produced_by.consumes`
-must equal that same namespace's own `source.id` (not a foreign or dangling
-id), and `mobile_e2e_report.consumes` must reference ids that actually exist
-in that namespace record.
+`validate.sh` enforces every declared edge referentially. Each namespace's
+`linux_api_service.produced_by.consumes` and
+`macos_artifact.produced_by.consumes` must equal that namespace's own
+`source.id`; `linux_api_service.endpoint_id` must equal its local
+`endpoint.id`; and `mobile_e2e_report.consumes` must contain exactly once each
+of the local endpoint, artifact, and simulator ids. Endpoint target namespace
+and simulator lease holder must equal the record's owning `namespace_id`.
 
 ## Two-namespace concurrency (AC #2)
 
@@ -63,24 +65,52 @@ concurrent worktree/agent namespaces running W3 at once. Every identifier
 that must not collide between them is deliberately distinct in the two
 examples:
 
+- `namespace_id`
 - `source.id`
 - `writable_root` (`/var/lib/taskflow/namespaces/ns-a` vs `ns-b`)
+- `linux_api_service.name`
 - `linux_api_service.port` (`41001` vs `41002`)
 - `linux_api_service.database_path`
 - `endpoint.id`
 - `macos_artifact.id`
 - `simulator_session.id` and `simulator_session.lease.id`
+- `mobile_e2e_report.id` and `mobile_e2e_report.consumer_id`
 
-`validate.sh` checks this list is actually distinct across `namespace-a.json`
-and `namespace-b.json`, not merely asserted in prose.
+`validate.sh` checks this list is actually distinct across all namespace
+examples, not merely asserted in prose. Identifier values are also unique
+across identifier kinds: an artifact id cannot silently reuse an endpoint id,
+for example. Every database path is a normalized absolute descendant of its
+own writable root, and no writable root or database path may equal, contain,
+or be contained by a path belonging to another namespace.
 
 `endpoint.authorized_consumers` in each namespace lists only that namespace's
-own consumer (`ns-a-ios-e2e` / `ns-b-ios-e2e`) — this is the explicit
-authorization model required by roadmap section 4's "Linux-to-macOS endpoint
-routing is explicit and authorized." `macos_artifact.profile_attestation`
-fields are marked `"modeled-not-attested"`: this fixture specifies the shape
-of an attestation record without asserting E06 has built an attestation
-mechanism.
+own consumer (`ns-a-ios-e2e` / `ns-b-ios-e2e`), now declared explicitly as
+`mobile_e2e_report.consumer_id`. The validator requires the authorization list
+to resolve exactly once to that local identity and requires `endpoint.route`
+to remain `namespace-private`. This is the explicit authorization relationship
+required by roadmap section 4; it is not a runtime authorization mechanism.
+
+`macos_artifact.profile_attestation` is required to be an object, but its
+contents are deliberately opaque. The current illustrative fields are marked
+`"modeled-not-attested"`; E06 still owns the provider and attestation contract.
+
+## Typed fixture envelope and diagnostics
+
+Namespace records require typed, non-empty values for the fields and nested
+objects shown by the W3 shape. Ports and lease TTLs are positive integers
+(JSON booleans are rejected), identifier collections contain non-empty
+strings, and malformed nesting produces validation diagnostics rather than
+Python exceptions.
+
+Diagnostics have the stable form:
+
+```text
+<file>: <semantic field>: [<invariant code>] namespace=<owner> <detail>
+```
+
+Collision diagnostics additionally identify the conflicting semantic field,
+file, and namespace. Diagnostics are sorted, so the same invalid fixture tree
+produces the same output regardless of filesystem iteration order.
 
 ## Fault and test scenarios (AC #3)
 
@@ -120,16 +150,22 @@ fixtures/w3/validate.sh
 ```
 
 Dependency-free (uses only `python3`'s standard-library `json` module).
-Checks every `examples/*.json` file is well-formed and contains the fields
-this document declares required for its kind (namespace record vs. scenario
-record), that each namespace's build-edge `produced_by.consumes` references
-its own `source.id` and not a dangling or foreign one, that
-`mobile_e2e_report.consumes` only references ids present in the same
-namespace record, and that the two-namespace-concurrency identifier list
-above is actually distinct across `namespace-a.json`/`namespace-b.json`
-rather than merely asserted in prose. This validates the specification's
-internal consistency; it does not and cannot validate against real W3
-infrastructure, because none exists yet.
+The command first runs `test_validate.py`, whose table-driven cases copy the
+canonical examples to a temporary directory and inject one invalid mutation at
+a time. Those mutations cover required/type failures, dangling or foreign
+links, unauthorized consumers, ownership violations, incomplete/duplicate
+report inputs, route and path confinement, every declared collision category,
+and cross-kind identifier reuse. Each case must fail with the expected stable
+invariant code and contextual diagnostic. The command then validates the
+untouched canonical examples with the same `validate.py` entry point.
+
+Scenario records receive only generic envelope validation: non-empty string
+metadata, an object-valued `given`, and a non-empty object list of expected
+events with a non-empty string `event`. This validates the specification's
+internal consistency; it does not validate against real W3 infrastructure.
+Every `examples/*.json` file must be classified by the accepted
+`namespace-*.json` or `scenario-*.json` naming contract; an unrecognized JSON
+example fails with `W3-FILESET` instead of being silently skipped.
 
 ## Limitations and open questions
 
@@ -142,6 +178,10 @@ infrastructure, because none exists yet.
   `orphan.reclaimed`) are illustrative event-name conventions, not a frozen
   event vocabulary. T4/T8 will define the real lifecycle-event schema
   (roadmap sections 13, 17).
+- Scenario-specific `given`, event payload fields, ordering, and outcome values
+  remain opaque. Likewise, the validator does not inspect provider-specific
+  `profile_attestation` contents. This prevents a T1 fixture validator from
+  pre-empting E06/E07, T4, or T8 contract decisions.
 - This fixture cannot distinguish "E06 concludes native macOS execution is
   infeasible" (roadmap section 9 E06 branch "No approach isolates concurrent
   agents") from a fixture defect, because there is no running system to

@@ -1,6 +1,6 @@
 {
   "fixture_id": "w3-isolated-native-mobile-stack",
-  "version": "t1-w3-fixture-v0-experimental",
+  "version": "t1-w3-fixture-v1-experimental",
   "status": "specification-only",
   "scenario": "unauthorized-endpoint-routing",
   "description": "A consumer from namespace ns-b attempts to route to namespace ns-a's private Linux API endpoint without being in its authorized_consumers list.",

@@ -1,6 +1,6 @@
 {
   "fixture_id": "w3-isolated-native-mobile-stack",
-  "version": "t1-w3-fixture-v0-experimental",
+  "version": "t1-w3-fixture-v1-experimental",
   "status": "specification-only",
   "scenario": "cancellation",
   "description": "The caller cancels a W3 run while the macOS build and simulator session are active. Cleanup must be bounded and durable.",

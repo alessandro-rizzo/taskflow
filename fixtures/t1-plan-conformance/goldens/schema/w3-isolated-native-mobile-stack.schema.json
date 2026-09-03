@@ -2,7 +2,7 @@
   "document_kind": "schema",
   "format_version": "t1-plan-conformance-schema-v1",
   "fixture_id": "w3-isolated-native-mobile-stack",
-  "fixture_version": "t1-w3-fixture-v0-experimental",
+  "fixture_version": "t1-w3-fixture-v1-experimental",
   "status": "experimental",
   "operations": [
     {

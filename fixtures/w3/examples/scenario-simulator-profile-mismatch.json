@@ -1,6 +1,6 @@
 {
   "fixture_id": "w3-isolated-native-mobile-stack",
-  "version": "t1-w3-fixture-v0-experimental",
+  "version": "t1-w3-fixture-v1-experimental",
   "status": "specification-only",
   "scenario": "simulator-profile-mismatch",
   "description": "A simulator session's attested identity (OS/runtime/device) does not match the profile declared by the macOS artifact build. The mismatch must be rejected before Report[MobileE2E] is produced, not silently tolerated.",

@@ -1,6 +1,6 @@
 {
   "fixture_id": "w3-isolated-native-mobile-stack",
-  "version": "t1-w3-fixture-v0-experimental",
+  "version": "t1-w3-fixture-v1-experimental",
   "status": "specification-only",
   "scenario": "dirty-warm-infrastructure",
   "description": "A warm macOS VM/workspace reused from a prior namespace still has leftover mutable state (files, simulator data) when a new namespace acquires it. It must be reset before reuse, not silently reused dirty.",
