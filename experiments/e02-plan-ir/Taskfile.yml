@@ -1,0 +1,16 @@
+version: "3"
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+
+tasks:
+  check:
+    desc: Verify the frozen E02 Phase A contract only
+    cmds:
+      - task: check:contract
+
+  check:contract:
+    desc: Verify protocol semantics, hashes, scope, and negative mutations
+    cmds:
+      - python3 scripts/verify_contract.py
+      - python3 -m unittest discover -s scripts -p 'test_verify_contract.py' -v

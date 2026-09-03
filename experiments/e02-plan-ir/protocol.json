@@ -1,0 +1,244 @@
+{
+  "schema_version": "taskflow-e02-experiment-protocol/v1",
+  "roadmap_id": "E02",
+  "task_id": "TF-003.08",
+  "status": "phase-a-contract-only",
+  "base_revision": "834ee0a95eef05a2a4e434bf9095826ee93a8cc5",
+  "question": "Can authored operations lower to deterministic language-neutral plan JSON sufficient for independent validation, display, identity, and resume explanation?",
+  "disposable_boundaries": {
+    "all_e02_formats_apis_and_implementations_are_experimental": true,
+    "production_go_module_selected": false,
+    "public_package_selected": false,
+    "daemon_transport_selected": false,
+    "compatibility_promise": false,
+    "prototype_import_allowed": false,
+    "goldens_may_be_generation_inputs": false
+  },
+  "formats": {
+    "plan_format_version": "t1-plan-conformance-plan-v2",
+    "resume_diff_format_version": "e02-resume-diff-v1",
+    "benchmark_schema_version": "taskflow-t1-benchmark/v2",
+    "digest": "sha256-lowercase-hex-over-canonical-bytes"
+  },
+  "plan_grammar": {
+    "json_values_only": true,
+    "forbidden_runtime_values": [
+      "function",
+      "interface",
+      "pointer",
+      "closure",
+      "executable-callback",
+      "secret-value",
+      "provider-handle",
+      "worker-handle",
+      "ambient-host-value"
+    ],
+    "identifier_pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+    "integers": {
+      "minimum": -9223372036854775808,
+      "maximum": 9223372036854775807,
+      "fraction_exponent_plus_and_negative_zero_allowed": false
+    },
+    "duplicate_object_members_allowed": false,
+    "unknown_fields_allowed": false,
+    "objects": {
+      "plan": {
+        "required": ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts", "services", "secrets", "effects"],
+        "allowed": ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts", "services", "secrets", "effects"]
+      },
+      "node": {
+        "required": ["id", "needs", "consumes", "produces", "planning_condition", "outcome_condition", "resources", "execution_profile", "cache_policy"],
+        "allowed": ["id", "needs", "consumes", "produces", "planning_condition", "outcome_condition", "resources", "execution_profile", "cache_policy"]
+      },
+      "artifact": {
+        "required": ["id", "type", "optional"],
+        "allowed": ["id", "type", "optional"]
+      },
+      "service": {
+        "required": ["id", "name", "route"],
+        "allowed": ["id", "name", "route"]
+      },
+      "secret": {
+        "required": ["id", "capability", "resolved_by"],
+        "allowed": ["id", "capability", "resolved_by"],
+        "resolved_by_value": "daemon",
+        "secret_value_field_allowed": false
+      },
+      "effect": {
+        "required": ["id", "kind", "target", "idempotency_key", "authorized_actor"],
+        "allowed": ["id", "kind", "target", "idempotency_key", "authorized_actor"]
+      },
+      "planning_condition": {
+        "variants": {
+          "always": ["type"],
+          "changed-paths": ["type", "patterns", "exclude_patterns"]
+        },
+        "required_by_variant": {
+          "always": ["type"],
+          "changed-paths": ["type", "patterns"]
+        }
+      },
+      "outcome_condition": {
+        "variants": {
+          "always": ["type"],
+          "all-upstream-pass": ["type"],
+          "conditional": ["type"]
+        }
+      },
+      "resources": {
+        "required": ["cpu_millicores", "memory_mib"],
+        "allowed": ["cpu_millicores", "memory_mib"],
+        "nonnegative_integers": true
+      },
+      "execution_profile": {
+        "required": ["os", "toolchain"],
+        "allowed": ["os", "toolchain", "profile_digest", "profile_id", "target_role"]
+      },
+      "cache_policy": {
+        "variants": {
+          "none": ["mode"],
+          "content-addressed": ["mode", "key_inputs"]
+        },
+        "required_by_variant": {
+          "none": ["mode"],
+          "content-addressed": ["mode", "key_inputs"]
+        }
+      }
+    }
+  },
+  "canonical_json": {
+    "encoding": "utf-8",
+    "bom": false,
+    "whitespace": "none",
+    "trailing_newline": false,
+    "object_member_order": "lexicographic-utf8-key-bytes",
+    "string_rule": "unicode-scalars-shortest-json-escape-lowercase-u00xx-otherwise-raw-utf8-no-html-escape",
+    "integer_rule": "signed-int64-shortest-base10-no-plus-fraction-exponent-leading-zero-or-negative-zero",
+    "literal_rule": "lowercase-true-false-null",
+    "arrays_ordered_by_default": true,
+    "set_like_paths": [
+      {"path": "$.nodes", "element": "object", "unique_by": "id", "order": "utf8-id-bytes"},
+      {"path": "$.artifacts", "element": "object", "unique_by": "id", "order": "utf8-id-bytes"},
+      {"path": "$.services", "element": "object", "unique_by": "id", "order": "utf8-id-bytes"},
+      {"path": "$.secrets", "element": "object", "unique_by": "id", "order": "utf8-id-bytes"},
+      {"path": "$.effects", "element": "object", "unique_by": "id", "order": "utf8-id-bytes"},
+      {"path": "$.nodes[*].needs", "element": "string", "unique_by": "value", "order": "utf8-value-bytes"},
+      {"path": "$.nodes[*].consumes", "element": "string", "unique_by": "value", "order": "utf8-value-bytes"},
+      {"path": "$.nodes[*].produces", "element": "string", "unique_by": "value", "order": "utf8-value-bytes"},
+      {"path": "$.nodes[*].planning_condition.patterns", "element": "string", "unique_by": "value", "order": "utf8-value-bytes"},
+      {"path": "$.nodes[*].planning_condition.exclude_patterns", "element": "string", "unique_by": "value", "order": "utf8-value-bytes"},
+      {"path": "$.nodes[*].cache_policy.key_inputs", "element": "string", "unique_by": "value", "order": "utf8-value-bytes"}
+    ],
+    "open_ended_key_name_heuristic_allowed": false
+  },
+  "resume_diff": {
+    "required_fields": ["format_version", "compatible", "differences"],
+    "difference_fields": ["path", "classification", "before", "after"],
+    "path_style": "jsonpath-with-semantic-id-selectors",
+    "array_indexes_allowed_in_paths": false,
+    "classification": "structural-incompatible",
+    "sort_differences_by": "utf8-path-bytes"
+  },
+  "scope": {
+    "phase_a_allowed_files": [
+      "Taskfile.yml",
+      "experiment-contract.md",
+      "protocol.json",
+      "protocol.sha256",
+      "scope-hashes.json",
+      "scripts/test_verify_contract.py",
+      "scripts/verify_contract.py"
+    ],
+    "phase_b_forbidden_before_contract_commit": [
+      "candidate-json/",
+      "reader/",
+      "mutations/",
+      "evidence/",
+      "benchmarks/"
+    ],
+    "scope_hashes_path": "experiments/e02-plan-ir/scope-hashes.json",
+    "bindings": [
+      {"id": "e01-candidate-b-go-module", "role": "accepted-e01-w1-import-surface", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/go.mod", "sha256": "0d1be68ebb3aeafda772cc4193f03aed856628147192b1a306273cf36e055e7f"},
+      {"id": "e01-candidate-b-project", "role": "accepted-e01-w1-source", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/project.go", "sha256": "e759b5b113a99a9eecce901e2f66b0c133dae417d3380dff1eea5f1a786f9c96"},
+      {"id": "e01-candidate-b-runtime", "role": "accepted-e01-w1-trace-runtime", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/runtime.go", "sha256": "c2123b9a3a14d64b5ab0e1073c958c37293c0732130da5568637cb455263a429"},
+      {"id": "e01-candidate-b-generator", "role": "accepted-e01-package-import-closure", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/generator.go", "sha256": "9daefcb8ed194869d6eafa75d3669d543bc834b5db3de6066d4b3d95aa69c0d9"},
+      {"id": "e01-candidate-b-w1-trace", "role": "accepted-e01-w1-trace", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/outputs/w1-logical-trace.json", "sha256": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"},
+      {"id": "t1-plan-w1", "role": "post-generation-comparison-only", "path": "fixtures/t1-plan-conformance/goldens/plan/w1-fast-project-check.plan.json", "sha256": "3c50f41566609e70a9da3f6e2c10dc49f829c5990320122480c0af5d73b036c9"},
+      {"id": "t1-plan-w2", "role": "post-generation-comparison-only", "path": "fixtures/t1-plan-conformance/goldens/plan/w2-cross-target-artifact-pipeline.plan.json", "sha256": "8ff93136a50e87407e3117355f8cc5c3bef7270bed9524874cc70927b2f50489"},
+      {"id": "t1-plan-w3", "role": "post-generation-comparison-only", "path": "fixtures/t1-plan-conformance/goldens/plan/w3-isolated-native-mobile-stack.plan.json", "sha256": "f36e312c944a534d5edfcfdab0fda0f536042960b1b605b8ae700a77af8411d1"},
+      {"id": "t1-plan-synthetic", "role": "post-generation-comparison-only", "path": "fixtures/t1-plan-conformance/goldens/plan/synthetic-full-coverage.plan.json", "sha256": "90dc0a7b2b8cddd545099cbeae754c5e763d69ea02459f682cdd2053feb51bb6"}
+    ],
+    "fixture_boundaries": {
+      "w1": "read-only adapter over E01 Candidate B ComposeW1 trace",
+      "w2": "E02-local disposable typed concrete graph matching T1 after emission",
+      "w3": "E02-local disposable typed concrete graph matching T1 after emission",
+      "synthetic": "E02-local disposable typed full-coverage graph matching T1 after emission"
+    }
+  },
+  "hard_gates": {
+    "fixtures": ["w1", "w2", "w3", "synthetic"],
+    "t1_validation_violations": 0,
+    "t1_structural_differences": 0,
+    "fresh_processes_per_fixture": 20,
+    "distinct_canonical_byte_sequences_per_fixture": 1,
+    "distinct_digests_per_fixture": 1,
+    "go_python_canonical_byte_differences": 0,
+    "go_python_digest_differences": 0,
+    "reorder_probe_minimum_elements_per_set_like_path": 2,
+    "reorder_digest_differences": 0,
+    "authority_counters": {"worker_acquisitions": 0, "provider_calls": 0, "secret_resolutions": 0},
+    "untouched_sentinels": ["E02_OPERATION_BODY_SENTINEL", "E02_FILE_WRITE_SENTINEL"],
+    "synthetic_required_concepts": ["typed-artifact", "optional-output", "planning-condition", "outcome-condition", "resources", "execution-profile", "cache-policy", "secret-capability-reference", "endpoint", "effect"],
+    "shape_probe": {"argument": "platform", "accepted_values": ["ios", "android"], "other_values_rejected": true, "complete_finite_graph": true, "serialized_callback": false},
+    "unknown_field_rejections": [
+      {"case": "root", "expected_path": "$.unexpected"},
+      {"case": "nested-node-test", "expected_path": "$.nodes[id=test].unexpected"}
+    ],
+    "incompatible_version_rejection_path": "$.format_version"
+  },
+  "meaningful_mutations": [
+    {"id": "planning-condition", "fixture": "w1", "target": "lint", "field": "planning_condition.patterns", "before": ["**/*.go"], "after": ["**/*.go", "**/*.mod"], "expected_paths": ["$.nodes[id=lint].planning_condition.patterns"]},
+    {"id": "execution-profile", "fixture": "w1", "target": "test", "field": "execution_profile.toolchain", "before": "go1.25.12", "after": "go1.25.13", "expected_paths": ["$.nodes[id=test].execution_profile.toolchain"]},
+    {"id": "output-type", "fixture": "w1", "target": "test-report", "field": "type", "before": "Report[GoTests]", "after": "Report[UnitTests]", "expected_paths": ["$.artifacts[id=test-report].type"]},
+    {"id": "output-optionality", "fixture": "w1", "target": "test-report", "field": "optional", "before": false, "after": true, "expected_paths": ["$.artifacts[id=test-report].optional"]}
+  ],
+  "performance_gates": {
+    "execution_order": ["w1-plan", "large-generation-canonicalization", "large-reader-validation-digest"],
+    "concurrent_measurement_allowed": false,
+    "w1_plan": {"samples": 30, "state": "warm", "driver": "prebuilt", "process": "fresh-per-sample", "p95_seconds_exclusive": 0.25},
+    "large_graph": {"nodes": 10000, "deterministic": true, "canonical_bytes_maximum_inclusive": 16777216},
+    "large_generation_and_canonicalization": {"samples": 15, "state": "warm", "process": "fresh-per-sample", "p95_seconds_exclusive": 2.0},
+    "large_reader_validation_and_digest": {"samples": 15, "state": "warm", "process": "fresh-per-sample", "p95_seconds_exclusive": 2.0},
+    "statistics": "fixtures/t1-benchmark-harness taskflow-t1-benchmark/v2 ComputeStatistics",
+    "required_metadata": ["source_revision", "timestamp_utc", "cpu", "cores", "ram_gib", "os_name", "os_version", "os_build", "arch", "go_version", "python_version", "preparation_command", "timed_command", "cache_dimensions", "raw_samples", "sample_count", "median", "p95", "byte_count"]
+  },
+  "rerun_rules": {
+    "failed_set": "retain the complete failed set, document cause and exact correction, then rerun the complete set from sample one",
+    "maximum_corrected_reruns_per_set": 1,
+    "individual_sample_replacement_allowed": false,
+    "threshold_or_rule_change_after_results_allowed": false,
+    "other_discretionary_reruns_allowed": false
+  },
+  "decision_branches": {
+    "priority": ["stop-revise-semantics", "bounded-dynamic-expansion", "pivot-encoding", "continue-canonical-json"],
+    "continue-canonical-json": "every hard, safety, determinism, scale, and performance gate passes",
+    "pivot-encoding": "cross-language bytes, reorder invariance, strict validation, size, or latency fails, or correctness needs an open-ended key-name heuristic; retain failure and compare schema-first Protobuf or canonical CBOR with JSON diagnostics",
+    "bounded-dynamic-expansion": "representative argument-dependent graph cannot become a complete finite plan; retain failure and prototype explicit limits without daemon callbacks into project code",
+    "stop-revise-semantics": "language neutrality requires erasing typed artifact, optional, endpoint, or effect distinctions; revise E01 and value semantics before T2",
+    "production_protocol_selected_before_gate_1": false
+  },
+  "evidence_locations": {
+    "raw_plans": "experiments/e02-plan-ir/evidence/raw/plans/",
+    "canonical_plans": "experiments/e02-plan-ir/evidence/raw/canonical/",
+    "digests": "experiments/e02-plan-ir/evidence/raw/digests/",
+    "comparisons": "experiments/e02-plan-ir/evidence/raw/comparisons/",
+    "reader": "experiments/e02-plan-ir/evidence/raw/reader/",
+    "mutations": "experiments/e02-plan-ir/evidence/raw/mutations/",
+    "rejections": "experiments/e02-plan-ir/evidence/raw/rejections/",
+    "sentinels": "experiments/e02-plan-ir/evidence/raw/sentinels/",
+    "benchmarks": "experiments/e02-plan-ir/evidence/raw/benchmarks/",
+    "failures": "experiments/e02-plan-ir/evidence/failures/",
+    "summary": "experiments/e02-plan-ir/evidence/summary.md"
+  },
+  "phase_a_verification_command": "cd experiments/e02-plan-ir && mise exec -- task check:contract"
+}
