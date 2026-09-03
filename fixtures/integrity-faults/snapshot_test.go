@@ -1,11 +1,115 @@
 package integrityfaults
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
+
+func TestTakeRejectsEveryDescendantSymlinkPolicy(t *testing.T) {
+	external := t.TempDir()
+	externalSecret := "external-secret-must-not-appear"
+	if err := os.WriteFile(filepath.Join(external, "secret.txt"), []byte(externalSecret), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Mkdir(filepath.Join(external, "secret-dir"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name   string
+		target func(root string) string
+	}{
+		{
+			name: "out-of-root file",
+			target: func(string) string {
+				return filepath.Join(external, "secret.txt")
+			},
+		},
+		{
+			name: "out-of-root directory",
+			target: func(string) string {
+				return filepath.Join(external, "secret-dir")
+			},
+		},
+		{
+			name: "dangling link",
+			target: func(string) string {
+				return "missing-target"
+			},
+		},
+		{
+			name: "in-root file",
+			target: func(string) string {
+				return "ordinary.txt"
+			},
+		},
+		{
+			name: "in-root directory",
+			target: func(string) string {
+				return "ordinary-dir"
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			root := t.TempDir()
+			if err := os.WriteFile(filepath.Join(root, "ordinary.txt"), []byte("ordinary"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Mkdir(filepath.Join(root, "ordinary-dir"), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			const linkName = "offending-link"
+			if err := os.Symlink(tt.target(root), filepath.Join(root, linkName)); err != nil {
+				t.Skipf("symlinks unavailable: %v", err)
+			}
+
+			snapshot, err := Take(root)
+			if !errors.Is(err, ErrSnapshotSymlink) {
+				t.Fatalf("expected ErrSnapshotSymlink, got %v", err)
+			}
+			if !strings.Contains(err.Error(), linkName) {
+				t.Fatalf("diagnostic %q does not identify relative path %q", err, linkName)
+			}
+			if strings.Contains(err.Error(), root) || strings.Contains(err.Error(), external) {
+				t.Fatalf("diagnostic must contain only the relative link path, got %q", err)
+			}
+			if !strings.Contains(err.Error(), ErrSnapshotSymlink.Error()) {
+				t.Fatalf("diagnostic %q does not explain the symlink policy", err)
+			}
+			if strings.Contains(err.Error(), externalSecret) {
+				t.Fatalf("diagnostic leaked external content: %q", err)
+			}
+			if !reflect.DeepEqual(snapshot, Snapshot{}) {
+				t.Fatalf("rejected snapshot returned partial state: %+v", snapshot)
+			}
+		})
+	}
+}
+
+func TestTakeRejectsSymlinkRoot(t *testing.T) {
+	realRoot := t.TempDir()
+	link := filepath.Join(t.TempDir(), "source-root")
+	if err := os.Symlink(realRoot, link); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	snapshot, err := Take(link)
+	if !errors.Is(err, ErrSnapshotSymlink) {
+		t.Fatalf("expected ErrSnapshotSymlink, got %v", err)
+	}
+	if !strings.Contains(err.Error(), `"."`) {
+		t.Fatalf("root-symlink diagnostic %q does not identify the relative root path", err)
+	}
+	if !reflect.DeepEqual(snapshot, Snapshot{}) {
+		t.Fatalf("rejected snapshot returned partial state: %+v", snapshot)
+	}
+}
 
 // TestSourceMutationAfterSnapshotDoesNotAlterDeclaredSource demonstrates
 // AC #2: once Take has returned, mutating the live source directory must
@@ -91,5 +195,11 @@ func TestTakeIsOrderIndependent(t *testing.T) {
 
 	if first.Digest != second.Digest {
 		t.Fatalf("expected identical content across two directories to produce the same Digest regardless of write order, got %s vs %s", first.Digest, second.Digest)
+	}
+	if len(first.Files) != 2 || first.Files["a.txt"] == "" || first.Files["b.txt"] == "" {
+		t.Fatalf("expected both ordinary files in snapshot, got %v", first.Files)
+	}
+	if !reflect.DeepEqual(first.Files, second.Files) {
+		t.Fatalf("expected identical ordinary file identities, got %v vs %v", first.Files, second.Files)
 	}
 }

@@ -9,12 +9,19 @@ package integrityfaults
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
 )
+
+// ErrSnapshotSymlink reports that Take encountered a symbolic link. This
+// fixture deliberately rejects every symlink rather than defining whether a
+// future production snapshot should preserve the link or follow an in-root
+// target.
+var ErrSnapshotSymlink = errors.New("symbolic links are not supported in snapshots")
 
 // Snapshot is a content-addressed, point-in-time record of a directory
 // tree. Every field is computed once inside Take and stored by value;
@@ -39,29 +46,64 @@ type Snapshot struct {
 	Digest string
 }
 
-// Take reads every regular file under root and returns an immutable
-// Snapshot. All bytes needed to compute Files and Digest are read before
-// Take returns; nothing in the returned Snapshot depends on root's
-// filesystem state afterward.
+// Take reads every non-directory, non-symlink entry under root and returns an
+// immutable Snapshot. The supplied root itself and every descendant symlink
+// are rejected, whether their targets are in-root, out-of-root, or dangling.
+// All bytes needed to compute Files and Digest are read before Take returns;
+// nothing in the returned Snapshot depends on root's filesystem state
+// afterward.
+//
+// This toy fixture does not provide an atomic filesystem snapshot. The rooted
+// operations prevent a descendant path from escaping root while it is read,
+// but concurrent in-root mutation can still make one Take observe entries at
+// different points in time.
 func Take(root string) (Snapshot, error) {
+	rootInfo, err := os.Lstat(root)
+	if err != nil {
+		return Snapshot{}, fmt.Errorf("snapshot root: %w", err)
+	}
+	if rootInfo.Mode()&fs.ModeSymlink != 0 {
+		return Snapshot{}, snapshotSymlinkError(".")
+	}
+	if !rootInfo.IsDir() {
+		return Snapshot{}, fmt.Errorf("snapshot root %q is not a directory", root)
+	}
+
+	rooted, err := os.OpenRoot(root)
+	if err != nil {
+		return Snapshot{}, fmt.Errorf("open snapshot root: %w", err)
+	}
+	defer rooted.Close()
+	openedRootInfo, err := rooted.Stat(".")
+	if err != nil {
+		return Snapshot{}, fmt.Errorf("inspect opened snapshot root: %w", err)
+	}
+	if !os.SameFile(rootInfo, openedRootInfo) {
+		return Snapshot{}, errors.New("snapshot root changed while it was being opened")
+	}
+
 	files := map[string]string{}
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, walkErr error) error {
+	err = fs.WalkDir(rooted.FS(), ".", func(path string, _ fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
-		if d.IsDir() {
+		rel := filepath.ToSlash(path)
+		info, err := rooted.Lstat(path)
+		if err != nil {
+			return fmt.Errorf("inspect snapshot path %q: %w", rel, err)
+		}
+		if info.Mode()&fs.ModeSymlink != 0 {
+			return snapshotSymlinkError(rel)
+		}
+		if info.IsDir() {
 			return nil
 		}
-		rel, err := filepath.Rel(root, path)
+		data, err := rooted.ReadFile(path)
 		if err != nil {
-			return err
-		}
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return err
+			return fmt.Errorf("read snapshot path %q: %w", rel, err)
 		}
 		sum := sha256.Sum256(data)
-		files[filepath.ToSlash(rel)] = hex.EncodeToString(sum[:])
+		files[rel] = hex.EncodeToString(sum[:])
 		return nil
 	})
 	if err != nil {
@@ -84,4 +126,8 @@ func Take(root string) (Snapshot, error) {
 		Files:  files,
 		Digest: hex.EncodeToString(h.Sum(nil)),
 	}, nil
+}
+
+func snapshotSymlinkError(rel string) error {
+	return fmt.Errorf("snapshot path %q: %w", rel, ErrSnapshotSymlink)
 }

@@ -1,8 +1,9 @@
 # T1 integrity and source-mutation fault fixtures
 
-Roadmap tranche: T1. Experiment input: E04. Workflows: W1-W2. Task: TF-002.07.
+Roadmap tranche: T1. Experiment input: E04. Workflows: W1-W2. Tasks:
+TF-002.07 and hardening ticket TF-003.03.
 
-Fixture id: `t1-integrity-faults`. Version: `t1-integrity-faults-v1-experimental`.
+Fixture id: `t1-integrity-faults`. Version: `t1-integrity-faults-v2-experimental`.
 Manifest schema version: `ManifestSchemaVersion` = `t1-integrity-faults-manifest/v1`
 (roadmap section 3 rule 3a: frozen and reusable, not disposable, pre-Gate-1,
 may change incompatibly).
@@ -77,12 +78,17 @@ changed) and that altered-but-present outputs were not detected at all
   filesystem again; it does not create a copy-on-write workspace, overlay,
   or any of E04's actual candidate approaches (Merkle/CAS, namespace/
   overlay, APFS clone, pooled container/microVM).
+- **Not a production symlink representation policy.** This fixture rejects
+  every symlink so it cannot accidentally assign source identity to bytes
+  outside its root. E04 must still decide whether a production Merkle tree
+  preserves links, follows safe in-root targets, or rejects them.
 
 ## Structure
 
 - `snapshot.go` / `snapshot_test.go` - `Take(dir) Snapshot`: content-addressed,
-  point-in-time directory digest. Demonstrates AC #2 (identity-freezing
-  only - see "What this is NOT").
+  point-in-time directory digest with a fail-closed rooted read and explicit
+  reject-all symlink policy. Demonstrates AC #2 (identity-freezing only - see
+  "What this is NOT") and the TF-003.03 symlink regression.
 - `store.go` / `store_test.go` - `Store`: toy in-memory cache with `Put`/
   `Lookup`, ordered per-call `Event` logging (`EventsForCall`), and six
   independent verification checks: manifest schema version, source
@@ -90,6 +96,33 @@ changed) and that altered-but-present outputs were not detected at all
   declared-output content. Demonstrates AC #1, #3, #4.
 
 ## Evidence
+
+### Snapshot symlinks are rejected without exposing target content
+
+`Snapshot.Take` rejects the supplied root when it is a symlink and rejects
+every descendant symlink before its normal content-read path. The policy does
+not depend on whether a link points to an in-root file, an in-root directory,
+an out-of-root file, an out-of-root directory, or a missing target. Rejection
+wraps `ErrSnapshotSymlink`, identifies only the normalized relative link path,
+and returns a zero `Snapshot` rather than partial identity metadata.
+
+`TestTakeRejectsEveryDescendantSymlinkPolicy` exercises all five descendant
+cases. Its external-file case is the original exploit shape: `root/offending-link`
+points to a file containing a secret marker outside `root`. The test requires
+rejection, a relative-path and policy diagnostic, no secret marker in that
+diagnostic, and no returned file digest. `TestTakeRejectsSymlinkRoot` covers the
+root itself. `TestTakeIsOrderIndependent` still proves deterministic ordinary
+file identity and now also asserts that the expected files were actually
+included.
+
+The implementation walks and reads through Go's `os.Root` API. On supported
+platforms, rooted operations refuse descendant paths that resolve outside the
+opened root, providing a fail-closed backstop if a checked entry is replaced by
+an external symlink before it is read. `Take` also compares the originally
+inspected root with the opened root handle before walking, so replacing the
+root path during that transition fails before any content is read. This is a
+fixture mechanism, not a decision that the future production snapshot must use
+`os.Root`.
 
 ### Manifest schema version is actually enforced
 
@@ -241,6 +274,13 @@ mise exec -- task check
   not be read as evidence toward E04's demonstration #5.
 - `Snapshot.Take` freezes identity metadata, not proof that any execution
   consumes frozen content rather than a live root - see "What this is NOT".
+- The reject-all policy is deterministic for a stable tree, but `Take` is not
+  an atomic filesystem snapshot. Concurrent writes and renames can produce an
+  error or a mixed-time view, and an entry replaced with an in-root symlink
+  between inspection and read may supply its target bytes. Rooted reads keep
+  that race inside the opened source root on supported platforms; this fixture
+  does not claim coherent capture under concurrent mutation. E04 must test a
+  real immutable materialization mechanism.
 - Identity and source-digest binding in this fixture are always bare
   strings the caller supplies directly; real cache identity (source +
   inputs + process + profile + policy + dependency manifests, per E04's
