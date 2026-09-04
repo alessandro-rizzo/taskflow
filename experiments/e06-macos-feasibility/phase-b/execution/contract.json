@@ -1,0 +1,61 @@
+{
+  "format_version": "taskflow-e06-execution-contract/v1-experimental",
+  "experiment_id": "E06",
+  "task_id": "TF-003.14",
+  "status": "repository-only-not-approved-not-executed",
+  "immutable_anchors": [
+    {"role": "accepted-phase-a", "commit": "098035bf29656c3fd3b3991224a98fdded3453b7"},
+    {"role": "frozen-phase-b-contract", "commit": "6decbbd1323fd9a69137129db234028d80b1151d"},
+    {"role": "rejected-description-only-approval-audit", "commit": "83d36f8eea6ec818f41ed4fc376b85be2d48f1c3"}
+  ],
+  "manifest_id": "taskflow-e06-native-a",
+  "candidate_id": "trusted-native-host",
+  "mutable_root": "/private/tmp/taskflow-e06-native-a",
+  "child_write_boundary": ["/private/tmp/taskflow-e06-native-a"],
+  "custom_device_set_root": "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+  "simulator_name_prefix": "taskflow-e06-native-a-",
+  "evidence_root": "experiments/e06-macos-feasibility/evidence/taskflow-e06-native-a",
+  "runner_write_boundary": ["experiments/e06-macos-feasibility/evidence/taskflow-e06-native-a"],
+  "mutation_boundary_rule": "The approved manifest must name child writes beneath mutable_root, runner-side sanitized evidence writes beneath evidence_root, and every attested external CoreSimulatorService write path as distinct exact mutations.",
+  "external_service_boundary": {
+    "seatbelt_confines_external_service_writes": false,
+    "custom_device_set_proves_all_service_writes_are_owned": false,
+    "entry_requirement": "A future attestation must prove a dedicated ephemeral account or dedicated host, enumerate exact CoreSimulatorService write paths, bind cleanup policy, and include every path in the fresh approval; otherwise native execution is blocked."
+  },
+  "thresholds": {
+    "warm_workspace_ready_p95_seconds_strictly_less_than": 3.0,
+    "simulator_ready_to_install_p95_seconds_strictly_less_than": 15.0,
+    "min_free_ram_gib": 16,
+    "min_free_disk_gib": 200,
+    "thermal_stop_signal": "serious",
+    "per_command_timeout_seconds": 900,
+    "cleanup_deadline_seconds": 30,
+    "caller_loss_lease_ttl_seconds": 1.0,
+    "caller_loss_heartbeat_seconds": 0.25
+  },
+  "execution_gate": {
+    "required_cli_flag": "--execute",
+    "required_manifest": "phase-b/execution-approval/execution-manifest.approved.json",
+    "required_binding": "phase-b/execution-approval/implementation-binding.approved.json",
+    "binding_must_match_current_commit": true,
+    "approval_must_bind_manifest_and_ledger_digests": true,
+    "approval_window_must_be_current": true,
+    "current_host_and_coresimulator_attestation_required": true
+  },
+  "child_environment": {
+    "ambient_environment_inherited": false,
+    "fixed_path": "/usr/bin:/bin:/usr/sbin:/sbin",
+    "fixed_locale": "C",
+    "developer_dir": "/Applications/Xcode.app/Contents/Developer",
+    "redirect_beneath_mutable_root": ["HOME", "TMPDIR", "CFFIXED_USER_HOME", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "CLANG_MODULE_CACHE_PATH", "SWIFT_MODULE_CACHE_PATH"]
+  },
+  "process_ownership": {
+    "recorded_child_starts_new_session": true,
+    "required_process_group_relation": "pgid equals recorded child pid",
+    "signal_target": "recorded process group only",
+    "broad_or_unrecorded_signal_forbidden": true
+  },
+  "repository_modes": ["--describe", "--record-plan", "--validate-manifest"],
+  "repository_modes_may_execute": false,
+  "execution_count": 0
+}

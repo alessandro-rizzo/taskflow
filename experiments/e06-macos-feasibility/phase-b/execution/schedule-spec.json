@@ -1,0 +1,46 @@
+{
+  "format_version": "taskflow-e06-expanded-schedule-spec/v1-experimental",
+  "worker_candidate": "trusted-native-host",
+  "simulator_order": ["fresh-create-boot", "erase-reset", "clone-from-golden"],
+  "timing": {
+    "warm-workspace-ready": 30,
+    "simulator-ready-to-install-per-mechanism": 30,
+    "xcode-build-per-mechanism": 15,
+    "simulator-install-per-mechanism": 15,
+    "mobile-test-per-mechanism": 15,
+    "candidate-reset-per-mechanism": 15,
+    "candidate-cleanup-per-mechanism": 15
+  },
+  "correctness": {
+    "alternating-namespace-contamination": 20,
+    "two-namespace-isolation": 10,
+    "bounded-maximum-safe-concurrency": {"levels": [1, 2, 3, 4], "repetitions_per_level": 5}
+  },
+  "faults": {
+    "profile-mismatch": 1,
+    "simulator-loss": 5,
+    "cancellation": 5,
+    "caller-loss": 5
+  },
+  "implementation_status": {
+    "repository_runner_complete": true,
+    "native_execution_requires_future_coresimulator_attestation": true,
+    "open_blocker": null,
+    "caller_loss_supervisor": "NativeBackend durable lease file and reaper",
+    "caller_loss_substitute_forbidden": "SIGTERM-on-recorded-xcodebuild",
+    "caller_loss_lease_ttl_seconds": 1.0,
+    "caller_loss_heartbeat_seconds": 0.25,
+    "caller_loss_cleanup_grace_seconds": 30.0
+  },
+  "not_applicable": ["cold-vm-boot", "vm-loss", "immutable-base-integrity", "image-import-update"],
+  "unmeasured_limitations": ["network-image-distribution", "native-xcode-sdk-runtime-update-and-rollback"],
+  "thresholds": {
+    "warm-workspace-ready": {"operator": "strictly-less-than", "p95_seconds": 3.0},
+    "simulator-ready-to-install": {"operator": "strictly-less-than", "p95_seconds": 15.0},
+    "cross_namespace_contamination_count_max": 0,
+    "identity_or_lease_collision_count_max": 0,
+    "unauthorized_cleanup_target_count_max": 0,
+    "unrecorded_orphan_count_max": 0,
+    "threshold_relaxation_after_results": false
+  }
+}
