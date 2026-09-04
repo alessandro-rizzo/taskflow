@@ -1,0 +1,22 @@
+{
+  "connection_detail_disclosure_count": 0,
+  "expected_diagnostics": {
+    "foreign-consumer": "E07_CONSUMER_NOT_AUTHORIZED",
+    "forged-handle": "E07_ENDPOINT_HANDLE_INVALID",
+    "missing-capability": "E07_ROUTE_CAPABILITY_MISSING",
+    "provider-mismatch": "E07_PROVIDER_MISMATCH",
+    "stale-handle": "E07_ENDPOINT_HANDLE_STALE",
+    "wrong-endpoint-type": "E07_ENDPOINT_TYPE_MISMATCH"
+  },
+  "provider_connection_before_authorization_count": 0,
+  "repetitions_by_class": {
+    "foreign-consumer": 20,
+    "forged-handle": 20,
+    "missing-capability": 20,
+    "provider-mismatch": 20,
+    "stale-handle": 20,
+    "wrong-endpoint-type": 20
+  },
+  "route_credential_byte_disclosure_count": 0,
+  "unauthorized_success_count": 0
+}

@@ -1,0 +1,331 @@
+{
+  "observations": [
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-00-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-00-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-01-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-01-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-02-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-02-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-03-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-03-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-04-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-04-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-05-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-05-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-06-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-06-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-07-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-07-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-08-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-08-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-09-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-09-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-10-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-10-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-11-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-11-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-12-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-12-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-13-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-13-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-14-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-14-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-15-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-15-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-16-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-16-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-17-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-17-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-18-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-18-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-19-a",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    },
+    {
+      "listener_open": false,
+      "mutable_root_exists": false,
+      "namespace_id": "isolation-19-b",
+      "phase": "after-cleanup",
+      "process_alive": false,
+      "route_count": 0
+    }
+  ],
+  "remaining_counts": {
+    "lease": 0,
+    "listener": 0,
+    "mutable_path": 0,
+    "process": 0,
+    "route": 0
+  }
+}

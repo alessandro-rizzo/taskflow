@@ -1,0 +1,24 @@
+version: "3"
+
+tasks:
+  check:
+    desc: Verify immutable Phase A, Phase B implementation, and retained evidence
+    cmds:
+      - task: check:phase-a-snapshot
+      - task: test:phase-b
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify_phase_b.py
+
+  check:phase-a-snapshot:
+    desc: Verify the immutable Phase A commit and digest envelope
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify_phase_b.py --phase-a-only
+
+  test:phase-b:
+    desc: Run bounded local service, routing, and cleanup integration tests
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_phase_b.py' -v
+
+  evidence:
+    desc: Regenerate the complete E07 Phase B evidence in place
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/run_experiment.py --output .

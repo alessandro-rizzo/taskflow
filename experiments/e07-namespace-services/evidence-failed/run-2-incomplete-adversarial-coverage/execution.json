@@ -1,0 +1,8 @@
+{
+  "command": "mise exec -- task --taskfile experiments/e07-namespace-services/PhaseBTaskfile.yml evidence",
+  "contract_commit": "7a61d885e7be658d0ea51cda4a092dec653ca53d",
+  "duration_seconds": 72.227430875,
+  "result": "pass",
+  "started_at": "2026-09-04T17:43:56Z",
+  "working_directory": "/private/tmp/taskflow-tf-003.15"
+}
