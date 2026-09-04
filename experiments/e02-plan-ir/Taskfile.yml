@@ -6,9 +6,10 @@ env:
 
 tasks:
   check:
-    desc: Verify the corrected contract snapshot, candidate, reader, and evidence
+    desc: Verify the corrected contract snapshot, candidate, reader, evidence, and decision
     cmds:
       - python3 scripts/verify_phase_b.py
+      - python3 scripts/verify_decision.py
       - cd candidate-json && go test ./...
       - python3 -m unittest discover -s reader -v
 
