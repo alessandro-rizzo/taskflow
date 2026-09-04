@@ -2,11 +2,33 @@ version: "3"
 
 tasks:
   check:
-    desc: Verify the frozen E04 Phase A contract and reject Phase B content
+    desc: Verify the frozen contract, Phase B implementation, and retained evidence
     cmds:
-      - python3 scripts/verify_contract.py --phase-a-only
+      - task: check:contract
+      - task: test
+      - task: check:evidence
 
   check:contract:
     desc: Verify the frozen E04 protocol and repository bindings
     cmds:
       - python3 scripts/verify_contract.py
+
+  check:phase-a:
+    desc: Historical Phase A boundary check; intentionally fails once Phase B files exist
+    cmds:
+      - python3 scripts/verify_contract.py --phase-a-only
+
+  test:
+    desc: Run the experiment-local source, sandbox, and cache fault tests
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+
+  evidence:generate:
+    desc: Regenerate E04 raw probes and serial T1 benchmark records
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/run_evidence.py
+
+  check:evidence:
+    desc: Verify all seven probes, benchmark thresholds, and evidence bindings
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify_evidence.py

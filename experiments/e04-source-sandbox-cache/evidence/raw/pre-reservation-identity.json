@@ -1,0 +1,46 @@
+{
+  "attained_reproducibility": "observed",
+  "details": {
+    "all_mutations_change_identity": true,
+    "base_identity": "c90202170f842e8d6a4af72cba2adccf0a9f249a4fbf0dc34f32fac18b981629",
+    "changed_identities": {
+      "dependency_manifests": "3bd92e62711dcbb2552a7c22213f09da17d4fd48c3fcc411c054294ed142297c",
+      "execution_profile": "2f12bc919d29ae5c1ceff081f62d16d2422edb630fc150adab889c4988692ce1",
+      "resolved_process_and_arguments": "c0742fb3758dbfbf13cf77b5ad8a337d19b5691cf7ba8310c14e924bc0de8ac6",
+      "sandbox_policy": "d9f04570f847d75e0e8e94f2b5494da72875ad408d8b1920a12646e68b9765df",
+      "source_manifest": "02a4ec5e8745d179c3113b5ac3a960f2e8c0c6e324a0f1a21af41209db6894b8",
+      "typed_input_manifests": "75264f72e812bccd6604cf5d5c308b9d0e438a041b23b760bf82a776d198c747"
+    },
+    "event_kinds": [
+      "resolve-profile",
+      "compute-cache-key",
+      "lookup-result-cache",
+      "reserve-worker",
+      "acquire-worker",
+      "attest-worker-profile",
+      "create-sandbox",
+      "execute"
+    ],
+    "key_before_lookup": true,
+    "lookup_before_reservation": true,
+    "mandatory_components": [
+      "source_manifest",
+      "typed_input_manifests",
+      "resolved_process_and_arguments",
+      "execution_profile",
+      "sandbox_policy",
+      "dependency_manifests"
+    ],
+    "missing_components_rejected": true
+  },
+  "experiment_id": "E04",
+  "id": "pre-reservation-identity",
+  "limitations": [
+    "The experimental identity encoding is not E02 canonical plan IR and carries no compatibility promise."
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "requested_reproducibility": "isolated",
+  "roadmap_demonstration": 4,
+  "schema_version": "taskflow-e04-probe-evidence/v1",
+  "status": "pass"
+}

@@ -1,0 +1,78 @@
+{
+  "files": [
+    {
+      "path": "evidence/benchmarks/apfs-clone-warm/record.json",
+      "sha256": "c73fbf0c636c7ba3fcb26091987f9d1f11ccaabe7abefb155bf63fc90874744f"
+    },
+    {
+      "path": "evidence/benchmarks/apfs-clone-warm/samples.txt",
+      "sha256": "5bf6321930406f70d854817627b66a66f40669488d97433a0136e275686ae2a2"
+    },
+    {
+      "path": "evidence/benchmarks/copy-warm/record.json",
+      "sha256": "cfc6cce9092de0df31c9fd09fdaacbfd863449fdea4784470a0d7b3758084073"
+    },
+    {
+      "path": "evidence/benchmarks/copy-warm/samples.txt",
+      "sha256": "5f13b4b383e6f95ec4426c68899d6c272ecee803c7278f052f30b26196857321"
+    },
+    {
+      "path": "evidence/benchmarks/ready-cache-hit/record.json",
+      "sha256": "a1cfbf61751b749d5fc9bd5bcb4f526c5f372c41e5505d679a2e4a2ba2e7bf9d"
+    },
+    {
+      "path": "evidence/benchmarks/ready-cache-hit/samples.txt",
+      "sha256": "af741964800d61525d84d4fba38701caf20f0e7ebe127cb9bbf96ec26fb57fbb"
+    },
+    {
+      "path": "evidence/benchmarks/ready-cache-hit/traces.jsonl",
+      "sha256": "5fff7b50bec80ad80683a39caab65de17d680791f1c295fa7f282482a09d585a"
+    },
+    {
+      "path": "evidence/environment.json",
+      "sha256": "8564a9288204fefaf4113d50e77d660e201fb85ce4cd36deb683e2825dfd2da3"
+    },
+    {
+      "path": "evidence/execution.json",
+      "sha256": "d31518db8119d79a034b66e191ebc5482020c33b51562e85952b74eae6a7732e"
+    },
+    {
+      "path": "evidence/implementation-manifest.json",
+      "sha256": "cbda00d727b8647f408f67fd17e952682c65dbc5f37ff88980e01e517277b380"
+    },
+    {
+      "path": "evidence/raw/ambient-input-control.json",
+      "sha256": "b810adea41a3dc35b31d94f281e852bd9015088d2d53f6b16147cd0778b0f196"
+    },
+    {
+      "path": "evidence/raw/attestation-mismatch.json",
+      "sha256": "3c4344df6cb662b9bd3be996eda67a947b429e2a2ea33389a15ecea5027deeaf"
+    },
+    {
+      "path": "evidence/raw/cache-class-separation.json",
+      "sha256": "9339bf1647d1f2b63af3ae6045b5b91b26c2bf9ed6ef0530798490356183ba25"
+    },
+    {
+      "path": "evidence/raw/concurrent-output-isolation.json",
+      "sha256": "00ddbca81597bb9c450d6f7cb02a132623761e565192f13bc388ac7c9b13384c"
+    },
+    {
+      "path": "evidence/raw/pre-reservation-identity.json",
+      "sha256": "3adca2b18d33dc987bedd93221623b7f2bd37f5f8270b386ba395ceb8b0c385f"
+    },
+    {
+      "path": "evidence/raw/source-mutation.json",
+      "sha256": "533ebe4d1b9dd20eb606d15eaad529f553506dbfe323b5f5158e33ad88e391ab"
+    },
+    {
+      "path": "evidence/raw/zero-reservation-cache-hit.json",
+      "sha256": "3f5f0a135ba5b113ff77e35a436607e44d22c8ba34b6776181179836670a7648"
+    },
+    {
+      "path": "evidence/summary.json",
+      "sha256": "9a6cebba5d9e6539506118c4137074b50f454b37664408d226e2189b834b23af"
+    }
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "schema_version": "taskflow-e04-evidence-manifest/v1"
+}

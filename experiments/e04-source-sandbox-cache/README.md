@@ -2,12 +2,14 @@
 
 Roadmap experiment: E04. Ticket: TF-003.11. Risks: R4, R5, R9.
 
-Status: Phase A contract only. No source/CAS, sandbox, cache, worker, provider,
-or benchmark implementation exists in this directory yet.
+Status: Phase B implemented and measured for review. The selected branch is
+native fast but incomplete; the attained reproducibility level remains
+observed, not isolated or hermetic.
 
-This contract must be reviewed and committed before Phase B mechanism work.
-Its byte identity is frozen by protocol.sha256. Phase B evidence must name that
-contract commit and independently digest the implementation tree it measures.
+The Phase A contract was reviewed and committed before Phase B mechanism work.
+Its byte identity remains frozen by protocol.sha256. Phase B evidence names
+that contract commit and independently digests the implementation tree it
+measures.
 
 ## Question
 
@@ -26,6 +28,52 @@ would allow a misleading success:
 A fast clone without source isolation is not a pass. A correct cache key that
 requires probing a worker is not a pass. A sandbox that passes only because no
 adversarial access was attempted is not a pass.
+
+## Phase B measured result
+
+All seven predeclared demonstrations pass against the bounded experiment. The
+native timings are comfortably inside the provisional budgets:
+
+| Metric | Samples | Median | p95 | Budget |
+| --- | ---: | ---: | ---: | ---: |
+| APFS clone sandbox command | 30 | 38.66 ms | 41.69 ms | < 250 ms |
+| Ordinary-copy control | 30 | 36.22 ms | 39.35 ms | descriptive |
+| Ready cache hit after planning | 30 | 42.01 ms | 44.44 ms | < 300 ms |
+
+Every timed ready hit retained its event trace and recorded zero reservations,
+acquisitions, sandboxes, executions, and publications. A mismatched attestation
+reserved/acquired the fake worker, then failed before sandbox creation without
+changing the planned cache key. Mutating each of the six mandatory semantic
+identity components changed the digest; omitting each component rejected the
+identity before lookup.
+
+The command-level timings conservatively include Python process and CLI startup
+around the create/lookup operation, plus trace serialization after each ready
+hit. The verified file-backed hit entry is recreated by the harness's untimed
+preparation command before every sample. The timings therefore overestimate,
+rather than hide, the experiment mechanism's in-process latency. They are not
+a production runtime benchmark.
+
+Two concurrent real W1 format/test/vet runs used APFS-cloned workspaces,
+private writable directories, sanitized environments, and targeted
+sandbox-exec denial of the peer output. Source execution after live mutation
+consumed the captured bytes, not the changed source path. The ambient canaries
+were absent or denied, and no canary content is retained in evidence.
+
+### Recommendation
+
+Select the predeclared native-fast-incomplete branch. APFS clone is credible as
+a low-latency local workspace primitive, and the cache-before-reservation plus
+attestation ordering is worth carrying to Gate 1. This experiment must not yet
+make the native policy the isolated default: its sandbox-exec profile proves
+specific peer/read/write denials but remains allow-by-default for unenumerated
+host paths. The honest attained level is therefore observed.
+
+Gate 1 should retain the worker/sandbox split, complete pre-provision identity,
+fail-closed attestation, and distinct cache classes. T3 must prove a complete
+deny-by-default native profile or select a stronger container/VM mode before it
+labels local execution isolated. Docker and Tart were unavailable and were not
+credited with hypothetical behavior.
 
 ## Canonical requirements and compatibility correction
 
@@ -297,21 +345,27 @@ From the repository root:
 
     mise exec -- task --dir experiments/e04-source-sandbox-cache check
 
-This validates the protocol checksum, fixture hashes and semantic anchors,
-canonical requirement mapping, seven probes, metrics, branches, and the
-Phase A-only file allowlist.
+This validates the protocol checksum and fixture bindings, the Phase B unit and
+fault tests, all seven retained probes, benchmark statistics and thresholds,
+per-sample ready-hit traces, implementation/evidence manifests, and canary
+non-disclosure.
 
 The reusable contract-only check, which remains valid after Phase B files
 exist, is:
 
     mise exec -- task --dir experiments/e04-source-sandbox-cache check:contract
 
+The historical boundary check is retained as check:phase-a and intentionally
+fails once any Phase B file exists. The frozen protocol, protocol checksum,
+fixture bindings, and contract verifier were not changed for the transition.
+
 ## Phase gate
 
-The next action is review of this contract and explicit authorization to commit
-it. Phase B mechanism work must not begin before that commit. No acceptance
-criterion, definition-of-done item, final summary, or branch decision is
-complete at this stage.
+Phase A was committed first as
+fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c. The next action is review of the
+Phase B implementation, retained evidence, limitations, and selected branch.
+No acceptance criterion, definition-of-done item, final summary, Phase B
+commit, merge, or push is complete at this stage.
 
 After Gate 1, this experiment remains disposable evidence. A selected concept
 must be restated in an accepted ADR and reimplemented or deliberately promoted;
