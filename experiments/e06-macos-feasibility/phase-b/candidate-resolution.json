@@ -1,0 +1,44 @@
+{
+  "format_version": "taskflow-e06-candidate-resolution/v1-experimental",
+  "source": "../candidate-matrix.json",
+  "evaluated_at_phase": "pre-execution-repository-preparation",
+  "worker_candidates": [
+    {
+      "id": "warm-immutable-vm-restore",
+      "status": "rejected-before-execution",
+      "reason_codes": ["missing-pinned-controller", "missing-immutable-image", "missing-reservation"],
+      "reproducible_evidence": ["../inventory/tooling.json", "../infrastructure-status.json"]
+    },
+    {
+      "id": "warm-vm-apfs-workspaces",
+      "status": "rejected-before-execution",
+      "reason_codes": ["missing-pinned-controller", "missing-immutable-image", "missing-guest-apfs-evidence", "missing-reservation"],
+      "reproducible_evidence": ["../inventory/tooling.json", "../infrastructure-status.json"]
+    },
+    {
+      "id": "vm-per-namespace",
+      "status": "rejected-before-execution",
+      "reason_codes": ["missing-pinned-controller", "missing-immutable-image", "missing-capacity-envelope", "missing-reservation"],
+      "reproducible_evidence": ["../inventory/tooling.json", "../infrastructure-status.json"]
+    },
+    {
+      "id": "trusted-native-host",
+      "status": "blocked-awaiting-separate-approval",
+      "reason_codes": ["host-shared-unreserved", "exclusive-window-unresolved", "coresimulator-access-unresolved", "execution-approval-absent"],
+      "reproducible_evidence": ["../inventory/host-profile.json", "../inventory/tooling.json", "../inventory/simulator.json", "../infrastructure-status.json"]
+    },
+    {
+      "id": "coarse-external-runner",
+      "status": "rejected-before-execution",
+      "reason_codes": ["missing-endpoint", "missing-credential-mediator", "missing-profile", "missing-quota", "missing-reset-or-orphan-api", "missing-reservation"],
+      "reproducible_evidence": ["../infrastructure-status.json"]
+    }
+  ],
+  "simulator_candidates": [
+    {"id": "fresh-create-boot", "order": 1, "status": "blocked-awaiting-approved-custom-set-preflight"},
+    {"id": "erase-reset", "order": 2, "status": "blocked-awaiting-approved-custom-set-preflight"},
+    {"id": "clone-from-golden", "order": 3, "status": "blocked-awaiting-approved-custom-set-preflight"}
+  ],
+  "execution_count": 0,
+  "selected_branch": null
+}

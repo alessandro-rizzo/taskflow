@@ -1,0 +1,78 @@
+{
+  "format_version": "taskflow-e06-manifest-resolution/v1-experimental",
+  "schema": "../execution-manifest.schema.json",
+  "status": "blocked-unresolved-not-executable",
+  "resolved": {
+    "format_version": "taskflow-e06-execution-manifest/v1-experimental",
+    "manifest_id": "taskflow-e06-native-a",
+    "phase_b_ticket": "TF-003.14",
+    "candidate_id": "trusted-native-host",
+    "operator": {"id": "@codex-tf-003-14"},
+    "host": {
+      "resource_id": "taskflow-e06-local-mac17-7",
+      "inventory_snapshot_sha256": "9e021a326cba6e3b3b92c6cfa9f274c531d5f9cf13b95a4f314f2afc95d80630"
+    },
+    "profile": {
+      "mechanism_id": "trusted-native-host",
+      "mechanism_version": "native-macos-25F84-xcode-17F113",
+      "base_image_digest": null,
+      "macos_version": "26.5.2",
+      "macos_build": "25F84",
+      "architecture": "arm64",
+      "xcode_version": "26.6",
+      "xcode_build": "17F113",
+      "sdk_identifiers_and_builds": ["iphoneos26.5@23F81a", "iphonesimulator26.5@23F81a"],
+      "simulator_runtime_identifier_build_and_architectures": "com.apple.CoreSimulator.SimRuntime.iOS-26-5@23F77@arm64",
+      "runner_digest": "512690fb200d2dfae5eaaa68e8ee8df7c9be130182e1bf32412cfd1a3c73fada",
+      "sandbox_policy_digest": "6a8defba7731fc5a3e560be9cd80e815930b77bab61e07b2b94f2f95ffda07c3",
+      "reset_policy_digest": "978219e5255d47a79df6a8161a8df0ec73066fb3b9852923d2ee3e69cc43907c",
+      "expected_profile_digest": "ecca75a43cf785793fe187316998d55f31653815a8562b1d6c05ddf138d4b570"
+    },
+    "paths": {
+      "mutable_root": "/private/tmp/taskflow-e06-native-a",
+      "workspace_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/workspace",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/workspace"
+      ],
+      "home_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/home",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/home"
+      ],
+      "tmp_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/tmp",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/tmp"
+      ],
+      "derived_data_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData"
+      ],
+      "result_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/results",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/results"
+      ],
+      "custom_device_set_root": "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+      "default_simulator_set_forbidden": true
+    },
+    "resources": {
+      "concurrency_levels": [1, 2, 3, 4],
+      "repetitions_per_level": 5,
+      "min_free_ram_gib": 16,
+      "min_free_disk_gib": 200,
+      "thermal_stop_signal": "serious",
+      "per_command_timeout_seconds": 900
+    },
+    "evidence_root": "experiments/e06-macos-feasibility/evidence/taskflow-e06-native-a"
+  },
+  "unresolved": [
+    "approval.approved_by",
+    "approval.approved_at",
+    "approval.exact_mutation_scope",
+    "host.exclusive_window_start",
+    "host.exclusive_window_end",
+    "current host and CoreSimulator attestation at approved-window start",
+    "final schema-valid command array expanded from command-ledger.json",
+    "cleanup allowlist copied verbatim into the approved manifest"
+  ],
+  "plan_approval_is_not_execution_approval": true,
+  "execution_count": 0
+}

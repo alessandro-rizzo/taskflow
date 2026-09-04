@@ -1,0 +1,24 @@
+{
+  "format_version": "taskflow-e06-phase-b-frozen-artifacts/v1-experimental",
+  "hash_algorithm": "sha256",
+  "artifacts": [
+    {"path": "README.md", "sha256": "27344cf0077832a98a6557cc56c55ee308c48a61afa36a552e8a61aaf5e28f6c"},
+    {"path": "Taskfile.yml", "sha256": "0324770bf8699bf09f4bb71e7beed7beffbee3ab32ef326009842fa167f26af3"},
+    {"path": "candidate-resolution.json", "sha256": "763d8e15513bdf55e1139f936d4b13bf693cb96ad1aac35493ab2adb9d575f83"},
+    {"path": "command-ledger.json", "sha256": "ce8592f5be1075361f51ae3bc60b55cdd0ad7254deb65fbb2a4a9124fa082db0"},
+    {"path": "contract.json", "sha256": "c3becd2ace033bd188f9529235c30225a52102964f06bf8f55cdafd1a1d62d16"},
+    {"path": "decision-matrix.json", "sha256": "2656a44e57ac152e333acc7924ca0b526b008137ce4fd40b7554e814a9795f96"},
+    {"path": "fixture/E06SmokeApp/E06SmokeApp.xcodeproj/project.pbxproj", "sha256": "ea2b83080242c2974548cbcca4631badde396c8484002bcaf0d453f252c549e5"},
+    {"path": "fixture/E06SmokeApp/E06SmokeApp.xcodeproj/xcshareddata/xcschemes/E06SmokeApp.xcscheme", "sha256": "5c2bb049fc2869f94d9b0522772ba4c48cd6d1ba42147362d13882275bbfeec5"},
+    {"path": "fixture/E06SmokeApp/E06SmokeApp/AppDelegate.swift", "sha256": "13096655127f5220e28eb7416aa721dd4a8f00c46f991e3612ea648c9993b92f"},
+    {"path": "manifest-resolution.json", "sha256": "669b6fe5037a140f06bac38f7396686991013ad799361eb88113815096148c0f"},
+    {"path": "reset-policy.json", "sha256": "978219e5255d47a79df6a8161a8df0ec73066fb3b9852923d2ee3e69cc43907c"},
+    {"path": "runner-profile.json", "sha256": "5965521ea8ae4cbe1dc70eb165528fe12298af9c67c713b2971e9fd18210602a"},
+    {"path": "sandbox-policy.json", "sha256": "6a8defba7731fc5a3e560be9cd80e815930b77bab61e07b2b94f2f95ffda07c3"},
+    {"path": "scope-hashes.json", "sha256": "7e7d987b1a6877eeb67d4f43158bff23907591734828429fbedebd00677c82bb"},
+    {"path": "scripts/guard.py", "sha256": "d24484b868b9afc3eeb45aba916c79ae46aa0e49b48e5f412cc1dd75d45db483"},
+    {"path": "scripts/runner.py", "sha256": "b7ebc75132b28a7b6de67d7109dcb661c5e91af3106adc78c7e5179b88025a71"},
+    {"path": "scripts/verify_phase_b.py", "sha256": "cf1ef42ec48abea5b147a659bfce75a6755bc3e20ee36c3c2abbcab860178e54"},
+    {"path": "tests/test_phase_b.py", "sha256": "7d72f2daa0f07f3d1d2948eaba6b497914b1a1eb775d01de0fc8bdb9d946a8e1"}
+  ]
+}

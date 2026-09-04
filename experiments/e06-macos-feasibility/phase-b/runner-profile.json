@@ -1,0 +1,14 @@
+{
+  "format_version": "taskflow-e06-runner-profile/v1-experimental",
+  "components": {
+    "command-ledger.json": "ce8592f5be1075361f51ae3bc60b55cdd0ad7254deb65fbb2a4a9124fa082db0",
+    "fixture/E06SmokeApp/E06SmokeApp.xcodeproj/project.pbxproj": "ea2b83080242c2974548cbcca4631badde396c8484002bcaf0d453f252c549e5",
+    "fixture/E06SmokeApp/E06SmokeApp.xcodeproj/xcshareddata/xcschemes/E06SmokeApp.xcscheme": "5c2bb049fc2869f94d9b0522772ba4c48cd6d1ba42147362d13882275bbfeec5",
+    "fixture/E06SmokeApp/E06SmokeApp/AppDelegate.swift": "13096655127f5220e28eb7416aa721dd4a8f00c46f991e3612ea648c9993b92f",
+    "scripts/guard.py": "d24484b868b9afc3eeb45aba916c79ae46aa0e49b48e5f412cc1dd75d45db483",
+    "scripts/runner.py": "b7ebc75132b28a7b6de67d7109dcb661c5e91af3106adc78c7e5179b88025a71"
+  },
+  "runner_digest": "512690fb200d2dfae5eaaa68e8ee8df7c9be130182e1bf32412cfd1a3c73fada",
+  "execution_entrypoint": null,
+  "description_entrypoint": "python3 scripts/runner.py --describe"
+}

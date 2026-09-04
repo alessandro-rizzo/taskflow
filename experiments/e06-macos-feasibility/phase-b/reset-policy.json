@@ -1,0 +1,11 @@
+{
+  "format_version": "taskflow-e06-native-reset-policy/v1-experimental",
+  "simulator_device_set": "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+  "simulator_name_prefix": "taskflow-e06-native-a-",
+  "reset_order": ["collect-sanitized-diagnostics", "shutdown-owned-device", "erase-or-delete-owned-device", "remove-owned-namespace-root", "recreate-owned-namespace-root", "run-residue-probes"],
+  "cleanup_deadline_seconds": 30,
+  "cleanup_guard_failure": "record-exact-orphan-and-stop",
+  "broad_process_kill_forbidden": true,
+  "immutable_resource_delete_forbidden": true,
+  "default_simulator_set_forbidden": true
+}

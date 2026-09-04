@@ -1,0 +1,14 @@
+{
+  "format_version": "taskflow-e06-native-sandbox-policy/v1-experimental",
+  "mutable_root": "/private/tmp/taskflow-e06-native-a",
+  "allowed_writes": [
+    "/private/tmp/taskflow-e06-native-a"
+  ],
+  "default_simulator_set_forbidden": true,
+  "user_workspace_forbidden": true,
+  "user_derived_data_forbidden": true,
+  "network_allowed": false,
+  "provider_credentials_allowed": false,
+  "process_rule": "Only descendants recorded by the experiment runner may be signalled.",
+  "attained_reproducibility_ceiling": "isolated"
+}

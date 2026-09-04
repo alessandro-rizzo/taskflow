@@ -1,0 +1,27 @@
+{
+  "format_version": "taskflow-e06-decision-matrix/v1-experimental",
+  "status": "predeclared-no-result",
+  "threshold_source": "../measurement-plan.json",
+  "precedence": ["stop-or-narrow", "serialized-macos-capacity", "trusted-native-host"],
+  "branches": [
+    {
+      "id": "stop-or-narrow",
+      "select_when": "No exercised candidate provides a bounded credible path, or any zero-tolerance isolation, identity, reset, cleanup, immutable-input, or orphan gate fails."
+    },
+    {
+      "id": "serialized-macos-capacity",
+      "select_when": "Trusted native execution is credible at concurrency one but the highest clean tested concurrency is below two."
+    },
+    {
+      "id": "trusted-native-host",
+      "select_when": "The native candidate passes every correctness and recovery gate, warm workspace p95 is strictly below 3 seconds, simulator ready p95 is strictly below 15 seconds, and clean concurrency reaches at least two."
+    }
+  ],
+  "ineligible_without_new_approved_infrastructure": [
+    "warm-vm-cloned-workspace",
+    "vm-per-namespace",
+    "coarse-external-runner"
+  ],
+  "selected_branch": null,
+  "threshold_relaxation_after_results": false
+}

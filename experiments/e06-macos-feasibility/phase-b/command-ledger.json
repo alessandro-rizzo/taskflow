@@ -1,0 +1,53 @@
+{
+  "format_version": "taskflow-e06-command-ledger/v1-experimental",
+  "status": "non-executing-proposal",
+  "manifest_id": "taskflow-e06-native-a",
+  "working_directory": "repository root at the future frozen implementation commit",
+  "custom_device_set": "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+  "commands": [
+    {"id": "create-owned-root", "argv": ["/bin/mkdir", "-p", "/private/tmp/taskflow-e06-native-a"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a"]},
+    {"id": "prepare-namespace-a-roots", "argv": ["/bin/mkdir", "-p", "/private/tmp/taskflow-e06-native-a/namespace-a/workspace", "/private/tmp/taskflow-e06-native-a/namespace-a/home", "/private/tmp/taskflow-e06-native-a/namespace-a/tmp", "/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData", "/private/tmp/taskflow-e06-native-a/namespace-a/results"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a/namespace-a/workspace", "/private/tmp/taskflow-e06-native-a/namespace-a/home", "/private/tmp/taskflow-e06-native-a/namespace-a/tmp", "/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData", "/private/tmp/taskflow-e06-native-a/namespace-a/results"]},
+    {"id": "prepare-namespace-b-roots", "argv": ["/bin/mkdir", "-p", "/private/tmp/taskflow-e06-native-a/namespace-b/workspace", "/private/tmp/taskflow-e06-native-a/namespace-b/home", "/private/tmp/taskflow-e06-native-a/namespace-b/tmp", "/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData", "/private/tmp/taskflow-e06-native-a/namespace-b/results"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a/namespace-b/workspace", "/private/tmp/taskflow-e06-native-a/namespace-b/home", "/private/tmp/taskflow-e06-native-a/namespace-b/tmp", "/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData", "/private/tmp/taskflow-e06-native-a/namespace-b/results"]},
+    {"id": "materialize-namespace-a", "argv": ["/usr/bin/ditto", "experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp", "/private/tmp/taskflow-e06-native-a/namespace-a/workspace/E06SmokeApp"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a/namespace-a/workspace"]},
+    {"id": "materialize-namespace-b", "argv": ["/usr/bin/ditto", "experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp", "/private/tmp/taskflow-e06-native-a/namespace-b/workspace/E06SmokeApp"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a/namespace-b/workspace"]},
+    {"id": "build-namespace-a", "argv": ["/usr/bin/xcodebuild", "-project", "/private/tmp/taskflow-e06-native-a/namespace-a/workspace/E06SmokeApp/E06SmokeApp.xcodeproj", "-scheme", "E06SmokeApp", "-sdk", "iphonesimulator", "-derivedDataPath", "/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData", "CODE_SIGNING_ALLOWED=NO", "build"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData"]},
+    {"id": "build-namespace-b", "argv": ["/usr/bin/xcodebuild", "-project", "/private/tmp/taskflow-e06-native-a/namespace-b/workspace/E06SmokeApp/E06SmokeApp.xcodeproj", "-scheme", "E06SmokeApp", "-sdk", "iphonesimulator", "-derivedDataPath", "/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData", "CODE_SIGNING_ALLOWED=NO", "build"], "mutates": true, "targets": ["/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData"]},
+    {"id": "create-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "create", "taskflow-e06-native-a-namespace-a", "com.apple.CoreSimulator.SimDeviceType.iPhone-17", "com.apple.CoreSimulator.SimRuntime.iOS-26-5"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "boot-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "boot", "taskflow-e06-native-a-namespace-a"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "wait-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "bootstatus", "taskflow-e06-native-a-namespace-a", "-b"], "mutates": false, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "install-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "install", "taskflow-e06-native-a-namespace-a", "/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData/Build/Products/Debug-iphonesimulator/E06SmokeApp.app"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "launch-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "launch", "--console-pty", "taskflow-e06-native-a-namespace-a", "dev.taskflow.e06.smoke", "--taskflow-namespace", "namespace-a"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "shutdown-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "shutdown", "taskflow-e06-native-a-namespace-a"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "erase-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "erase", "taskflow-e06-native-a-namespace-a"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "delete-device-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "delete", "taskflow-e06-native-a-namespace-a"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-a"]},
+    {"id": "create-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "create", "taskflow-e06-native-a-namespace-b", "com.apple.CoreSimulator.SimDeviceType.iPhone-17", "com.apple.CoreSimulator.SimRuntime.iOS-26-5"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "boot-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "boot", "taskflow-e06-native-a-namespace-b"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "wait-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "bootstatus", "taskflow-e06-native-a-namespace-b", "-b"], "mutates": false, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "install-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "install", "taskflow-e06-native-a-namespace-b", "/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData/Build/Products/Debug-iphonesimulator/E06SmokeApp.app"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "launch-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "launch", "--console-pty", "taskflow-e06-native-a-namespace-b", "dev.taskflow.e06.smoke", "--taskflow-namespace", "namespace-b"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "shutdown-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "shutdown", "taskflow-e06-native-a-namespace-b"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "erase-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "erase", "taskflow-e06-native-a-namespace-b"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "delete-device-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "delete", "taskflow-e06-native-a-namespace-b"], "mutates": true, "targets": ["taskflow-e06-native-a-namespace-b"]},
+    {"id": "create-golden", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "create", "taskflow-e06-native-a-golden", "com.apple.CoreSimulator.SimDeviceType.iPhone-17", "com.apple.CoreSimulator.SimRuntime.iOS-26-5"], "mutates": true, "targets": ["taskflow-e06-native-a-golden"]},
+    {"id": "boot-golden", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "boot", "taskflow-e06-native-a-golden"], "mutates": true, "targets": ["taskflow-e06-native-a-golden"]},
+    {"id": "wait-golden", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "bootstatus", "taskflow-e06-native-a-golden", "-b"], "mutates": false, "targets": ["taskflow-e06-native-a-golden"]},
+    {"id": "shutdown-golden", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "shutdown", "taskflow-e06-native-a-golden"], "mutates": true, "targets": ["taskflow-e06-native-a-golden"]},
+    {"id": "clone-golden-a", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "clone", "taskflow-e06-native-a-golden", "taskflow-e06-native-a-namespace-a"], "mutates": true, "targets": ["taskflow-e06-native-a-golden", "taskflow-e06-native-a-namespace-a"]},
+    {"id": "clone-golden-b", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "clone", "taskflow-e06-native-a-golden", "taskflow-e06-native-a-namespace-b"], "mutates": true, "targets": ["taskflow-e06-native-a-golden", "taskflow-e06-native-a-namespace-b"]},
+    {"id": "delete-golden", "argv": ["/usr/bin/xcrun", "simctl", "--set", "/private/tmp/taskflow-e06-native-a/CoreSimulator", "delete", "taskflow-e06-native-a-golden"], "mutates": true, "targets": ["taskflow-e06-native-a-golden"]}
+  ],
+  "cleanup_allowlist": {
+    "paths": [
+      "/private/tmp/taskflow-e06-native-a",
+      "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+      "/private/tmp/taskflow-e06-native-a/namespace-a",
+      "/private/tmp/taskflow-e06-native-a/namespace-b"
+    ],
+    "vm_names": [],
+    "simulator_name_prefix": "taskflow-e06-native-a-",
+    "immutable_base_delete_forbidden": true,
+    "broad_process_kill_forbidden": true
+  },
+  "forbidden": ["default CoreSimulator device set", "killall", "broad glob deletion", "provider login", "network access", "tool or image download"],
+  "execution_count": 0
+}

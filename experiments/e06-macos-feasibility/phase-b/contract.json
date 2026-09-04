@@ -1,0 +1,50 @@
+{
+  "format_version": "taskflow-e06-phase-b-contract/v1-experimental",
+  "experiment_id": "E06",
+  "task_id": "TF-003.14",
+  "status": "repository-preparation-only",
+  "accepted_phase_a": {
+    "revision": "098035bf29656c3fd3b3991224a98fdded3453b7",
+    "path": "experiments/e06-macos-feasibility",
+    "immutable": true
+  },
+  "risks": ["R4", "R8", "R9"],
+  "canonical_requirements": ["EXEC-3", "EXEC-4", "EXEC-5", "REP-2", "AGENT-4", "AGENT-5"],
+  "phase_a_contract_inputs": [
+    "candidate-matrix.json",
+    "candidate-procedures.md",
+    "contract.json",
+    "execution-manifest.schema.json",
+    "fixture-bindings.json",
+    "infrastructure-status.json",
+    "measurement-plan.json"
+  ],
+  "repository_phase_allows": [
+    "result-free Phase-B contract and resolution records",
+    "deterministic native smoke fixture source",
+    "non-executing command ledger",
+    "dry-run-only guard and runner description",
+    "verifiers and mutation tests",
+    "proposed decision record skeleton"
+  ],
+  "repository_phase_forbids": [
+    "xcodebuild or CoreSimulator invocation",
+    "VM or simulator lifecycle mutation",
+    "process signalling or lifecycle cleanup",
+    "tool or image installation or download",
+    "provider authentication or network access",
+    "benchmark or correctness measurement",
+    "Phase-B raw evidence or scorecard",
+    "selected E06 decision branch",
+    "completed external execution manifest"
+  ],
+  "execution_preconditions": [
+    "repository implementation accepted and committed",
+    "all implementation and profile digests resolved from that commit",
+    "current host attestation matches the expected profile",
+    "exclusive host window supplied",
+    "execution manifest validates against the accepted Phase-A schema",
+    "complete external mutation and cleanup ledger receives fresh explicit approval"
+  ],
+  "verification_command": "mise exec -- task --dir experiments/e06-macos-feasibility/phase-b check"
+}
