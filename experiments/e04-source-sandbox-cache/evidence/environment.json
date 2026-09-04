@@ -1,0 +1,12 @@
+{
+  "apfs_clone_command": "cp -cR",
+  "docker": "CLI present; daemon inaccessible in managed environment; not exercised",
+  "go": "go version go1.25.12 darwin/arm64",
+  "machine": "arm64",
+  "macos_build": "25F84",
+  "macos_product_version": "26.5.2",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.9.6",
+  "sandbox_command": "sandbox-exec -p",
+  "tart": "not installed; not exercised"
+}

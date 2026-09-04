@@ -1,0 +1,34 @@
+{
+  "accepted_as_e02_evidence": false,
+  "accepted_collection": "All three sets are collected again from sample one after commit 6b98cada25439f66c75eaf3f5faea3d01dfdfade; no preliminary samples are reused.",
+  "classification": "invalidated-before-wrapper-binding",
+  "contract_commit_claimed": "713aa13f63d230eabd940b9d8c6eb6e8dd1260da",
+  "earlier_environment_failure": "A still-earlier W1 set completed but the harness rejected zero-RAM metadata before writing a record; it is also pre-binding and contributes no accepted samples.",
+  "reason": "The generator invoked T1 benchmarks before its measurement wrapper was bound and reviewed as required by experiment-contract.md.",
+  "sets": [
+    {
+      "id": "w1-plan",
+      "median": 0.0056792505,
+      "p95": 0.008374,
+      "record_sha256": "22b53c8a520de7f03ead290906a9380c2ccf1dbee47060f08a773e876e11af14",
+      "sample_count": 30,
+      "samples_sha256": "bf7a4beb6b106804980daf1b55f1b26b4c148db46942c613e4db282a37bf969f"
+    },
+    {
+      "id": "large-generation-canonicalization",
+      "median": 0.178058709,
+      "p95": 0.184964084,
+      "record_sha256": "7eab297a31169ca3033c8c55ba0b36e5ef7c03f7fc1496f690101be55cdf3bca",
+      "sample_count": 15,
+      "samples_sha256": "495e60c57988f32c471f343ef2bfa4d1823f2f33f1f366759d5e6642dbcb41ce"
+    },
+    {
+      "id": "large-reader-validation-digest",
+      "median": 0.194048709,
+      "p95": 0.197406334,
+      "record_sha256": "50f4a433aa404a26b48b410b9b9b6b46e4b099a9b79e652da8647108ee57291c",
+      "sample_count": 15,
+      "samples_sha256": "322a5ce099e03d4bc9854d0cb3bef5bdd49c3b321de9de980756654b540e7759"
+    }
+  ]
+}

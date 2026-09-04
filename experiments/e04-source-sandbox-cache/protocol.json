@@ -1,0 +1,333 @@
+{
+  "compatibility_correction": {
+    "canonical_requirement_source": "docs/product-specification.md#19-product-requirements",
+    "noncanonical_ticket_labels": [
+      "SRC-1",
+      "SRC-2",
+      "SRC-3",
+      "SRC-4",
+      "SRC-5",
+      "CACHE-1",
+      "CACHE-2",
+      "CACHE-3",
+      "CACHE-4",
+      "CACHE-5",
+      "CACHE-6"
+    ],
+    "policy": "Retain these stale labels only as ticket provenance; do not define aliases or use them as experiment requirements."
+  },
+  "decision_branches": [
+    {
+      "id": "native-isolated-default",
+      "select_when": "The APFS clone candidate passes all seven demonstrations, denies or detects every declared ambient-input probe at the reported level, and its warm sandbox-creation p95 is strictly below 0.250 seconds.",
+      "decision": "Recommend the native lightweight sandbox as the isolated local default; do not call it hermetic unless every hermetic input is controlled."
+    },
+    {
+      "id": "native-fast-incomplete",
+      "select_when": "Immutable bytes, writable isolation, cache ordering, attestation, and latency pass, but native path or capability enforcement is incomplete.",
+      "decision": "Report the lower attained level honestly and require a stronger pooled container or VM mode for stricter operations."
+    },
+    {
+      "id": "pooled-container-linux",
+      "select_when": "An actually exercised pooled-container candidate is the only candidate that passes the isolation contract and applicable latency budget.",
+      "decision": "Recommend pooled containers for reproducible Linux nodes while preserving native-provider-specific modes. An installed but unreachable Docker CLI is not evidence."
+    },
+    {
+      "id": "redesign-profile-identity",
+      "select_when": "Any cache-key component requires worker acquisition, or an attestation mismatch changes/recomputes the planned key instead of failing closed.",
+      "decision": "Stop and redesign profile resolution and attestation before T2; do not retain probe-before-cache ordering."
+    },
+    {
+      "id": "local-hit-remote-miss",
+      "select_when": "Correct local sandbox creation cannot meet the 0.250-second warm p95 budget while the pre-provision ready-hit path remains correct and below 0.300 seconds.",
+      "decision": "Keep planning and ready hits local and dispatch misses to a warm worker pool; reconsider the local-miss default."
+    },
+    {
+      "id": "stop-or-narrow",
+      "select_when": "Execution can observe post-snapshot source mutation, concurrent runs share writable state, the complete key is unavailable before reservation, or no exercised mechanism provides a credible bounded branch.",
+      "decision": "Stop or narrow the product claim before production foundation work."
+    }
+  ],
+  "evidence_contract": {
+    "benchmark_records": [
+      {
+        "metric_id": "local-warm-sandbox-creation-apfs",
+        "record_path": "evidence/benchmarks/apfs-clone-warm/record.json",
+        "samples_path": "evidence/benchmarks/apfs-clone-warm/samples.txt"
+      },
+      {
+        "metric_id": "local-warm-sandbox-creation-copy-control",
+        "record_path": "evidence/benchmarks/copy-warm/record.json",
+        "samples_path": "evidence/benchmarks/copy-warm/samples.txt"
+      },
+      {
+        "metric_id": "ready-cache-hit-after-planning",
+        "record_path": "evidence/benchmarks/ready-cache-hit/record.json",
+        "samples_path": "evidence/benchmarks/ready-cache-hit/samples.txt"
+      }
+    ],
+    "implementation_binding": {
+      "phase_a_contract_commit_required": true,
+      "measured_implementation_manifest": "evidence/implementation-manifest.json",
+      "policy": "Every evidence record binds the committed Phase A contract and a digest manifest of the uncommitted implementation tree used for measurement."
+    },
+    "metadata_paths": [
+      "evidence/environment.json",
+      "evidence/execution.json",
+      "evidence/evidence-manifest.json"
+    ],
+    "raw_probe_format": "taskflow-e04-probe-evidence/v1",
+    "secret_policy": "Persist canary names, attempted operation, decision, and diagnostics only; never persist canary content or undeclared environment values."
+  },
+  "experiment": {
+    "phase": "phase-a-contract-only",
+    "roadmap_id": "E04",
+    "risks": [
+      "R4",
+      "R5",
+      "R9"
+    ],
+    "status": "predeclared",
+    "ticket_id": "TF-003.11"
+  },
+  "fixture_bindings": {
+    "path": "experiments/e04-source-sandbox-cache/fixture-bindings.json",
+    "sha256": "23e578bf7499c3faae47d27d6037af7444987d44a984f460f45b79cb7f67b14e"
+  },
+  "identity_contract": {
+    "cache_schema_version": "taskflow-e04-cache-identity/v1-experimental",
+    "canonicalization": "Deterministic canonical encoding defined by the Phase B candidate; unordered declarations normalize before hashing and repeated generation must be byte-identical.",
+    "mandatory_components": [
+      "source_manifest",
+      "typed_input_manifests",
+      "resolved_process_and_arguments",
+      "execution_profile",
+      "sandbox_policy",
+      "dependency_manifests"
+    ],
+    "missing_component_result": "reject-before-lookup",
+    "mutation_rule": "Changing each mandatory semantic component independently must change the identity digest; semantically irrelevant map/list declaration ordering must not.",
+    "ordering": [
+      "resolve-profile",
+      "compute-cache-key",
+      "lookup-result-cache",
+      "reserve-worker-on-miss-only",
+      "attest-worker-profile",
+      "create-sandbox",
+      "execute",
+      "verify-and-publish-result"
+    ]
+  },
+  "mechanism_candidates": [
+    {
+      "id": "apfs-clone-native-controls",
+      "role": "preferred local candidate",
+      "preflight": "APFS storage, BSD cp -c clonefile support, and sandbox-exec are visible; Phase B must exercise and record actual behavior rather than infer support from command presence."
+    },
+    {
+      "id": "ordinary-copy-control",
+      "role": "portable correctness and latency control",
+      "preflight": "Available through ordinary filesystem copy; it cannot win by latency alone if ambient-input or writable-isolation probes fail."
+    },
+    {
+      "id": "pooled-container-conditional",
+      "role": "stronger Linux fallback",
+      "preflight": "The Docker CLI is installed but its daemon socket is unavailable in the managed planning environment. Record unavailable unless Phase B can actually reach and exercise a daemon."
+    },
+    {
+      "id": "microvm-conditional",
+      "role": "stronger fallback outside the local latency default",
+      "preflight": "No Tart CLI is present. Do not make a microVM claim without an exercised provider."
+    }
+  ],
+  "measurements": {
+    "execution_order": "Serial only; no Taskflow experiment or competing benchmark runs concurrently.",
+    "harness": {
+      "fixture_id": "t1-benchmark-harness",
+      "invocation": "go run ./cmd/t1bench from fixtures/t1-benchmark-harness, called as a command rather than imported",
+      "schema_version": "taskflow-t1-benchmark/v2"
+    },
+    "metrics": [
+      {
+        "cache_dimensions": {
+          "result-cache": "absent",
+          "source-cas": "warm",
+          "worker-capacity": "warm"
+        },
+        "id": "local-warm-sandbox-creation-apfs",
+        "primary_state": "warm",
+        "sample_count": 30,
+        "statistic": "p95",
+        "threshold": {
+          "operator": "strictly-less-than",
+          "seconds": 0.25
+        },
+        "timed_scope": "From CreateSandbox invocation with a verified immutable base already materialized until a unique writable APFS-cloned workspace is returned; preparation, prior materialization, cleanup, and W1 execution are outside the timer."
+      },
+      {
+        "cache_dimensions": {
+          "result-cache": "absent",
+          "source-cas": "warm",
+          "worker-capacity": "warm"
+        },
+        "id": "local-warm-sandbox-creation-copy-control",
+        "primary_state": "warm",
+        "sample_count": 30,
+        "statistic": "p95-descriptive-only",
+        "threshold": null,
+        "timed_scope": "The same create-only boundary as the APFS candidate using an ordinary verified copy, retained as a descriptive control."
+      },
+      {
+        "cache_dimensions": {
+          "result-cache": "ready-and-verified",
+          "source-cas": "warm",
+          "tool-cache": "irrelevant-to-authority",
+          "worker-capacity": "not-required"
+        },
+        "counter_requirements": {
+          "acquisitions_per_sample": 0,
+          "reservations_per_sample": 0,
+          "sandboxes_per_sample": 0
+        },
+        "id": "ready-cache-hit-after-planning",
+        "primary_state": "cache-hit",
+        "sample_count": 30,
+        "statistic": "p95",
+        "threshold": {
+          "operator": "strictly-less-than",
+          "seconds": 0.3
+        },
+        "timed_scope": "After an accepted plan and complete identity are available: result lookup, manifest verification, and immutable artifact-handle return; planning, preparation, and worker activity are excluded because worker activity is forbidden on this path."
+      }
+    ],
+    "sample_policy": "The declared preparation command runs untimed before every sample. Every sample retains its trace/counters in raw evidence in addition to the v2 aggregate record. Failed or unavailable sample sets are retained separately with cause and rerun rule."
+  },
+  "phase_boundary": {
+    "allowed_phase_a_files": [
+      "README.md",
+      "Taskfile.yml",
+      "fixture-bindings.json",
+      "protocol.json",
+      "protocol.sha256",
+      "scripts/verify_contract.py"
+    ],
+    "forbidden_before_contract_commit": [
+      "Go source or module metadata",
+      "CAS, sandbox, cache, worker, or provider implementation",
+      "generated benchmark records or probe results",
+      "candidate-specific recommendation or passing claim"
+    ],
+    "next_step": "Show the Phase A diff, obtain explicit user authorization, and commit this contract before Phase B mechanism work."
+  },
+  "probes": [
+    {
+      "acceptance": "After run creation, mutate and extend the live source copy; execution materialized from the captured source must observe only the original bytes/digest and never the mutation marker.",
+      "evidence_path": "evidence/raw/source-mutation.json",
+      "id": "source-mutation",
+      "requirements": [
+        "REP-1",
+        "REP-6"
+      ],
+      "roadmap_demonstration": 1
+    },
+    {
+      "acceptance": "Two barrier-synchronised W1 runs use unique writable roots, HOME, TMPDIR, outputs, and tool-cache paths; neither observes or mutates the peer marker and the immutable base still verifies.",
+      "evidence_path": "evidence/raw/concurrent-output-isolation.json",
+      "id": "concurrent-output-isolation",
+      "requirements": [
+        "REP-1",
+        "EXEC-3"
+      ],
+      "roadmap_demonstration": 2
+    },
+    {
+      "acceptance": "An inherited undeclared environment canary is absent; attempted reads and writes outside the declared sandbox are denied or explicitly detected. The evidence reports the attained level and contains no canary bytes.",
+      "evidence_path": "evidence/raw/ambient-input-control.json",
+      "id": "ambient-input-control",
+      "requirements": [
+        "REP-2"
+      ],
+      "roadmap_demonstration": 3
+    },
+    {
+      "acceptance": "All six mandatory semantic components validate and produce the cache key before any reservation event; omitting one rejects before lookup and mutating each one independently changes the digest.",
+      "evidence_path": "evidence/raw/pre-reservation-identity.json",
+      "id": "pre-reservation-identity",
+      "requirements": [
+        "REP-3",
+        "EXEC-4"
+      ],
+      "roadmap_demonstration": 4
+    },
+    {
+      "acceptance": "Every ready-hit sample has lookup and verified-return events with zero reservation, acquisition, attestation, sandbox, and execution events or counters.",
+      "evidence_path": "evidence/raw/zero-reservation-cache-hit.json",
+      "id": "zero-reservation-cache-hit",
+      "requirements": [
+        "REP-4"
+      ],
+      "roadmap_demonstration": 5
+    },
+    {
+      "acceptance": "After a miss and reservation, a mismatched worker profile attestation fails closed before sandbox/execution/publication, leaves the planned key unchanged, and records the expected/attested profile digests.",
+      "evidence_path": "evidence/raw/attestation-mismatch.json",
+      "id": "attestation-mismatch",
+      "requirements": [
+        "REP-3",
+        "EXEC-4"
+      ],
+      "roadmap_demonstration": 6
+    },
+    {
+      "acceptance": "Result cache, mutable tool cache, and warm-worker state have separate types, storage roots, and event namespaces; warming or poisoning either performance cache cannot create or authorize a result hit, and a verified result hit needs neither.",
+      "evidence_path": "evidence/raw/cache-class-separation.json",
+      "id": "cache-class-separation",
+      "requirements": [
+        "REP-5",
+        "REP-6",
+        "EXEC-3"
+      ],
+      "roadmap_demonstration": 7
+    }
+  ],
+  "reproducibility_claim": {
+    "maximum_predeclared_level": "isolated",
+    "requested_level": "isolated",
+    "required_controls": [
+      "immutable source bytes",
+      "unique disposable writable workspace",
+      "declared inputs and outputs",
+      "sanitized environment",
+      "no cross-run mutable workspace"
+    ],
+    "unproven_hermetic_inputs": [
+      "network closure",
+      "time",
+      "randomness",
+      "complete host-tool closure",
+      "all host sockets and hardware capabilities"
+    ],
+    "downgrade_policy": "A provider must report the attained level and the exact failed/unenforced control; it must not silently retain the requested label."
+  },
+  "requirement_mapping": {
+    "EXEC-3": "Workers and disposable sandboxes are separate lifecycles.",
+    "EXEC-4": "Profile identity is known before provisioning and attested at execution.",
+    "REP-1": "Every run uses one immutable source snapshot.",
+    "REP-2": "The requested and attained reproducibility levels are reported.",
+    "REP-3": "Cache identity includes semantic execution profile and all declared typed inputs.",
+    "REP-4": "Ready cache hits return before worker reservation.",
+    "REP-5": "Result, tool, and warm-provider caches are distinct.",
+    "REP-6": "Artifact provenance is queryable and digest verified."
+  },
+  "requirements_not_established_here": {
+    "EXEC-1": "Per-node placement needs a multi-node/provider plan and is not proven by this local single-node experiment.",
+    "EXEC-2": "Provider saturation versus global scheduling slots belongs to E05.",
+    "EXEC-5": "Durable service/session/device leases belong to E05/E07 and later daemon work."
+  },
+  "schema_version": "taskflow-e04-phase-a-protocol/v1",
+  "verification": {
+    "contract_command": "mise exec -- task --dir experiments/e04-source-sandbox-cache check:contract",
+    "phase_a_command": "mise exec -- task --dir experiments/e04-source-sandbox-cache check",
+    "phase_b_command_reserved": "mise exec -- task --dir experiments/e04-source-sandbox-cache check"
+  }
+}

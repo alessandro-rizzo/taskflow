@@ -1,0 +1,10 @@
+{
+  "canonical_bytes_equal": true,
+  "fixture": "w3",
+  "go_digest": "35cbc9f8bf8af5e15095b61a55dc753e84877d6bd1b25644f27e02ceca2239f0",
+  "python_digest": "35cbc9f8bf8af5e15095b61a55dc753e84877d6bd1b25644f27e02ceca2239f0",
+  "structural_differences": 0,
+  "t1_exit_code": 0,
+  "t1_output": "t1conform: PASS (digest 35cbc9f8bf8af5e15095b61a55dc753e84877d6bd1b25644f27e02ceca2239f0)",
+  "validation_violations": 0
+}

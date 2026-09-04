@@ -1,0 +1,23 @@
+{
+  "attained_reproducibility": "observed",
+  "details": {
+    "environment_canary_absent": true,
+    "environment_canary_name": "E04_UNDECLARED_CANARY",
+    "read_canary_name": "undeclared-read-canary",
+    "read_denied": true,
+    "sandbox_mechanism": "sandbox-exec-targeted-deny",
+    "write_canary_name": "undeclared-write-canary",
+    "write_denied": true
+  },
+  "experiment_id": "E04",
+  "id": "ambient-input-control",
+  "limitations": [
+    "Targeted denial proves the declared canaries, not complete host filesystem closure.",
+    "Network, time, randomness, host sockets, and hardware capabilities were not controlled."
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "requested_reproducibility": "isolated",
+  "roadmap_demonstration": 3,
+  "schema_version": "taskflow-e04-probe-evidence/v1",
+  "status": "pass"
+}

@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "Taskfile.yml",
+      "sha256": "47e1ced8c298971d4572523100d5f9160eee3d183a45b9c5473a143e2e2f1eb2"
+    },
+    {
+      "path": "e04.py",
+      "sha256": "3b48ca43821340676dc9c1d62e309a8671803e1a25ea5effeb28be650be5f73d"
+    },
+    {
+      "path": "scripts/run_evidence.py",
+      "sha256": "546f324f72a59c8a5b38b4bb24174f53823fa132dac86026e6b353c2279fa1d0"
+    },
+    {
+      "path": "scripts/verify_evidence.py",
+      "sha256": "1c2fbe5d58030907830dc3ed710bc6315daae2c53018c1cfb8af5f8dfd56cc82"
+    },
+    {
+      "path": "tests/test_e04.py",
+      "sha256": "0ee23063aeccbcb2e9febf54e264533ed7030e171595d6019b9b2b3d0ae9a67b"
+    }
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "schema_version": "taskflow-e04-implementation-manifest/v1"
+}

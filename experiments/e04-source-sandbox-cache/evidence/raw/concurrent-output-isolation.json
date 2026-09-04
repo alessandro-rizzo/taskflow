@@ -1,0 +1,86 @@
+{
+  "attained_reproducibility": "observed",
+  "details": {
+    "distinct_workspace_roots": true,
+    "immutable_base_verified_after_runs": true,
+    "method": "apfs-clone",
+    "own_markers_intact": true,
+    "peer_reads_denied": true,
+    "run_a": {
+      "commands": [
+        {
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "passed": true,
+          "returncode": 0
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "./..."
+          ],
+          "passed": true,
+          "returncode": 0
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "passed": true,
+          "returncode": 0
+        }
+      ],
+      "peer_probe_returncode": 1,
+      "peer_read_denied": true
+    },
+    "run_b": {
+      "commands": [
+        {
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "passed": true,
+          "returncode": 0
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "./..."
+          ],
+          "passed": true,
+          "returncode": 0
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "passed": true,
+          "returncode": 0
+        }
+      ],
+      "peer_probe_returncode": 1,
+      "peer_read_denied": true
+    }
+  },
+  "experiment_id": "E04",
+  "id": "concurrent-output-isolation",
+  "limitations": [
+    "The native profile denies the named peer path but is not a complete default-deny host filesystem profile."
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "requested_reproducibility": "isolated",
+  "roadmap_demonstration": 2,
+  "schema_version": "taskflow-e04-probe-evidence/v1",
+  "status": "pass"
+}

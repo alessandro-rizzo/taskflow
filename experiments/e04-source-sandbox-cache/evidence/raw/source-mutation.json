@@ -1,0 +1,22 @@
+{
+  "attained_reproducibility": "observed",
+  "details": {
+    "captured_source_digest": "7e45b9a18871339dac6324d8b391eb5a5f92bf224bb3019b94ebf1e0224ede88",
+    "executed_extra_file_present": false,
+    "executed_file_digest": "a0c4ade927faec444da9272998bbd8ae61f520d637c28fe19e939bba8c24ad0b",
+    "fresh_live_digest_after_mutation": "0f5f3cb3868373716a2041a324ba7aca7c37cf9216ae6cefd1a61d59091ae59c",
+    "materialized_tree_verified": true,
+    "mutation_marker_observed": false,
+    "original_file_digest": "a0c4ade927faec444da9272998bbd8ae61f520d637c28fe19e939bba8c24ad0b"
+  },
+  "experiment_id": "E04",
+  "id": "source-mutation",
+  "limitations": [
+    "Capture is a bounded directory walk, not an atomic filesystem snapshot during concurrent mutation."
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "requested_reproducibility": "isolated",
+  "roadmap_demonstration": 1,
+  "schema_version": "taskflow-e04-probe-evidence/v1",
+  "status": "pass"
+}

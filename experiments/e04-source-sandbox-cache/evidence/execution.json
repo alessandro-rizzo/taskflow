@@ -1,0 +1,26 @@
+{
+  "benchmark_runs": [
+    {
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py create-sandbox --base /private/tmp/taskflow-e04-benchmark-base/base --target /private/tmp/taskflow-e04-benchmark-apfs-target --method apfs-clone",
+      "metric_id": "local-warm-sandbox-creation-apfs",
+      "prepare": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py cleanup --path /private/tmp/taskflow-e04-benchmark-apfs-target",
+      "runner_stderr": "t1bench: collecting 30 sample(s) of \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py create-sandbox --base /private/tmp/taskflow-e04-benchmark-base/base --target /private/tmp/taskflow-e04-benchmark-apfs-target --method apfs-clone\" (state=warm, prepare=\"/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py cleanup --path /private/tmp/taskflow-e04-benchmark-apfs-target\")\nt1bench: wrote /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/evidence/benchmarks/apfs-clone-warm/record.json (median=0.039s p95=0.042s)"
+    },
+    {
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py create-sandbox --base /private/tmp/taskflow-e04-benchmark-base/base --target /private/tmp/taskflow-e04-benchmark-copy-target --method copy",
+      "metric_id": "local-warm-sandbox-creation-copy-control",
+      "prepare": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py cleanup --path /private/tmp/taskflow-e04-benchmark-copy-target",
+      "runner_stderr": "t1bench: collecting 30 sample(s) of \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py create-sandbox --base /private/tmp/taskflow-e04-benchmark-base/base --target /private/tmp/taskflow-e04-benchmark-copy-target --method copy\" (state=warm, prepare=\"/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py cleanup --path /private/tmp/taskflow-e04-benchmark-copy-target\")\nt1bench: wrote /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/evidence/benchmarks/copy-warm/record.json (median=0.036s p95=0.039s)"
+    },
+    {
+      "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py benchmark-cache-hit --cache-root /private/tmp/taskflow-e04-benchmark-hit-state --trace-log /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/evidence/benchmarks/ready-cache-hit/traces.jsonl",
+      "metric_id": "ready-cache-hit-after-planning",
+      "prepare": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py prepare-cache-hit --root /private/tmp/taskflow-e04-benchmark-hit-state",
+      "runner_stderr": "t1bench: collecting 30 sample(s) of \"/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py benchmark-cache-hit --cache-root /private/tmp/taskflow-e04-benchmark-hit-state --trace-log /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/evidence/benchmarks/ready-cache-hit/traces.jsonl\" (state=cache-hit, prepare=\"/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py prepare-cache-hit --root /private/tmp/taskflow-e04-benchmark-hit-state\")\nt1bench: wrote /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/evidence/benchmarks/ready-cache-hit/record.json (median=0.042s p95=0.044s)"
+    }
+  ],
+  "completed_at": "2026-09-03T22:56:37.364714+00:00",
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "probe_command": "python3 scripts/run_evidence.py",
+  "schema_version": "taskflow-e04-execution/v1"
+}

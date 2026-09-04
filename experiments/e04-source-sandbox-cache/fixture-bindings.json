@@ -1,0 +1,108 @@
+{
+  "bindings": [
+    {
+      "fixture_id": "w1-fast-project-check",
+      "files": [
+        {
+          "path": "fixtures/w1/manifest.yaml",
+          "sha256": "18a61f791c198e16f3e478243213e6d48bb3223357c14f6a674c2f3862415169"
+        },
+        {
+          "path": "fixtures/w1/repo/go.mod",
+          "sha256": "f5ce7b592333646bbb9fd3d1a9180bc1313be7b01f7f3e8d445ef48599b76b72"
+        },
+        {
+          "path": "fixtures/w1/repo/greeter.go",
+          "sha256": "a0c4ade927faec444da9272998bbd8ae61f520d637c28fe19e939bba8c24ad0b"
+        },
+        {
+          "path": "fixtures/w1/repo/greeter_test.go",
+          "sha256": "51590ebc6ac96d8618bd01a6c51e425a09b5a30c6b53be9c6f57937b8acedf2b"
+        }
+      ],
+      "purpose": "Representative local format, test, lint, and aggregate-check workload; only the passing repo is copied into experiment-owned temporary source roots.",
+      "version": "t1-experimental-v1"
+    },
+    {
+      "fixture_id": "t1-integrity-faults",
+      "files": [
+        {
+          "path": "fixtures/integrity-faults/README.md",
+          "sha256": "e263d802b4439261a4057442b27f17297e66cb1f14b8c76232d68d164be278ca"
+        },
+        {
+          "path": "fixtures/integrity-faults/Taskfile.yml",
+          "sha256": "ead83f20ec9bc256bf6c5137b2d2ee07cf8c90332c32e7d01fb94bb284c64bb6"
+        },
+        {
+          "path": "fixtures/integrity-faults/go.mod",
+          "sha256": "d3b53c62412fc4446efcbad646bccb55b0253a4cedd0ee11e9426d83b95949b6"
+        },
+        {
+          "path": "fixtures/integrity-faults/mise.toml",
+          "sha256": "f503d784cf4f0ba009729c8274c345e010f4ccc964a99434c107e58bad89bf3c"
+        },
+        {
+          "path": "fixtures/integrity-faults/snapshot.go",
+          "sha256": "45e4a6301f191878af8329ce775f449e30a9927fabed5000dc04386b2f0c1ac6"
+        },
+        {
+          "path": "fixtures/integrity-faults/snapshot_test.go",
+          "sha256": "0ba3ba204fe3643666a4b79b706f5409f927deaed21046a3a19a0d78c9d4e847"
+        },
+        {
+          "path": "fixtures/integrity-faults/store.go",
+          "sha256": "68b2ba94951ab985fb0eec8ace3c2c8797b328ad31603f84a03a836be4584ea5"
+        },
+        {
+          "path": "fixtures/integrity-faults/store_test.go",
+          "sha256": "e9a140b6b953eb10c7234114d57b90fc1065dc78ecaa412ba40ecf2edf4580e9"
+        }
+      ],
+      "manifest_schema_version": "t1-integrity-faults-manifest/v1",
+      "purpose": "Adversarial source-identity and cache-integrity baseline; E04 must not import or treat its reserve-before-lookup toy store as the target design.",
+      "version": "t1-integrity-faults-v2-experimental"
+    },
+    {
+      "fixture_id": "t1-benchmark-harness",
+      "files": [
+        {
+          "path": "fixtures/t1-benchmark-harness/README.md",
+          "sha256": "93aeaec37aecafb53bb11a9f3be8314b68c99b89c9868a85c5ea7977c9b3cf9b"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/Taskfile.yml",
+          "sha256": "9c13f2b7fc2f79b33bad346b7a0035c201cb509380dd22f4e37e16eadaa719d0"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/cmd/t1bench/main.go",
+          "sha256": "d4c10e124c223f538897bb3ea1553c4c39d79b9b821805ac240ebab6d72547d3"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/go.mod",
+          "sha256": "ace069a03a471073b36b9cfc5ef79e59c6d46d38302b360b3b349eae06f8a6a9"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/mise.toml",
+          "sha256": "f503d784cf4f0ba009729c8274c345e010f4ccc964a99434c107e58bad89bf3c"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/record.go",
+          "sha256": "b0bb479abc9d2095d3f8f3067001125312c0be98d5ed67f3b295b72a13f0a659"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/validate.go",
+          "sha256": "07dedcd217927500b6a9758aeaf8c6ebf9b780e4ab66b8577ced793ef57d071a"
+        },
+        {
+          "path": "fixtures/t1-benchmark-harness/validate_test.go",
+          "sha256": "62f007e10dce94785802905c3761d60d99dca2b6ffced2dc546814185f538ed0"
+        }
+      ],
+      "purpose": "Required v2 measurement record and serial per-sample preparation runner; Phase B invokes its CLI without importing the fixture package.",
+      "version": "taskflow-t1-benchmark/v2"
+    }
+  ],
+  "schema_version": "taskflow-e04-fixture-bindings/v1",
+  "source_revision": "834ee0a95eef05a2a4e434bf9095826ee93a8cc5"
+}

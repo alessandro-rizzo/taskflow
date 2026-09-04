@@ -1,0 +1,71 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E04",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "timestamp": "2026-09-03T22:56:32Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    },
+    {
+      "name": "python",
+      "version": "3.9.6"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "/Applications/Xcode.app/Contents/Developer/usr/bin/python3 /private/tmp/taskflow-tf-003.11/experiments/e04-source-sandbox-cache/e04.py cleanup --path /private/tmp/taskflow-e04-benchmark-apfs-target",
+  "cache_dimensions": {
+    "result-cache": "absent",
+    "source-cas": "warm",
+    "worker-capacity": "warm"
+  },
+  "samples": [
+    0.036802292,
+    0.037903458,
+    0.039072375,
+    0.040508375,
+    0.039270042,
+    0.038873292,
+    0.038473417,
+    0.04159325,
+    0.0387725,
+    0.038390709,
+    0.037952792,
+    0.038245291,
+    0.038278542,
+    0.038058083,
+    0.038929542,
+    0.038702666,
+    0.038282084,
+    0.041688291,
+    0.04178875,
+    0.038924458,
+    0.038665625,
+    0.038552291,
+    0.039051292,
+    0.038284333,
+    0.038333292,
+    0.03975325,
+    0.038651667,
+    0.037688,
+    0.040558125,
+    0.038065583
+  ],
+  "sample_count": 30,
+  "median": 0.038658646000000005,
+  "p95": 0.041688291,
+  "raw_result_location": "samples.txt"
+}

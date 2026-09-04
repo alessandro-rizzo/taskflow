@@ -1,0 +1,9 @@
+{
+  "attained_reproducibility": "observed",
+  "experiment_id": "E04",
+  "local_warm_sandbox_p95_seconds": 0.041688291,
+  "ready_cache_hit_p95_seconds": 0.044444667,
+  "ready_cache_hit_reservations": 0,
+  "recommendation": "Retain APFS clone as a fast local sandbox primitive, but do not make the current targeted native policy the isolated default until a complete deny-by-default profile is proven.",
+  "selected_branch": "native-fast-incomplete"
+}

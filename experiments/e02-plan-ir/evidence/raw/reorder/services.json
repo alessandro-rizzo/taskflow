@@ -1,0 +1,176 @@
+{
+  "artifacts": [
+    {
+      "id": "source-tree",
+      "optional": false,
+      "type": "Tree"
+    },
+    {
+      "id": "release-binary",
+      "optional": false,
+      "type": "Artifact[BackendBinary]"
+    },
+    {
+      "id": "signed-binary",
+      "optional": false,
+      "type": "Artifact[SignedBackendBinary]"
+    },
+    {
+      "id": "release-manifest",
+      "optional": true,
+      "type": "Report[ReleaseManifest]"
+    },
+    {
+      "id": "audit-report",
+      "optional": false,
+      "type": "Report[Audit]"
+    }
+  ],
+  "document_kind": "plan",
+  "effects": [
+    {
+      "authorized_actor": "release-bot",
+      "id": "publish-release",
+      "idempotency_key": "release-manifest-digest",
+      "kind": "publish",
+      "target": "artifact-registry-endpoint"
+    },
+    {
+      "authorized_actor": "release-bot",
+      "id": "audit-release",
+      "idempotency_key": "release-manifest-digest",
+      "kind": "audit",
+      "target": "audit-endpoint"
+    }
+  ],
+  "fixture_id": "synthetic",
+  "fixture_version": "t1-plan-conformance-synthetic-v1",
+  "format_version": "t1-plan-conformance-plan-v2",
+  "nodes": [
+    {
+      "cache_policy": {
+        "key_inputs": [
+          "source-tree",
+          "execution-profile"
+        ],
+        "mode": "content-addressed"
+      },
+      "consumes": [
+        "source-tree"
+      ],
+      "execution_profile": {
+        "os": "linux",
+        "toolchain": "go1.25.12"
+      },
+      "id": "build",
+      "needs": [],
+      "outcome_condition": {
+        "type": "always"
+      },
+      "planning_condition": {
+        "exclude_patterns": [
+          "vendor/**",
+          "generated/**"
+        ],
+        "patterns": [
+          "**/*.go",
+          "**/*.mod"
+        ],
+        "type": "changed-paths"
+      },
+      "produces": [
+        "release-binary"
+      ],
+      "resources": {
+        "cpu_millicores": 1000,
+        "memory_mib": 1024
+      }
+    },
+    {
+      "cache_policy": {
+        "mode": "none"
+      },
+      "consumes": [
+        "release-binary"
+      ],
+      "execution_profile": {
+        "os": "linux",
+        "toolchain": "cosign"
+      },
+      "id": "sign",
+      "needs": [
+        "build"
+      ],
+      "outcome_condition": {
+        "type": "conditional"
+      },
+      "planning_condition": {
+        "type": "always"
+      },
+      "produces": [
+        "signed-binary"
+      ],
+      "resources": {
+        "cpu_millicores": 250,
+        "memory_mib": 128
+      }
+    },
+    {
+      "cache_policy": {
+        "mode": "none"
+      },
+      "consumes": [
+        "signed-binary",
+        "release-binary"
+      ],
+      "execution_profile": {
+        "os": "any",
+        "toolchain": "none"
+      },
+      "id": "publish",
+      "needs": [
+        "sign",
+        "build"
+      ],
+      "outcome_condition": {
+        "type": "always"
+      },
+      "planning_condition": {
+        "type": "always"
+      },
+      "produces": [
+        "release-manifest",
+        "audit-report"
+      ],
+      "resources": {
+        "cpu_millicores": 100,
+        "memory_mib": 64
+      }
+    }
+  ],
+  "secrets": [
+    {
+      "capability": "code-signing-key",
+      "id": "signing-key",
+      "resolved_by": "daemon"
+    },
+    {
+      "capability": "audit-token",
+      "id": "audit-token",
+      "resolved_by": "daemon"
+    }
+  ],
+  "services": [
+    {
+      "id": "audit-endpoint",
+      "name": "audit",
+      "route": "authorized-external"
+    },
+    {
+      "id": "artifact-registry-endpoint",
+      "name": "artifact-registry",
+      "route": "authorized-external"
+    }
+  ],
+  "status": "experimental"
+}

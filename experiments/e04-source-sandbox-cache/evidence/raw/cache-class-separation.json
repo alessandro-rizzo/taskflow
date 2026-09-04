@@ -1,0 +1,24 @@
+{
+  "attained_reproducibility": "observed",
+  "details": {
+    "classes": {
+      "result": "ResultCache",
+      "tool": "ToolCache",
+      "warm_worker": "WarmWorkerState"
+    },
+    "miss_status": "executed",
+    "poisoned_tool_cache_created_result_hit": false,
+    "result_hit_without_tool_or_warm_state": true,
+    "warm_workers_created_result_hit": false
+  },
+  "experiment_id": "E04",
+  "id": "cache-class-separation",
+  "limitations": [
+    "Storage is in-process and demonstrates authority separation, not production cache poisoning resistance."
+  ],
+  "phase_a_contract_commit": "fe5cb0aa25deb4c10f72dc56e800cfeaac9e363c",
+  "requested_reproducibility": "isolated",
+  "roadmap_demonstration": 7,
+  "schema_version": "taskflow-e04-probe-evidence/v1",
+  "status": "pass"
+}
