@@ -1,0 +1,24 @@
+{
+  "checks": {
+    "cross_language": true,
+    "determinism": true,
+    "large_generation": true,
+    "large_reader": true,
+    "large_size": true,
+    "mutations": true,
+    "reorder": true,
+    "sentinels": true,
+    "synthetic_concepts": true,
+    "t1_zero_diffs": true,
+    "w1_latency": true
+  },
+  "contract_commit": "6b98cada25439f66c75eaf3f5faea3d01dfdfade",
+  "decision": "continue-canonical-json",
+  "format_version": "e02-scorecard-v1",
+  "implementation_manifest_sha256": "eb1b63e65ee7599be7d0c9ae83232956ce3dbe2e9e6d2b9657fe1717fb4d4b7f",
+  "limitations": [
+    "E01 diagnostics remains schema-only because its trace has no producer.",
+    "The encoding and APIs remain disposable until Gate 1.",
+    "Python is the language-neutral reader proxy; no additional language runtime was tested."
+  ]
+}

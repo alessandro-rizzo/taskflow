@@ -1,0 +1,12 @@
+{
+  "compatible": false,
+  "differences": [
+    {
+      "after": "go1.25.13",
+      "before": "go1.25.12",
+      "classification": "structural-incompatible",
+      "path": "$.nodes[id=test].execution_profile.toolchain"
+    }
+  ],
+  "format_version": "e02-resume-diff-v1"
+}

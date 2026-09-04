@@ -1,0 +1,17 @@
+{
+  "android": {
+    "complete_plan": true,
+    "exit_code": 0,
+    "serialized_callback": false
+  },
+  "ios": {
+    "complete_plan": true,
+    "exit_code": 0,
+    "serialized_callback": false
+  },
+  "windows": {
+    "complete_plan": false,
+    "exit_code": 1,
+    "serialized_callback": false
+  }
+}

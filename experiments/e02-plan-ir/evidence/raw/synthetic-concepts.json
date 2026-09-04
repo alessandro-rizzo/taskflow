@@ -1,0 +1,12 @@
+{
+  "cache-policy": true,
+  "effect": true,
+  "endpoint": true,
+  "execution-profile": true,
+  "optional-output": true,
+  "outcome-condition": true,
+  "planning-condition": true,
+  "resources": true,
+  "secret-capability-reference": true,
+  "typed-artifact": true
+}

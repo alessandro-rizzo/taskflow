@@ -1,0 +1,17 @@
+{
+  "compatible": false,
+  "differences": [
+    {
+      "after": [
+        "**/*.go",
+        "**/*.mod"
+      ],
+      "before": [
+        "**/*.go"
+      ],
+      "classification": "structural-incompatible",
+      "path": "$.nodes[id=lint].planning_condition.patterns"
+    }
+  ],
+  "format_version": "e02-resume-diff-v1"
+}

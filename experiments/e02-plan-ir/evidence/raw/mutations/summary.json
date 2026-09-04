@@ -1,0 +1,26 @@
+{
+  "execution-profile": {
+    "digest_changed": true,
+    "paths": [
+      "$.nodes[id=test].execution_profile.toolchain"
+    ]
+  },
+  "output-optionality": {
+    "digest_changed": true,
+    "paths": [
+      "$.artifacts[id=test-report].optional"
+    ]
+  },
+  "output-type": {
+    "digest_changed": true,
+    "paths": [
+      "$.artifacts[id=test-report].type"
+    ]
+  },
+  "planning-condition": {
+    "digest_changed": true,
+    "paths": [
+      "$.nodes[id=lint].planning_condition.patterns"
+    ]
+  }
+}

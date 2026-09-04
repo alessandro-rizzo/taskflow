@@ -1,0 +1,49 @@
+{
+  "base_digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+  "paths": {
+    "artifacts": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "consumes": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "effects": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "exclude_patterns": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "key_inputs": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "needs": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "nodes": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "patterns": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "produces": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "secrets": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    },
+    "services": {
+      "digest": "0db9afa44566e09b017a3f8fdafa0deefa516b04792a1eea6182beaed7582ce8",
+      "equal": true
+    }
+  }
+}

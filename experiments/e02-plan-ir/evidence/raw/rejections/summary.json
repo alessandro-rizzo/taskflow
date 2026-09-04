@@ -1,0 +1,32 @@
+{
+  "nested-node-test": {
+    "go": {
+      "exit_code": 1,
+      "stderr": "e02plan: $.nodes[id=test].unexpected unknown field"
+    },
+    "python": {
+      "exit_code": 1,
+      "stderr": "e02-reader: $.nodes[id=test].unexpected unknown field"
+    }
+  },
+  "root": {
+    "go": {
+      "exit_code": 1,
+      "stderr": "e02plan: $.unexpected unknown field"
+    },
+    "python": {
+      "exit_code": 1,
+      "stderr": "e02-reader: $.unexpected unknown field"
+    }
+  },
+  "version": {
+    "go": {
+      "exit_code": 1,
+      "stderr": "e02plan: $.format_version incompatible"
+    },
+    "python": {
+      "exit_code": 1,
+      "stderr": "e02-reader: $.format_version incompatible"
+    }
+  }
+}
