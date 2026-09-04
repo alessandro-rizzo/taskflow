@@ -1,0 +1,99 @@
+{
+  "format_version": "taskflow-e07-thresholds/v1-experimental",
+  "experiment_id": "E07",
+  "statistics": {
+    "p95_method": "sort ascending and select index round(0.95*(n-1))",
+    "timing_unit": "monotonic wall-clock seconds",
+    "failed_sample_policy": "retain the complete failed set; one complete restart from sample one is allowed only after a documented mechanical correction with unchanged thresholds and branch rules",
+    "execution_order": "serial except for the explicitly barrier-synchronised two-namespace isolation trial"
+  },
+  "isolation": {
+    "paired_namespace_trial_count": 20,
+    "namespace_count_per_trial": 2,
+    "service_name_collision_count_max": 0,
+    "allocated_port_collision_count_max": 0,
+    "writable_root_collision_count_max": 0,
+    "database_path_collision_count_max": 0,
+    "endpoint_id_collision_count_max": 0,
+    "lease_id_collision_count_max": 0,
+    "route_capability_id_collision_count_max": 0,
+    "mutable_object_identity_collision_count_max": 0,
+    "peer_marker_read_count_max": 0,
+    "peer_marker_write_count_max": 0,
+    "cross_namespace_endpoint_success_count_max": 0,
+    "project_visible_forbidden_field_count_max": 0
+  },
+  "authorization": {
+    "denial_classes": [
+      "wrong-endpoint-type",
+      "foreign-consumer",
+      "forged-handle",
+      "missing-capability",
+      "stale-handle",
+      "provider-mismatch"
+    ],
+    "repetitions_per_class_min": 20,
+    "unauthorized_success_count_max": 0,
+    "connection_detail_disclosure_count_max": 0,
+    "route_credential_byte_disclosure_count_max": 0,
+    "provider_connection_before_authorization_count_max": 0,
+    "required_diagnostic_fields": [
+      "code",
+      "endpoint_id",
+      "consumer_id",
+      "namespace_id",
+      "policy_id"
+    ]
+  },
+  "readiness": {
+    "serial_sample_count": 30,
+    "fixed_sleep_count_max": 0,
+    "route_before_successful_health_probe_count_max": 0,
+    "route_before_committed_ready_transition_count_max": 0,
+    "process_start_to_committed_ready_p95_seconds_strictly_less_than": 1.0,
+    "unhealthy_or_early_exit_drain_max_seconds": 2.0
+  },
+  "caller_loss_cleanup": {
+    "trial_count": 20,
+    "lease_ttl_seconds": 1.0,
+    "heartbeat_interval_seconds": 0.25,
+    "reaper_interval_seconds": 0.1,
+    "expiry_detection_lateness_max_seconds": 0.5,
+    "cleanup_after_expiry_p95_seconds_max": 1.0,
+    "cleanup_after_expiry_max_seconds_max": 2.0,
+    "remaining_process_count_max": 0,
+    "remaining_listener_count_max": 0,
+    "remaining_route_count_max": 0,
+    "remaining_lease_count_max": 0,
+    "remaining_mutable_namespace_path_count_max": 0,
+    "cleanup_stages": [
+      "route.revoked",
+      "service.stopped",
+      "namespace.mutable_state.removed",
+      "lease.finalized"
+    ],
+    "restart_timings_per_stage": [
+      "before-commit",
+      "after-commit"
+    ],
+    "committed_event_loss_count_max": 0,
+    "committed_event_duplicate_count_max": 0,
+    "cleanup_stage_reorder_count_max": 0
+  },
+  "reuse": {
+    "namespace_sequence_count": 3,
+    "immutable_api_artifact_distinct_digest_count": 1,
+    "immutable_api_artifact_publication_count": 1,
+    "shared_mutable_database_count_max": 0,
+    "shared_route_credential_count_max": 0,
+    "shared_service_process_count_max": 0,
+    "shared_route_count_max": 0,
+    "prior_namespace_marker_visible_count_max": 0
+  },
+  "routing_overhead": {
+    "serial_paired_sample_count": 30,
+    "sample_order": "alternate direct-loopback-first and fake-macos-relay-first",
+    "authorized_endpoint_resolution_p95_seconds_strictly_less_than": 0.025,
+    "fake_macos_relay_paired_p95_delta_seconds_max": 0.01
+  }
+}

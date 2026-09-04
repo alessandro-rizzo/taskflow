@@ -1,0 +1,64 @@
+{
+  "format_version": "taskflow-e07-fixture-bindings/v1-experimental",
+  "source_revision": "098035bf29656c3fd3b3991224a98fdded3453b7",
+  "bindings": [
+    {
+      "id": "w3-complete-specification",
+      "purpose": "Frozen W3 namespace, routing, cleanup, contamination, and profile-mismatch specification.",
+      "files": [
+        {"path": "fixtures/w3/spec.md", "sha256": "3604c22837c2c377309c4d08b1eeeef862fc150b195b545bed981745fd1768a4"},
+        {"path": "fixtures/w3/examples/namespace-a.json", "sha256": "b86378913dcc9f7e80c8a47cf387f68a5a6130d88592fa02be72229e85a3583e"},
+        {"path": "fixtures/w3/examples/namespace-b.json", "sha256": "22db508434c6997cc8ec4bd9b0dee4bc0a01181380ca196e0abb875c865ab682"},
+        {"path": "fixtures/w3/examples/scenario-caller-loss.json", "sha256": "88fbb5623f79bfcf572759bfe6f16a5371a423f24b098969a0194923b33800cc"},
+        {"path": "fixtures/w3/examples/scenario-cancellation.json", "sha256": "5e043f9f043748f22bc5a0f5a220b883fe7fcec7912400286723fb2442ac4b01"},
+        {"path": "fixtures/w3/examples/scenario-dirty-warm-infrastructure.json", "sha256": "e319dc7d35df836f6b792901de028226872161be051db503f6c97ebde7dde87b"},
+        {"path": "fixtures/w3/examples/scenario-port-collision.json", "sha256": "fd8da59e371f2eb3f38342f23bccfd728f348b99703cffaf7e7516cac8124560"},
+        {"path": "fixtures/w3/examples/scenario-simulator-profile-mismatch.json", "sha256": "09898335565236d4f3856cfa03deaf826a9e8e3e9e61bc48e33635ec2d70f40a"},
+        {"path": "fixtures/w3/examples/scenario-unauthorized-routing.json", "sha256": "a4f79da3f856f34e1c06039c00ba7126b006e9bde4e7b708895ed4771de968b3"}
+      ]
+    },
+    {
+      "id": "t1-lease-reclamation",
+      "purpose": "Logical-time lease lifecycle, separately persisted manager state, and every-stage before/after restart behavior to extend with real resources.",
+      "files": [
+        {"path": "fixtures/t1-lifecycle-faults/lease.go", "sha256": "a915fad64df70c10e6d31aac4557bf7198c347a60565a951a4b45fc5ffd14b6d"},
+        {"path": "fixtures/t1-lifecycle-faults/lease_state.go", "sha256": "4a70cb20e995f9d4b69e29a561c04e3f856113d50c6bef7e557b4e76a1e42e23"},
+        {"path": "fixtures/t1-lifecycle-faults/scenario_lease_expiry_test.go", "sha256": "dfa49e57b4d277479e887c422edb69040ecfe0e423572d728ff2754bc9b23d90"}
+      ]
+    },
+    {
+      "id": "e02-typed-w3-plan",
+      "purpose": "Accepted language-neutral W3 plan retaining typed Service and Endpoint distinctions.",
+      "files": [
+        {"path": "experiments/e02-plan-ir/evidence/raw/canonical/w3.json", "sha256": "35cbc9f8bf8af5e15095b61a55dc753e84877d6bd1b25644f27e02ceca2239f0"},
+        {"path": "docs/decisions/0006-e02-plan-ir.md", "sha256": "5128c2ce46531da9a4c21aca1a82f6f005a096ff7ca134622dcde8fc811ae29c"}
+      ]
+    },
+    {
+      "id": "e05-ownership-cleanup",
+      "purpose": "Narrow ownership conclusion, wall-clock cleanup comparison, and explicit non-service-isolation limitations.",
+      "files": [
+        {"path": "experiments/e05-daemon-simulation/results/lifecycle.json", "sha256": "1e01cb9185be383e2759a9964aa397e1f5a6d11eede61a51d2cb576da0dbf5ed"},
+        {"path": "experiments/e05-daemon-simulation/thresholds.json", "sha256": "860bbb206d73d76ab9b2c93efdbd5276df4251b2e9ff164fb1274d50b14ec8f5"},
+        {"path": "experiments/e05-daemon-simulation/decision.md", "sha256": "2d2bca7a83995c6ca3863f030428641e925adc7a46aeb509bfc82f2b8ba63552"},
+        {"path": "experiments/e05-daemon-simulation/limitations.md", "sha256": "036f82723d29b2907b39cd38b4a165dc3c5dfdac18c6fd6003658681b0a470be"}
+      ]
+    },
+    {
+      "id": "e06-provider-shape",
+      "purpose": "Branch-neutral worker, sandbox, session, and fake-macOS consumer shape without taking ownership of E06 execution.",
+      "files": [
+        {"path": "experiments/e06-macos-feasibility/contract.json", "sha256": "e504372b6887b94fba46a341bfa7faf8bcb9a032bd503ca3fe20da93c66a74df"},
+        {"path": "experiments/e06-macos-feasibility/candidate-matrix.json", "sha256": "43422a12603f0f9480d7c701e09d0e31772998ab80aa22f94363e56609762fbe"}
+      ]
+    },
+    {
+      "id": "t1-benchmark-v2",
+      "purpose": "Comparable serial timing records validated through the fixture command rather than imported as experiment code.",
+      "files": [
+        {"path": "fixtures/t1-benchmark-harness/record.go", "sha256": "b0bb479abc9d2095d3f8f3067001125312c0be98d5ed67f3b295b72a13f0a659"},
+        {"path": "fixtures/t1-benchmark-harness/validate.go", "sha256": "07dedcd217927500b6a9758aeaf8c6ebf9b780e4ab66b8577ced793ef57d071a"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "format_version": "taskflow-e07-event-evidence/v1-experimental",
+  "experiment_id": "E07",
+  "phase": "phase-b-predeclared",
+  "ordering_rule": "Persist the durable mutation before emitting the event that describes it.",
+  "common_required_fields": [
+    "format_version",
+    "sequence",
+    "event",
+    "run_id",
+    "namespace_id",
+    "monotonic_seconds"
+  ],
+  "conditional_fields": {
+    "service lifecycle": [
+      "service_id",
+      "resource_id",
+      "health_transition"
+    ],
+    "endpoint routing": [
+      "endpoint_id",
+      "consumer_id",
+      "provider_id",
+      "route_decision",
+      "capability_digest"
+    ],
+    "lease and cleanup": [
+      "lease_id",
+      "resource_id",
+      "cleanup_stage",
+      "cleanup_latency_seconds"
+    ],
+    "denial": [
+      "diagnostic_code",
+      "endpoint_id",
+      "consumer_id",
+      "policy_id"
+    ],
+    "measurement": [
+      "sample_id",
+      "latency_seconds",
+      "collision_count"
+    ]
+  },
+  "credential_policy": {
+    "raw_route_credentials_allowed": false,
+    "raw_tokens_allowed": false,
+    "retained_representation": "sha256 digest only",
+    "digest_field": "capability_digest"
+  },
+  "stable_diagnostic_codes": [
+    "E07_ENDPOINT_TYPE_MISMATCH",
+    "E07_CONSUMER_NOT_AUTHORIZED",
+    "E07_ENDPOINT_HANDLE_INVALID",
+    "E07_ROUTE_CAPABILITY_MISSING",
+    "E07_ENDPOINT_HANDLE_STALE",
+    "E07_PROVIDER_MISMATCH"
+  ],
+  "phase_b_evidence": {
+    "required_paths": [
+      "evidence/raw/paired-namespaces.jsonl",
+      "evidence/raw/authorization.jsonl",
+      "evidence/raw/readiness.jsonl",
+      "evidence/raw/caller-loss-cleanup.jsonl",
+      "evidence/raw/cleanup-restarts.jsonl",
+      "evidence/raw/reuse.jsonl",
+      "evidence/raw/routing-overhead.jsonl",
+      "evidence/process-listener-inventory.json",
+      "evidence/namespace-leak-collision-report.json",
+      "evidence/authorization-matrix.json",
+      "evidence/readiness-summary.json",
+      "evidence/cleanup-summary.json",
+      "evidence/benchmarks/endpoint-resolution/record.json",
+      "evidence/benchmarks/endpoint-resolution/samples.txt",
+      "evidence/benchmarks/fake-macos-relay/record.json",
+      "evidence/benchmarks/fake-macos-relay/samples.txt",
+      "evidence/environment.json",
+      "evidence/execution.json",
+      "evidence/checksums.json",
+      "evidence/implementation-manifest.json",
+      "evidence/evidence-manifest.json",
+      "evidence/scorecard.json",
+      "evidence/limitations.md",
+      "evidence/recommendation.md"
+    ],
+    "exact_reproduction_command_required": true,
+    "failed_sets_retained": true,
+    "normalized_jsonl_required": true
+  }
+}
