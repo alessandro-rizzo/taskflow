@@ -1,0 +1,171 @@
+{
+  "format_version": "taskflow-e08-state-machines/v1-experimental",
+  "persistence_rule": "Transitions affecting retry, ownership, cancellation, publication, or cleanup are durable before acknowledgement.",
+  "transition_identity": [
+    "operation_id",
+    "run_id",
+    "node_id",
+    "attempt_id",
+    "expected_revision",
+    "expected_prior_state",
+    "event_sequence",
+    "reason_code"
+  ],
+  "machines": [
+    {
+      "id": "node-attempt",
+      "initial": "ready",
+      "terminal": ["cache_hit", "released"],
+      "states": [
+        "ready", "cache_lookup", "cache_hit", "reservation_requested",
+        "reservation_queued", "reserved", "worker_acquired", "attested",
+        "sandbox_created", "session_acquired", "materializing", "inputs_materialized",
+        "executing", "reconnecting", "publishing", "succeeded",
+        "cancelling", "cancelled", "failed", "lost", "cleaning",
+        "cleanup_warning", "released", "orphaned"
+      ],
+      "transitions": [
+        {"from": "ready", "event": "cache_lookup_started", "to": "cache_lookup"},
+        {"from": "cache_lookup", "event": "verified_result_found", "to": "cache_hit"},
+        {"from": "cache_lookup", "event": "result_absent_or_invalid", "to": "reservation_requested"},
+        {"from": "reservation_requested", "event": "capacity_queued", "to": "reservation_queued"},
+        {"from": "reservation_queued", "event": "capacity_granted", "to": "reserved"},
+        {"from": "reservation_requested", "event": "capacity_granted", "to": "reserved"},
+        {"from": "reserved", "event": "worker_attached", "to": "worker_acquired"},
+        {"from": "worker_acquired", "event": "profile_attested", "to": "attested"},
+        {"from": "attested", "event": "sandbox_created", "to": "sandbox_created"},
+        {"from": "sandbox_created", "event": "session_acquired", "to": "session_acquired"},
+        {"from": "sandbox_created", "event": "materialization_started", "to": "materializing"},
+        {"from": "session_acquired", "event": "materialization_started", "to": "materializing"},
+        {"from": "materializing", "event": "inputs_verified", "to": "inputs_materialized"},
+        {"from": "inputs_materialized", "event": "execution_started", "to": "executing"},
+        {"from": "executing", "event": "transport_disconnected", "to": "reconnecting"},
+        {"from": "materializing", "event": "transport_disconnected", "to": "reconnecting"},
+        {"from": "publishing", "event": "transport_disconnected", "to": "reconnecting"},
+        {"from": "cleaning", "event": "transport_disconnected", "to": "reconnecting"},
+        {"from": "reconnecting", "event": "attempt_reattached", "to": "executing"},
+        {"from": "reconnecting", "event": "materialization_resumed", "to": "materializing"},
+        {"from": "reconnecting", "event": "publication_reconciled", "to": "publishing"},
+        {"from": "reconnecting", "event": "cleanup_reconciled", "to": "cleaning"},
+        {"from": "reconnecting", "event": "worker_declared_lost", "to": "lost"},
+        {"from": "executing", "event": "exit_succeeded", "to": "publishing"},
+        {"from": "publishing", "event": "outputs_published", "to": "succeeded"},
+        {"from": "succeeded", "event": "cleanup_started", "to": "cleaning"},
+        {"from": "cancelled", "event": "cleanup_started", "to": "cleaning"},
+        {"from": "failed", "event": "cleanup_started", "to": "cleaning"},
+        {"from": "lost", "event": "cleanup_started", "to": "cleaning"},
+        {"from": "cleaning", "event": "resources_released", "to": "released"},
+        {"from": "cleaning", "event": "cleanup_deadline_exceeded", "to": "cleanup_warning"},
+        {"from": "cleanup_warning", "event": "orphan_recorded", "to": "orphaned"},
+        {"from": "orphaned", "event": "reaper_reconciled", "to": "released"},
+        {"from": "reservation_requested", "event": "placement_failed", "to": "failed"},
+        {"from": "reservation_queued", "event": "placement_failed", "to": "failed"},
+        {"from": "worker_acquired", "event": "attestation_mismatch", "to": "failed"},
+        {"from": "materializing", "event": "materialization_failed", "to": "failed"},
+        {"from": "executing", "event": "exit_failed", "to": "failed"},
+        {"from": "publishing", "event": "publication_failed", "to": "failed"},
+        {"from": "reservation_requested", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "reservation_queued", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "reserved", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "worker_acquired", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "attested", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "sandbox_created", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "session_acquired", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "materializing", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "inputs_materialized", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "executing", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "reconnecting", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "publishing", "event": "cancel_requested", "to": "cancelling"},
+        {"from": "cancelling", "event": "cancellation_acknowledged", "to": "cancelled"}
+      ]
+    },
+    {
+      "id": "reservation",
+      "initial": "none",
+      "terminal": ["released"],
+      "states": ["none", "requested", "queued", "granted", "released"],
+      "transitions": [
+        {"from": "none", "event": "try_reserve", "to": "requested"},
+        {"from": "requested", "event": "queued", "to": "queued"},
+        {"from": "requested", "event": "granted", "to": "granted"},
+        {"from": "queued", "event": "granted", "to": "granted"},
+        {"from": "requested", "event": "release", "to": "released"},
+        {"from": "queued", "event": "release", "to": "released"},
+        {"from": "granted", "event": "release", "to": "released"}
+      ],
+      "invariants": ["TryReserve never acquires or provisions a worker.", "Release is idempotent and bound to one reservation identity."]
+    },
+    {
+      "id": "worker-attachment",
+      "initial": "detached",
+      "terminal": ["detached", "lost"],
+      "states": ["detached", "acquiring", "attached", "attested", "quarantined", "lost"],
+      "transitions": [
+        {"from": "detached", "event": "acquire", "to": "acquiring"},
+        {"from": "acquiring", "event": "attached", "to": "attached"},
+        {"from": "attached", "event": "profile_match", "to": "attested"},
+        {"from": "attached", "event": "profile_mismatch", "to": "quarantined"},
+        {"from": "attested", "event": "disconnect_expired", "to": "lost"},
+        {"from": "attested", "event": "release", "to": "detached"},
+        {"from": "quarantined", "event": "release", "to": "detached"}
+      ],
+      "invariants": ["Unexpected identity never rewrites the planned profile.", "No sandbox or session is created before attestation."]
+    },
+    {
+      "id": "sandbox",
+      "initial": "absent",
+      "terminal": ["destroyed"],
+      "states": ["absent", "creating", "materializing", "ready", "destroying", "destroyed", "orphaned"],
+      "transitions": [
+        {"from": "absent", "event": "create", "to": "creating"},
+        {"from": "creating", "event": "created", "to": "materializing"},
+        {"from": "materializing", "event": "all_inputs_verified", "to": "ready"},
+        {"from": "creating", "event": "cleanup", "to": "destroying"},
+        {"from": "materializing", "event": "cleanup", "to": "destroying"},
+        {"from": "ready", "event": "cleanup", "to": "destroying"},
+        {"from": "destroying", "event": "destroyed", "to": "destroyed"},
+        {"from": "destroying", "event": "deadline_exceeded", "to": "orphaned"},
+        {"from": "orphaned", "event": "reaper_destroyed", "to": "destroyed"}
+      ],
+      "invariants": ["Sandbox identity is attempt-owned and never part of the profile digest.", "No input is used before complete digest verification."]
+    },
+    {
+      "id": "session",
+      "initial": "absent",
+      "terminal": ["absent", "released"],
+      "optional": true,
+      "states": ["absent", "acquiring", "leased", "resetting", "releasing", "released", "lost", "orphaned"],
+      "transitions": [
+        {"from": "absent", "event": "acquire", "to": "acquiring"},
+        {"from": "acquiring", "event": "lease_granted", "to": "leased"},
+        {"from": "leased", "event": "reset", "to": "resetting"},
+        {"from": "resetting", "event": "reset_complete", "to": "leased"},
+        {"from": "leased", "event": "release", "to": "releasing"},
+        {"from": "releasing", "event": "released", "to": "released"},
+        {"from": "leased", "event": "lease_lost", "to": "lost"},
+        {"from": "lost", "event": "orphan_recorded", "to": "orphaned"},
+        {"from": "orphaned", "event": "reaper_released", "to": "released"}
+      ],
+      "invariants": ["Stateless Linux does not synthesize a session.", "Session identity and mutable state are namespace-private and excluded from profile identity."]
+    },
+    {
+      "id": "publication",
+      "initial": "absent",
+      "terminal": ["published", "rejected"],
+      "states": ["absent", "collecting", "verifying", "publishing", "published", "rejected"],
+      "transitions": [
+        {"from": "absent", "event": "collect_declared_outputs", "to": "collecting"},
+        {"from": "collecting", "event": "paths_confined", "to": "verifying"},
+        {"from": "verifying", "event": "manifest_verified", "to": "publishing"},
+        {"from": "verifying", "event": "integrity_failure", "to": "rejected"},
+        {"from": "publishing", "event": "compare_and_swap_won", "to": "published"},
+        {"from": "publishing", "event": "compare_and_swap_lost", "to": "rejected"}
+      ],
+      "invariants": ["Partial outputs are never visible.", "Only one attempt can publish a logical result identity."]
+    }
+  ],
+  "cache_hit_forbidden_events": [
+    "try_reserve", "worker_wake", "acquire", "profile_match", "create",
+    "session_acquired", "execution_started", "outputs_published", "cleanup_started"
+  ]
+}

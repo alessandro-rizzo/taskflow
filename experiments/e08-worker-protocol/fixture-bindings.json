@@ -1,0 +1,71 @@
+{
+  "format_version": "taskflow-e08-fixture-bindings/v1-experimental",
+  "source_revision": "098035bf29656c3fd3b3991224a98fdded3453b7",
+  "bindings": [
+    {
+      "id": "w2-cross-target-artifact-pipeline",
+      "version": "t1-w2-experimental-v1",
+      "files": [
+        {"path": "fixtures/w2/README.md", "sha256": "daf9344abe270bb7f751b6a0e2926240c56738044e6d1a074b1a9b5d344cf7f1"},
+        {"path": "fixtures/w2/golden/cancellation.md", "sha256": "9074bab7d15e4003055c6ac00534d746a4d5fa8fb08737c9adda97cbea752e15"},
+        {"path": "fixtures/w2/golden/corrupt-artifact.md", "sha256": "375fb891a3100a54258069b320cd6d81787eff71f30459607b11238b189d3da4"},
+        {"path": "fixtures/w2/golden/downstream-failure-resume.md", "sha256": "55a144e5dce2c19312e3ffca3dc92ef876f127bb0e5cba6c4e265d0b325a6c14"},
+        {"path": "fixtures/w2/golden/provider-outage.md", "sha256": "de64d4ada10a957f1e3f2836310351d814e445db734de29aba8fc3c3066b8cda"},
+        {"path": "fixtures/w2/golden/worker-loss.md", "sha256": "f47e5bc6d742661fe15d938cc15972b2c2ca012ec31f5640c1923accc298f71b"},
+        {"path": "fixtures/w2/graph.json", "sha256": "68d599c31ebe04c085610a98ff37e1775db650e2d034d553ac291632fcd7d45b"}
+      ]
+    },
+    {
+      "id": "integrity-faults",
+      "version": "t1-integrity-faults-v2-experimental",
+      "files": [
+        {"path": "fixtures/integrity-faults/README.md", "sha256": "e263d802b4439261a4057442b27f17297e66cb1f14b8c76232d68d164be278ca"},
+        {"path": "fixtures/integrity-faults/Taskfile.yml", "sha256": "ead83f20ec9bc256bf6c5137b2d2ee07cf8c90332c32e7d01fb94bb284c64bb6"},
+        {"path": "fixtures/integrity-faults/go.mod", "sha256": "d3b53c62412fc4446efcbad646bccb55b0253a4cedd0ee11e9426d83b95949b6"},
+        {"path": "fixtures/integrity-faults/mise.toml", "sha256": "f503d784cf4f0ba009729c8274c345e010f4ccc964a99434c107e58bad89bf3c"},
+        {"path": "fixtures/integrity-faults/snapshot.go", "sha256": "45e4a6301f191878af8329ce775f449e30a9927fabed5000dc04386b2f0c1ac6"},
+        {"path": "fixtures/integrity-faults/snapshot_test.go", "sha256": "0ba3ba204fe3643666a4b79b706f5409f927deaed21046a3a19a0d78c9d4e847"},
+        {"path": "fixtures/integrity-faults/store.go", "sha256": "68b2ba94951ab985fb0eec8ace3c2c8797b328ad31603f84a03a836be4584ea5"},
+        {"path": "fixtures/integrity-faults/store_test.go", "sha256": "e9a140b6b953eb10c7234114d57b90fc1065dc78ecaa412ba40ecf2edf4580e9"}
+      ]
+    },
+    {
+      "id": "e04-cache-profile-evidence",
+      "version": "taskflow-e04-phase-a-protocol/v1",
+      "files": [
+        {"path": "experiments/e04-source-sandbox-cache/README.md", "sha256": "d566645349c5f8d88937a8c9f819e1db8d2cd1e8042183e6050fefff3a38f61e"},
+        {"path": "experiments/e04-source-sandbox-cache/evidence/raw/attestation-mismatch.json", "sha256": "3c4344df6cb662b9bd3be996eda67a947b429e2a2ea33389a15ecea5027deeaf"},
+        {"path": "experiments/e04-source-sandbox-cache/evidence/raw/cache-class-separation.json", "sha256": "9339bf1647d1f2b63af3ae6045b5b91b26c2bf9ed6ef0530798490356183ba25"},
+        {"path": "experiments/e04-source-sandbox-cache/evidence/raw/pre-reservation-identity.json", "sha256": "3adca2b18d33dc987bedd93221623b7f2bd37f5f8270b386ba395ceb8b0c385f"},
+        {"path": "experiments/e04-source-sandbox-cache/evidence/raw/zero-reservation-cache-hit.json", "sha256": "3f5f0a135ba5b113ff77e35a436607e44d22c8ba34b6776181179836670a7648"},
+        {"path": "experiments/e04-source-sandbox-cache/evidence/summary.json", "sha256": "9a6cebba5d9e6539506118c4137074b50f454b37664408d226e2189b834b23af"},
+        {"path": "experiments/e04-source-sandbox-cache/protocol.json", "sha256": "43f024a1ceb74ec0a8b0d8341d74270116e0a268bc02bee2482c50c3ffe6f200"},
+        {"path": "experiments/e04-source-sandbox-cache/protocol.sha256", "sha256": "8a0915ce3f14d36051864b9fa767048d1f54fc46194d04a7a34e9456f985f474"}
+      ]
+    },
+    {
+      "id": "e06-macos-lifecycle-shape",
+      "version": "taskflow-e06-phase-a-contract/v1-experimental",
+      "files": [
+        {"path": "experiments/e06-macos-feasibility/README.md", "sha256": "9b348a37a9102f9b91b52e5213969113912182a8f7fdcfa28d9385102c5470ad"},
+        {"path": "experiments/e06-macos-feasibility/candidate-matrix.json", "sha256": "43422a12603f0f9480d7c701e09d0e31772998ab80aa22f94363e56609762fbe"},
+        {"path": "experiments/e06-macos-feasibility/contract.json", "sha256": "e504372b6887b94fba46a341bfa7faf8bcb9a032bd503ca3fe20da93c66a74df"},
+        {"path": "experiments/e06-macos-feasibility/fixture-bindings.json", "sha256": "e9c8ba20f6a9737d8379b5527d41ad00e5780b76ec97332fc40db783d91707ab"},
+        {"path": "experiments/e06-macos-feasibility/frozen-artifacts.json", "sha256": "89f3be1dc96fe67622ddd4cf35536590dace74c0bc4d1b9c7e0526e6a2f981b1"},
+        {"path": "experiments/e06-macos-feasibility/infrastructure-status.json", "sha256": "24ddab121ac55261339d9a133f7e3ce08a7b8125b3189decc6b5e9c3c200cc36"},
+        {"path": "experiments/e06-macos-feasibility/measurement-plan.json", "sha256": "50fd5713f014a85b671ee1a89e58604b7518e9df2fad31cb49401c5112a9001f"},
+        {"path": "experiments/e06-macos-feasibility/protocol.sha256", "sha256": "024ae42b88a6f56110bed24c2623895518aba818d9fc01dbd2d31e569980b4df"}
+      ]
+    },
+    {
+      "id": "t1-benchmark-harness",
+      "version": "taskflow-t1-benchmark/v2",
+      "files": [
+        {"path": "fixtures/t1-benchmark-harness/README.md", "sha256": "93aeaec37aecafb53bb11a9f3be8314b68c99b89c9868a85c5ea7977c9b3cf9b"},
+        {"path": "fixtures/t1-benchmark-harness/record.go", "sha256": "b0bb479abc9d2095d3f8f3067001125312c0be98d5ed67f3b295b72a13f0a659"},
+        {"path": "fixtures/t1-benchmark-harness/validate.go", "sha256": "07dedcd217927500b6a9758aeaf8c6ebf9b780e4ab66b8577ced793ef57d071a"},
+        {"path": "fixtures/t1-benchmark-harness/validate_test.go", "sha256": "62f007e10dce94785802905c3761d60d99dca2b6ffced2dc546814185f538ed0"}
+      ]
+    }
+  ]
+}

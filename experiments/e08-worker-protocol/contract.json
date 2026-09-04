@@ -1,0 +1,137 @@
+{
+  "format_version": "taskflow-e08-phase-a-contract/v1-experimental",
+  "experiment_id": "E08",
+  "task_id": "TF-003.16",
+  "status": "phase-a-contract-frozen",
+  "baseline_revision": "098035bf29656c3fd3b3991224a98fdded3453b7",
+  "question": "What is the smallest provider-neutral worker protocol that preserves cache, identity, transfer, execution, publication, cleanup, reconnect, and orphan semantics across in-process, SSH-backed Linux, and E06-shaped macOS adapters?",
+  "risks": ["R5", "R9"],
+  "canonical_requirements": {
+    "specified_by_phase_a": [
+      "EXEC-1",
+      "EXEC-2",
+      "EXEC-3",
+      "EXEC-4",
+      "EXEC-5",
+      "REP-1",
+      "REP-3",
+      "REP-4",
+      "REP-5",
+      "REP-6",
+      "AGENT-3",
+      "AGENT-5",
+      "DUR-1",
+      "DUR-3"
+    ],
+    "stale_ticket_references": ["REM-1", "REM-2", "REM-3", "REM-4", "REM-5"],
+    "stale_reference_policy": "Ticket provenance only; do not create aliases or use as canonical requirements."
+  },
+  "phase_boundary": {
+    "phase_a_allows": [
+      "frozen repository input bindings",
+      "state and ownership machines",
+      "typed command response and event envelopes",
+      "numeric thresholds and sample policy",
+      "fault matrix and decision precedence",
+      "SSH availability manifest schema and explicit blocker",
+      "contract verifier and mutation tests"
+    ],
+    "phase_a_forbids": [
+      "Go module or worker and adapter source",
+      "worker process execution",
+      "SSH or provider connection",
+      "SSH configuration credential or agent inspection",
+      "local remote VM simulator or shared resource mutation",
+      "raw Phase B traces measurements scorecard or decision",
+      "production package or prototype import",
+      "selected E08 decision branch"
+    ],
+    "phase_b_preconditions": [
+      "accepted and committed Phase A contract",
+      "separate explicit approval to begin Phase B implementation",
+      "fresh SSH availability manifest validated against the frozen schema",
+      "explicit approval for exact network and remote mutations before SSH use"
+    ]
+  },
+  "adapter_shapes": [
+    {
+      "id": "in-process",
+      "phase_a_status": "specified-not-implemented",
+      "required_shape": "Deterministic fake driven through the same typed operations and state machines."
+    },
+    {
+      "id": "ssh-linux",
+      "phase_a_status": "external-blocker",
+      "required_shape": "Representative Linux worker reached only through a separately approved strict SSH manifest."
+    },
+    {
+      "id": "macos-e06-stub",
+      "phase_a_status": "specified-not-implemented",
+      "required_shape": "Non-mutating stub preserving E06 reusable worker, disposable sandbox, and optional namespace-owned session separation."
+    }
+  ],
+  "semantic_separation": {
+    "controller_node": "Owns planned cache and logical outcome state.",
+    "reservation": "Owns a non-blocking capacity disposition and release obligation, not worker provisioning.",
+    "worker": "Reusable capacity that attests the planned immutable profile.",
+    "sandbox": "Disposable attempt-owned workspace materialized from verified immutable inputs.",
+    "session": "Optional namespace-owned mutable lifetime for simulator or stateful native resources; absent for stateless Linux.",
+    "publication": "Atomic compare-and-swap visibility of verified declared outputs.",
+    "cleanup": "Cancellation-detached bounded finalization that either releases exact ownership or records an orphan."
+  },
+  "typed_operation_groups": {
+    "discovery_and_capacity": ["AdvertiseCapabilities", "TryReserve", "AcquireWorker"],
+    "identity_and_lifecycle": ["AttestProfile", "CreateSandbox", "AcquireSession"],
+    "cas": ["CASHas", "CASPutChunk", "CASGetChunk"],
+    "execution": ["Exec", "ReadLogs", "Cancel", "WaitExit"],
+    "publication_and_cleanup": ["PublishOutputs", "Cleanup"],
+    "continuity": ["Heartbeat", "Reconnect", "QueryOrphans"]
+  },
+  "identity_and_ordering": {
+    "cache_key_ready_before_reservation": true,
+    "ready_hit_terminal_before_capacity": true,
+    "attestation_before_sandbox_or_session": true,
+    "integrity_verification_before_use": true,
+    "publication_atomic_after_output_verification": true,
+    "planned_profile_rewrite_forbidden": true,
+    "cache_classes": ["result", "tool", "warm-provider"]
+  },
+  "durability_and_idempotency": {
+    "identity_fields": ["operation_id", "run_id", "node_id", "attempt_id"],
+    "transition_fields": ["expected_revision", "expected_prior_state", "event_sequence", "reason_code"],
+    "continuity_fields": ["reconnect_token", "last_durable_revision", "last_acknowledged_log_cursor"],
+    "acknowledgement_rule": "Persist every transition affecting retry, ownership, or publication before acknowledgement.",
+    "duplicate_rule": "The same operation identity and payload digest returns the prior result; a conflicting duplicate fails closed."
+  },
+  "provider_extension_policy": {
+    "representation": "closed discriminated versioned capability values",
+    "open_option_maps_forbidden": true,
+    "project_visible_provider_fields_forbidden": true,
+    "transport_specific_fields_outside_transport_adapter": true
+  },
+  "transport_policy": {
+    "status": "experimental-and-unselected",
+    "state_machine_precedes_transport": true,
+    "candidate_phase_b_shape": "replaceable newline-framed request and event stream over one approved SSH invocation",
+    "not_frozen": ["SSH framing", "reconnect token encoding", "gRPC", "Connect", "HTTP", "long-term wire version"]
+  },
+  "ssh_boundary": {
+    "status": "external-blocker",
+    "availability_manifest": null,
+    "schema": "ssh-availability-manifest.schema.json",
+    "representative_endpoint_approved": false,
+    "substitution_forbidden": ["mocked SSH command", "localhost macOS advertised as Linux", "unapproved external endpoint"],
+    "acceptance_effect": "Without an approved representative endpoint, AC 1 and the one-typed-core success branch remain unpassed."
+  },
+  "artifacts": {
+    "state_machines": "state-machines.json",
+    "typed_envelopes": "envelopes.schema.json",
+    "thresholds": "thresholds.json",
+    "fault_matrix": "fault-matrix.json",
+    "decision_matrix": "decision-matrix.json",
+    "fixture_bindings": "fixture-bindings.json",
+    "frozen_artifacts": "frozen-artifacts.json",
+    "frozen_artifacts_digest": "protocol.sha256"
+  },
+  "verification_command": "mise exec -- task --dir experiments/e08-worker-protocol check:phase-a"
+}

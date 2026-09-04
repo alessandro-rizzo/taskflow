@@ -1,0 +1,91 @@
+{
+  "format_version": "taskflow-e08-thresholds/v1-experimental",
+  "freeze_rule": "No threshold, boundary, sample count, hard gate, ordering, or branch rule may change after Phase B observations begin.",
+  "execution_order": "Run adapter-complete sample sets serially in the order in-process, ssh-linux, macos-e06-stub; only an explicitly named fault pair may overlap.",
+  "sample_policy": {
+    "correctness_repetitions_per_case_per_adapter": 5,
+    "retain_failed_attempts": true,
+    "preparation_untimed": true,
+    "rerun_rule": "Retain the failed complete set and restart from sample one only after a documented contract-compatible operational correction; never discard individual samples."
+  },
+  "timing_metrics": [
+    {
+      "id": "ready-result-hit",
+      "adapters": ["in-process", "ssh-linux", "macos-e06-stub"],
+      "sample_count": 30,
+      "primary_state": "cache-hit",
+      "start": "Accepted plan, resolved profile digest, complete result identity, and ready immutable result already exist.",
+      "end": "Verified immutable artifact handles are returned.",
+      "excluded": ["planning", "sample preparation"],
+      "statistic": "p95",
+      "threshold": {"operator": "strictly-less-than", "milliseconds": 300},
+      "hard_zero_counters": [
+        "reservation", "worker_wake", "worker_acquisition", "attestation",
+        "sandbox", "session", "execution", "publication", "cleanup"
+      ]
+    },
+    {
+      "id": "warm-ssh-linux-sandbox-admission",
+      "adapters": ["ssh-linux"],
+      "sample_count": 30,
+      "primary_state": "warm-cache-miss",
+      "start": "Verified result miss is recorded and a warm compatible worker is available.",
+      "end": "The attested worker returns a ready attempt-owned sandbox.",
+      "excluded": ["declared queue duration", "sample preparation", "input materialization", "command execution"],
+      "statistic": "p95",
+      "threshold": {"operator": "strictly-less-than", "milliseconds": 2000}
+    },
+    {
+      "id": "non-blocking-try-reserve",
+      "adapters": ["in-process", "ssh-linux", "macos-e06-stub"],
+      "sample_count": 30,
+      "primary_state": "acquisition-deliberately-delayed",
+      "start": "TryReserve enters the provider adapter while worker acquisition is blocked by the harness.",
+      "end": "A granted, queued, mismatch, or unavailable disposition returns.",
+      "excluded": ["worker acquisition", "worker wake", "provider provisioning"],
+      "statistic": "maximum",
+      "threshold": {"operator": "less-than-or-equal", "milliseconds": 100},
+      "hard_zero_counters": ["worker_acquisition", "worker_wake", "provider_provision"]
+    },
+    {
+      "id": "cancellation-acknowledgement",
+      "adapters": ["in-process", "ssh-linux", "macos-e06-stub"],
+      "sample_count": 5,
+      "primary_state": "active-execution",
+      "start": "A durable cancel request is accepted.",
+      "end": "The cancellation acknowledgement is durably visible.",
+      "statistic": "maximum",
+      "threshold": {"operator": "less-than-or-equal", "milliseconds": 1000}
+    },
+    {
+      "id": "bounded-cleanup",
+      "adapters": ["in-process", "ssh-linux", "macos-e06-stub"],
+      "sample_count": 5,
+      "primary_state": "cancelled-failed-lost-or-succeeded",
+      "start": "Cancellation-detached cleanup begins.",
+      "end": "Execution is stopped and every experiment-owned reservation, sandbox, and session is released, or an exact durable orphan is recorded.",
+      "statistic": "maximum",
+      "threshold": {"operator": "less-than-or-equal", "milliseconds": 30000}
+    }
+  ],
+  "hard_gates": {
+    "stale_success_count_max": 0,
+    "corrupt_input_use_count_max": 0,
+    "planned_profile_rewrite_count_max": 0,
+    "double_publication_count_max": 0,
+    "cross_attempt_output_count_max": 0,
+    "leaked_reservation_count_max": 0,
+    "unrecorded_orphan_count_max": 0,
+    "unowned_cleanup_target_count_max": 0,
+    "log_cursor_gap_count_max": 0,
+    "log_duplicate_identity_count_max": 0,
+    "replayed_log_byte_difference_count_max": 0,
+    "threshold_relaxation_after_results": false
+  },
+  "log_replay_rule": "From the last acknowledged cursor, reconnect replay is gap-free and duplicate-free by sequence identity and byte-equivalent to the original durable stream.",
+  "benchmark_harness": {
+    "fixture_id": "t1-benchmark-harness",
+    "schema_version": "taskflow-t1-benchmark/v2",
+    "invocation_rule": "Invoke the fixture command; never import its Go package into the experiment."
+  }
+}

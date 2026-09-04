@@ -1,0 +1,17 @@
+{
+  "format_version": "taskflow-e08-frozen-artifacts/v1-experimental",
+  "artifacts": [
+    {"path": "README.md", "sha256": "ca4f6e6f22847c70169caa4d9fe6eb14eeb14b368083928b3265704873d0e6b1"},
+    {"path": "Taskfile.yml", "sha256": "15915583f10a0a8a56a415863ea8b5ad666e27b8457bc1862309bc2e391dc2ce"},
+    {"path": "contract.json", "sha256": "206906f1f49a68c4e4ef4c631a342b3c598337f201bf97da0b3019356b175fc7"},
+    {"path": "decision-matrix.json", "sha256": "bad9efc577eb2192b9dc3285a38899459abf7ebe6305ddbe2d48774c86161ae9"},
+    {"path": "envelopes.schema.json", "sha256": "f7fef9a1b6e039c3d3f19567db0a600af54286745097d540696c387b55ed57b0"},
+    {"path": "fault-matrix.json", "sha256": "9d9b9d7f964361fad28eb28400f5060197274096e031be98772b0e67a06311e6"},
+    {"path": "fixture-bindings.json", "sha256": "b5451b4e5e6d731ed06cc24607772422ff0f3e7449a92d15bd0f4125ac78c6b5"},
+    {"path": "scripts/verify_contract.py", "sha256": "c605533924dfa215bc37275314902e631d759a4023b3b915f1e5c54b33cd4574"},
+    {"path": "ssh-availability-manifest.schema.json", "sha256": "4695f3e11adf4da408ba32ba7a925002fb3d616ca160b2dc8b449cf299cabda2"},
+    {"path": "state-machines.json", "sha256": "eb2928dc74393fc9d53dd8acee993f20b131a0c6bb2a25e2fbc610462e3e0b1e"},
+    {"path": "tests/test_verify_contract.py", "sha256": "4bcd8ee6196b08857f3c0d72e8c439dc13275ca37fcf16083ffb28ba16f67b6a"},
+    {"path": "thresholds.json", "sha256": "9403511ad93c04fee7493dd9d782d88c73271da782aea964434db62bf86fc8e3"}
+  ]
+}

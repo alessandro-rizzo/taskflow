@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "taskflow-e08-ssh-availability-manifest/v1-experimental",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version", "manifest_id", "endpoint", "identity", "profile",
+    "remote_scope", "capacity", "commands", "fault_scope", "cleanup",
+    "evidence", "approval"
+  ],
+  "properties": {
+    "format_version": {"const": "taskflow-e08-ssh-availability-manifest/v1-experimental"},
+    "manifest_id": {"$ref": "#/$defs/id"},
+    "endpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["host", "port", "host_key_algorithm", "host_key_sha256", "strict_host_key_checking", "known_hosts_path"],
+      "properties": {
+        "host": {"type": "string", "minLength": 1},
+        "port": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "host_key_algorithm": {"enum": ["ssh-ed25519", "ecdsa-sha2-nistp256", "rsa-sha2-512"]},
+        "host_key_sha256": {"type": "string", "pattern": "^SHA256:[A-Za-z0-9+/]{20,}={0,2}$"},
+        "strict_host_key_checking": {"const": true},
+        "known_hosts_path": {"type": "string", "pattern": "^experiments/e08-worker-protocol/approved/[^.].*$"}
+      }
+    },
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["user", "credential_mediator", "ambient_ssh_config_forbidden", "ambient_agent_forbidden", "interactive_prompts_forbidden", "forwarding_forbidden"],
+      "properties": {
+        "user": {"type": "string", "minLength": 1},
+        "credential_mediator": {"type": "string", "minLength": 1},
+        "ambient_ssh_config_forbidden": {"const": true},
+        "ambient_agent_forbidden": {"const": true},
+        "interactive_prompts_forbidden": {"const": true},
+        "forwarding_forbidden": {"const": true}
+      }
+    },
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["linux_profile_digest", "runner_digest", "os", "architecture", "attestation_command"],
+      "properties": {
+        "linux_profile_digest": {"$ref": "#/$defs/digest"},
+        "runner_digest": {"$ref": "#/$defs/digest"},
+        "os": {"const": "linux"},
+        "architecture": {"type": "string", "minLength": 1},
+        "attestation_command": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+      }
+    },
+    "remote_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["root", "name_prefix", "shared_root_forbidden", "sudo_forbidden", "installation_forbidden"],
+      "properties": {
+        "root": {"type": "string", "pattern": "^/[^.].*/taskflow-e08-[A-Za-z0-9._-]+$", "not": {"pattern": "(^|/)\\.\\.(/|$)"}},
+        "name_prefix": {"type": "string", "pattern": "^taskflow-e08-[A-Za-z0-9._-]+$"},
+        "shared_root_forbidden": {"const": true},
+        "sudo_forbidden": {"const": true},
+        "installation_forbidden": {"const": true}
+      }
+    },
+    "capacity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reservation_reference", "exclusive_paths", "max_concurrent_attempts", "expires_at"],
+      "properties": {
+        "reservation_reference": {"type": "string", "minLength": 1},
+        "exclusive_paths": {"type": "boolean"},
+        "max_concurrent_attempts": {"type": "integer", "minimum": 1},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "commands": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runner", "allowlist", "shell_startup_forbidden"],
+      "properties": {
+        "runner": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "allowlist": {"type": "array", "items": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "minItems": 1},
+        "shell_startup_forbidden": {"const": true}
+      }
+    },
+    "fault_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["allowed_fault_ids", "connection_timeout_ms", "reconnect_timeout_ms", "process_targets"],
+      "properties": {
+        "allowed_fault_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "connection_timeout_ms": {"type": "integer", "minimum": 1, "maximum": 30000},
+        "reconnect_timeout_ms": {"type": "integer", "minimum": 1, "maximum": 30000},
+        "process_targets": {"type": "array", "items": {"type": "string", "pattern": "^taskflow-e08-"}, "uniqueItems": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path_allowlist", "process_allowlist", "orphan_query", "broad_process_kill_forbidden", "outside_allowlist_forbidden"],
+      "properties": {
+        "path_allowlist": {"type": "array", "items": {"type": "string", "pattern": "taskflow-e08-", "not": {"pattern": "(^|/)\\.\\.(/|$)"}}},
+        "process_allowlist": {"type": "array", "items": {"type": "string", "pattern": "^taskflow-e08-"}},
+        "orphan_query": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "broad_process_kill_forbidden": {"const": true},
+        "outside_allowlist_forbidden": {"const": true}
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["local_destination", "remote_diagnostics_allowlist", "credential_values_forbidden"],
+      "properties": {
+        "local_destination": {"type": "string", "pattern": "^experiments/e08-worker-protocol/evidence/"},
+        "remote_diagnostics_allowlist": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "credential_values_forbidden": {"const": true}
+      }
+    },
+    "approval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["approved_by", "approved_at", "exact_network_and_mutations_approved", "phase_a_approval_is_not_execution_approval"],
+      "properties": {
+        "approved_by": {"type": "string", "minLength": 1},
+        "approved_at": {"type": "string", "format": "date-time"},
+        "exact_network_and_mutations_approved": {"const": true},
+        "phase_a_approval_is_not_execution_approval": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^taskflow-e08-[A-Za-z0-9._-]+$"},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
