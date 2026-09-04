@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify only the frozen, result-free E02 Phase A contract."""
+"""Verify the frozen E02 contract, optionally enforcing the Phase A tree."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ REPOSITORY = EXPERIMENT.parents[1]
 PROTOCOL = EXPERIMENT / "protocol.json"
 PROTOCOL_DIGEST = EXPERIMENT / "protocol.sha256"
 SCOPE_HASHES = EXPERIMENT / "scope-hashes.json"
-EXPECTED_PROTOCOL_SHA256 = "bfa10b1c41f28f4d2ab5f8440900813d37d697ac1441020d169bcd2df9f23aef"
+EXPECTED_PROTOCOL_SHA256 = "37fbf82c7f11711b9b477ecda014a1eb8ad4869d0298d8a497f82592a44e8083"
 SIGNED_INT64_MIN = -(2**63)
 SIGNED_INT64_MAX = 2**63 - 1
 
@@ -192,6 +192,30 @@ def validate_protocol_semantics(protocol: dict[str, Any]) -> None:
         "digest": "sha256-lowercase-hex-over-canonical-bytes",
     }, "format contract changed")
 
+    plan = protocol["plan_grammar"]["objects"]["plan"]
+    require(plan["required"] == ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts"], "plan required fields changed")
+    require(plan["allowed"] == ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts", "services", "secrets", "effects"], "plan allowed fields changed")
+
+    corrections = protocol["compatibility_corrections"]
+    require(corrections == {
+        "empty_declaration_arrays": {
+            "omittable_when_empty": ["services", "secrets", "effects"],
+            "missing_means_empty": True,
+            "reason": "The bound T1 W1, W2, and W3 plans omit empty declaration arrays; requiring them would contradict the frozen zero-structural-difference gate.",
+        },
+        "e01_w1_optional_diagnostics": {
+            "classification": "schema-only-unmaterialized",
+            "plan_artifact_emitted": False,
+            "reason": "Candidate B exposes diagnostics as an optional operation output but its trace has no producing work item and the bound W1 plan omits it.",
+            "plan_optionality_proved_by": "synthetic-full-coverage",
+        },
+        "phase_transition": {
+            "phase_a_boundary_check_is_explicit": True,
+            "reusable_contract_check_allows_phase_b_files": True,
+            "phase_b_must_verify_the_committed_corrected_phase_a_snapshot": True,
+        },
+    }, "compatibility correction changed")
+
     canonical = protocol["canonical_json"]
     require(canonical["encoding"] == "utf-8", "canonical encoding changed")
     require(canonical["bom"] is False and canonical["whitespace"] == "none", "canonical compactness changed")
@@ -305,20 +329,26 @@ def verify_phase_a_file_boundary() -> None:
     require(actual == EXPECTED_PHASE_A_FILES, f"Phase A file boundary changed: want {sorted(EXPECTED_PHASE_A_FILES)}, got {sorted(actual)}")
 
 
-def verify_contract() -> str:
+def verify_contract(require_phase_a_only: bool = False) -> str:
     protocol = verify_protocol_digest()
     validate_protocol_semantics(protocol)
     verify_bound_inputs(protocol)
     verify_scope_hashes()
-    verify_phase_a_file_boundary()
+    if require_phase_a_only:
+        verify_phase_a_file_boundary()
     return EXPECTED_PROTOCOL_SHA256
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
+    parser.add_argument(
+        "--phase-a-only",
+        action="store_true",
+        help="also reject any file outside the frozen Phase A allowlist",
+    )
+    args = parser.parse_args()
     try:
-        digest = verify_contract()
+        digest = verify_contract(args.phase_a_only)
     except (ContractError, OSError, KeyError, TypeError) as error:
         print(f"verify-contract: FAIL: {error}", file=sys.stderr)
         raise SystemExit(1) from error

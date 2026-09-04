@@ -7,10 +7,16 @@ tasks:
   check:
     desc: Verify the frozen E02 Phase A contract only
     cmds:
-      - task: check:contract
+      - task: check:phase-a
 
   check:contract:
-    desc: Verify protocol semantics, hashes, scope, and negative mutations
+    desc: Verify reusable protocol semantics, hashes, bindings, and negative mutations
     cmds:
       - python3 scripts/verify_contract.py
+      - python3 -m unittest discover -s scripts -p 'test_verify_contract.py' -v
+
+  check:phase-a:
+    desc: Verify the contract and reject Phase B files before the correction commit
+    cmds:
+      - python3 scripts/verify_contract.py --phase-a-only
       - python3 -m unittest discover -s scripts -p 'test_verify_contract.py' -v

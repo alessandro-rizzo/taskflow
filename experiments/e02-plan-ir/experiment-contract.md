@@ -26,6 +26,13 @@ E01 supplied only public schema surfaces for W2 and W3, so E02 must define
 disposable local typed fixtures for their concrete graphs and for the synthetic
 full-coverage plan. It must not claim those graphs came from E01.
 
+Candidate B also exposes optional `diagnostics` from its W1 aggregate, but no
+trace work item produces that value and the bound W1 plan omits it. E02 records
+that output as schema-only, unmaterialized evidence instead of silently
+inventing a producer. The synthetic full-coverage plan remains the experiment's
+plan-level proof of optional-output semantics. Gate 1 must revisit the boundary
+between operation outputs and materialized plan artifacts.
+
 The four T1 plan goldens are comparison outputs, never generation inputs.
 Candidate generation must still succeed when the golden directory is
 unavailable. Comparison occurs only after emission.
@@ -39,7 +46,12 @@ callbacks, secret values, provider handles, worker handles, and host-derived
 ambient values are forbidden.
 
 The grammar preserves the T1 envelope and its explicit node, artifact, service,
-secret-capability, and effect declarations. Conditions, resources, execution
+secret-capability, and effect declarations. `nodes` and `artifacts` are always
+present. `services`, `secrets`, and `effects` may be omitted only when empty,
+matching the bound T1 W1, W2, and W3 documents; when present they remain strict
+set-like declarations. This compatibility correction is necessary because
+requiring empty arrays and requiring zero structural differences from those
+goldens cannot both hold. Conditions, resources, execution
 profiles, and cache policies receive an E02-local strict experimental grammar;
 this does not promote T1's deliberately opaque nested objects into production
 types. Unknown fields fail at every object level. Duplicate object names,
@@ -159,5 +171,9 @@ cd experiments/e02-plan-ir
 mise exec -- task check:contract
 ```
 
-The verifier also rejects any Phase B candidate, reader, mutation artifact, or
-result file while the protocol status remains `phase-a-contract-only`.
+The explicit Phase A boundary check rejects any Phase B candidate, reader,
+mutation artifact, or result file. Reusable contract verification omits only
+that tree-boundary assertion so Phase B can independently validate the exact
+committed corrected Phase A snapshot before checking live implementation and
+evidence. It never relaxes protocol hashes, fixture bindings, thresholds, or
+branch rules.

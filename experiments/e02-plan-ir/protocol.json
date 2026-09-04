@@ -43,7 +43,7 @@
     "unknown_fields_allowed": false,
     "objects": {
       "plan": {
-        "required": ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts", "services", "secrets", "effects"],
+        "required": ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts"],
         "allowed": ["document_kind", "format_version", "fixture_id", "fixture_version", "status", "nodes", "artifacts", "services", "secrets", "effects"]
       },
       "node": {
@@ -104,6 +104,24 @@
           "content-addressed": ["mode", "key_inputs"]
         }
       }
+    }
+  },
+  "compatibility_corrections": {
+    "empty_declaration_arrays": {
+      "omittable_when_empty": ["services", "secrets", "effects"],
+      "missing_means_empty": true,
+      "reason": "The bound T1 W1, W2, and W3 plans omit empty declaration arrays; requiring them would contradict the frozen zero-structural-difference gate."
+    },
+    "e01_w1_optional_diagnostics": {
+      "classification": "schema-only-unmaterialized",
+      "plan_artifact_emitted": false,
+      "reason": "Candidate B exposes diagnostics as an optional operation output but its trace has no producing work item and the bound W1 plan omits it.",
+      "plan_optionality_proved_by": "synthetic-full-coverage"
+    },
+    "phase_transition": {
+      "phase_a_boundary_check_is_explicit": true,
+      "reusable_contract_check_allows_phase_b_files": true,
+      "phase_b_must_verify_the_committed_corrected_phase_a_snapshot": true
     }
   },
   "canonical_json": {

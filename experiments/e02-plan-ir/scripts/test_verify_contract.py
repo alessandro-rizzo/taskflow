@@ -54,6 +54,21 @@ class ContractVerifierTests(unittest.TestCase):
             lambda protocol: protocol["rerun_rules"].__setitem__("other_discretionary_reruns_allowed", True)
         )
 
+    def test_rejects_mandatory_empty_declaration_arrays(self) -> None:
+        self.assert_semantic_rejection(
+            lambda protocol: protocol["plan_grammar"]["objects"]["plan"].__setitem__(
+                "required",
+                protocol["plan_grammar"]["objects"]["plan"]["required"] + ["services", "secrets", "effects"],
+            )
+        )
+
+    def test_rejects_materializing_unproduced_e01_diagnostics(self) -> None:
+        self.assert_semantic_rejection(
+            lambda protocol: protocol["compatibility_corrections"]["e01_w1_optional_diagnostics"].__setitem__(
+                "plan_artifact_emitted", True
+            )
+        )
+
     def test_strict_json_rejects_duplicate_members(self) -> None:
         with self.assertRaisesRegex(VERIFY.ContractError, "duplicate JSON object member"):
             VERIFY.load_json_bytes(b'{"value":1,"value":2}', "duplicate.json")
