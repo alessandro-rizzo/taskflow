@@ -1,0 +1,70 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E02",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "6b98cada25439f66c75eaf3f5faea3d01dfdfade",
+  "timestamp": "2026-09-04T14:31:24Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "darwin",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    },
+    {
+      "name": "python",
+      "version": "3.9.6"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "true",
+  "cache_dimensions": {
+    "candidate-binary": "prebuilt",
+    "gocache": "warm"
+  },
+  "samples": [
+    0.014596583,
+    0.010239125,
+    0.008587167,
+    0.007432875,
+    0.006979792,
+    0.006573667,
+    0.006386833,
+    0.006703583,
+    0.006438542,
+    0.006403375,
+    0.006282125,
+    0.006163833,
+    0.006441208,
+    0.006102167,
+    0.006583583,
+    0.009178084,
+    0.007976208,
+    0.007579584,
+    0.007095042,
+    0.0076375,
+    0.006833917,
+    0.01036625,
+    0.006545917,
+    0.006105042,
+    0.006285208,
+    0.005969334,
+    0.006343084,
+    0.005745667,
+    0.006077542,
+    0.005772709
+  ],
+  "sample_count": 30,
+  "median": 0.006559792,
+  "p95": 0.01036625,
+  "raw_result_location": "samples.txt"
+}

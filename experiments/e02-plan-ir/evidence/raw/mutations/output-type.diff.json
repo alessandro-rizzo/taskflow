@@ -1,0 +1,12 @@
+{
+  "compatible": false,
+  "differences": [
+    {
+      "after": "Report[UnitTests]",
+      "before": "Report[GoTests]",
+      "classification": "structural-incompatible",
+      "path": "$.artifacts[id=test-report].type"
+    }
+  ],
+  "format_version": "e02-resume-diff-v1"
+}

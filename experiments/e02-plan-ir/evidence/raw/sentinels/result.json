@@ -1,0 +1,13 @@
+{
+  "authority_counters": {
+    "provider_calls": 0,
+    "secret_resolutions": 0,
+    "worker_acquisitions": 0
+  },
+  "goldens_used_as_generation_input": false,
+  "untouched": {
+    "E01_BODY_SENTINEL": true,
+    "E02_FILE_WRITE_SENTINEL": true,
+    "E02_OPERATION_BODY_SENTINEL": true
+  }
+}

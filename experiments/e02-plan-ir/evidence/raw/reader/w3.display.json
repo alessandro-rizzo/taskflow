@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    "api-endpoint",
+    "ios-app",
+    "linux-api-service",
+    "mobile-e2e-report",
+    "simulator-session",
+    "source-tree"
+  ],
+  "digest": "35cbc9f8bf8af5e15095b61a55dc753e84877d6bd1b25644f27e02ceca2239f0",
+  "fixture_id": "w3-isolated-native-mobile-stack",
+  "fixture_version": "t1-w3-fixture-v1-experimental",
+  "nodes": [
+    "linux-api-build",
+    "macos-xcode-build",
+    "mobile-e2e"
+  ]
+}

@@ -1,0 +1,30 @@
+version: "3"
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  GOCACHE: /tmp/taskflow-tf00308-go-cache
+
+tasks:
+  check:
+    desc: Verify the corrected contract snapshot, candidate, reader, and evidence
+    cmds:
+      - python3 scripts/verify_phase_b.py
+      - cd candidate-json && go test ./...
+      - python3 -m unittest discover -s reader -v
+
+  check:contract:
+    desc: Verify reusable protocol semantics, hashes, bindings, and negative mutations
+    cmds:
+      - python3 scripts/verify_contract.py
+      - python3 -m unittest discover -s scripts -p 'test_verify_contract.py' -v
+
+  check:phase-a:
+    desc: Historical boundary check; intentionally rejects a live Phase B tree
+    cmds:
+      - python3 scripts/verify_contract.py --phase-a-only
+      - python3 -m unittest discover -s scripts -p 'test_verify_contract.py' -v
+
+  evidence:generate:
+    desc: Regenerate all retained E02 Phase B evidence under the frozen rules
+    cmds:
+      - python3 scripts/generate_evidence.py

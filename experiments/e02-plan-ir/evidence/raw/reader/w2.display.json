@@ -1,0 +1,16 @@
+{
+  "artifacts": [
+    "backend-binary",
+    "go-tests-report",
+    "inspection-summary",
+    "source-tree"
+  ],
+  "digest": "5e043c45dd43b52c529755d1da377a40f36ea142bda09cea964ee2c82962c260",
+  "fixture_id": "w2-cross-target-artifact-pipeline",
+  "fixture_version": "t1-w2-experimental-v1",
+  "nodes": [
+    "build",
+    "inspect",
+    "test"
+  ]
+}

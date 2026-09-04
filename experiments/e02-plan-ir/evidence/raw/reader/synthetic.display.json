@@ -1,0 +1,16 @@
+{
+  "artifacts": [
+    "release-binary",
+    "release-manifest",
+    "signed-binary",
+    "source-tree"
+  ],
+  "digest": "b8b73cd8b8827772539e4b51891bc773c03a1e97643fd3a00607d1cc2ead48b3",
+  "fixture_id": "synthetic",
+  "fixture_version": "t1-plan-conformance-synthetic-v1",
+  "nodes": [
+    "build",
+    "publish",
+    "sign"
+  ]
+}

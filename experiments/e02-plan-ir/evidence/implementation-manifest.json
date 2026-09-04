@@ -1,0 +1,61 @@
+{
+  "contract_commit": "6b98cada25439f66c75eaf3f5faea3d01dfdfade",
+  "entries": [
+    {
+      "bytes": 3414,
+      "path": "experiments/e02-plan-ir/candidate-json/candidate_test.go",
+      "sha256": "9c006004bd169b157c7c9e0c91b1c8da51ae02b5ac9750aeba72747b3992bbac"
+    },
+    {
+      "bytes": 6797,
+      "path": "experiments/e02-plan-ir/candidate-json/canonical.go",
+      "sha256": "d4fa4d8e404c1783bb6f2439c7df229d7e75d206cad37758a7fd07817fbaf783"
+    },
+    {
+      "bytes": 3695,
+      "path": "experiments/e02-plan-ir/candidate-json/cmd/e02plan/main.go",
+      "sha256": "cb23239a0c97d431ced99b59d10de1e14e74ae5eebf736e0bb01f3e6a06cc868"
+    },
+    {
+      "bytes": 3041,
+      "path": "experiments/e02-plan-ir/candidate-json/diff.go",
+      "sha256": "4911d0467aa314d0af7c6c269935f1ec1eafec162902aa213d08b8b22cf6b377"
+    },
+    {
+      "bytes": 147,
+      "path": "experiments/e02-plan-ir/candidate-json/go.mod",
+      "sha256": "643bc2314ab090c2972db601a83b75a9c6c76ee9d4832b8c22d3f71e925f2cec"
+    },
+    {
+      "bytes": 12611,
+      "path": "experiments/e02-plan-ir/candidate-json/plan.go",
+      "sha256": "f24a0c3a5b966de6abecfc4d8cc379132ee583f187adbfa32de88e1499f6eaac"
+    },
+    {
+      "bytes": 1621,
+      "path": "experiments/e02-plan-ir/candidate-json/typed.go",
+      "sha256": "cb7f7b478904404ccce3f748867ab7c5f122baedda34c389c273861fce6c5d85"
+    },
+    {
+      "bytes": 10022,
+      "path": "experiments/e02-plan-ir/candidate-json/validate.go",
+      "sha256": "2774d35be2e4b68379b977833e801b799c746b17c31dd9ab4510c6fcd97bd53b"
+    },
+    {
+      "bytes": 11938,
+      "path": "experiments/e02-plan-ir/reader/e02_reader.py",
+      "sha256": "4b5e47a219879eea238de53797c15aac7eb1b694915ad86c36721763cbcd653e"
+    },
+    {
+      "bytes": 1552,
+      "path": "experiments/e02-plan-ir/reader/test_reader.py",
+      "sha256": "dc775fea9ecebd9b3eda64f79a9bf66dad2894244140b2528a332d0a611d8118"
+    },
+    {
+      "bytes": 4483,
+      "path": "experiments/e02-plan-ir/scripts/run_benchmarks.py",
+      "sha256": "d13d4bd2e4fc549faea5708afb539a01f1b8615b20f44ab0f191977852a31ac0"
+    }
+  ],
+  "format_version": "e02-implementation-manifest-v1"
+}

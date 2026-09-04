@@ -1,0 +1,12 @@
+{
+  "compatible": false,
+  "differences": [
+    {
+      "after": true,
+      "before": false,
+      "classification": "structural-incompatible",
+      "path": "$.artifacts[id=test-report].optional"
+    }
+  ],
+  "format_version": "e02-resume-diff-v1"
+}
