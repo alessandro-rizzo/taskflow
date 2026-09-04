@@ -1,0 +1,12 @@
+{
+  "format_version": "e05-environment-v1-experimental",
+  "go": "go version go1.25.12 darwin/arm64",
+  "phase_a_anchor": "fbf1fbe",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.9.6",
+  "real_builds": false,
+  "real_providers": false,
+  "source_state": "Phase B reviewer diff above committed Phase A anchor",
+  "sqlite": "3.51.0",
+  "task": "3.50.0"
+}

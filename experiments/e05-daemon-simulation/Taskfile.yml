@@ -2,12 +2,29 @@ version: "3"
 
 tasks:
   check:
-    desc: Verify the frozen E05 Phase A contract
+    desc: Verify immutable Phase A and the complete E05 Phase B experiment
     cmds:
-      - task: check:phase-a
+      - task: check:phase-a-snapshot
+      - task: test:phase-b
+      - python3 scripts/verify_phase_b.py
+      - GOCACHE=/tmp/taskflow-tf00312-phaseb-go-cache task --dir ../../fixtures/t1-benchmark-harness check
+
+  check:phase-a-snapshot:
+    desc: Materialize and verify the immutable Phase A commit
+    cmds:
+      - python3 scripts/verify_phase_b.py --phase-a-only
 
   check:phase-a:
-    desc: Verify Phase A artifacts and rejection tests without running Phase B
+    desc: Compatibility alias for the contract's historical verification command
     cmds:
-      - python3 scripts/verify_contract.py
-      - python3 -m unittest discover -s tests -v
+      - task: check:phase-a-snapshot
+
+  test:phase-b:
+    desc: Run experiment-local scheduler and SQLite tests
+    cmds:
+      - python3 -m unittest discover -s tests -p 'test_phase_b.py' -v
+
+  evidence:
+    desc: Regenerate the complete E05 evidence in place
+    cmds:
+      - python3 scripts/run_experiment.py --output .

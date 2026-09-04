@@ -1,0 +1,23 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "raw/traces/broker-only-agents-1.jsonl.gz": "a96b3b2b97170a577b09526abaa996e5d44f78d4be3c67bddda3741f503ffe28",
+    "raw/traces/broker-only-agents-20.jsonl.gz": "4bc94b508b108f38a37ef7327c9eb3b953fa36dfc962f14624142b7b409cd846",
+    "raw/traces/broker-only-agents-4.jsonl.gz": "40118b9ebadd9717ddd33bbfda58215c80ae857d8694abfb3358dd0ff58ed3b1",
+    "raw/traces/independent-provider-guard-agents-1.jsonl.gz": "0648a6c076e3acc9b558b4fea0dc92029ad5b985a8f38cd89cd6b7b466cf58fb",
+    "raw/traces/independent-provider-guard-agents-20.jsonl.gz": "485d46f0f539738ddfd7bed620c0e2977d86e58c9f59ae9277574e439bb03669",
+    "raw/traces/independent-provider-guard-agents-4.jsonl.gz": "db83da244752a2b57bc362290ceeffa9432f0e5d1770ed25ce3ac045d31868f7",
+    "raw/traces/independent-unguarded-negative-control-agents-1.jsonl.gz": "0088eb9312d3ccf1e0f21b2b089d34ea35667eb3a87f50b833cd2b6c8dba055c",
+    "raw/traces/independent-unguarded-negative-control-agents-20.jsonl.gz": "c090e7f5562f343abad87e1ab7b91d0bb401bb7544c447054b5829e1b4a66bf0",
+    "raw/traces/independent-unguarded-negative-control-agents-4.jsonl.gz": "f6e803e6b504a627f016b74df0b54ed21b2d01047931cbf2da28a6e409a8c12a",
+    "raw/traces/shared-fifo-agents-1.jsonl.gz": "37afa90390dc0abdd756c8d34f6a28646a046ddbbee4fa03d62790f728d9b8ee",
+    "raw/traces/shared-fifo-agents-20.jsonl.gz": "68f0d2d8c45d2881fd593ddd57c5e16ad70613beb28086a9e9c62c82cf685f87",
+    "raw/traces/shared-fifo-agents-4.jsonl.gz": "47b631e0eff28967957b452126f07807b6053a5533ca8e56cbb3c692ee9a8b33",
+    "raw/traces/shared-strict-interactive-agents-1.jsonl.gz": "d5034f11c18169875070f955e31899ccd08559191b21cf997053f59c884f9382",
+    "raw/traces/shared-strict-interactive-agents-20.jsonl.gz": "c710c66a4c42a359b6baf171298e58cd0ff3f1fc4eb056818b65fb010ea5a080",
+    "raw/traces/shared-strict-interactive-agents-4.jsonl.gz": "74664e65f65bf17fd65d2a0e565c57bc28f13d52b9a2fefb59544346c0d05cd8",
+    "raw/traces/shared-weighted-aging-agents-1.jsonl.gz": "23236265030759b9d035c395e8ca806f13e3e4f584a5ed1ffb5679d2e9f108e1",
+    "raw/traces/shared-weighted-aging-agents-20.jsonl.gz": "5c2276ed79f3531de418d6945958532b9406c689b614f5adb0b1e8ac35c1ebf2",
+    "raw/traces/shared-weighted-aging-agents-4.jsonl.gz": "5abdb18d7eaae7a3fbca3ae03d7fd99562eed90f70a982dd1e613bab9c0fa050"
+  }
+}

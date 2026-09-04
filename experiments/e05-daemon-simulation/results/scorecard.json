@@ -1,0 +1,473 @@
+{
+  "candidate_distributions": {
+    "broker-only": {
+      "1": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 0.0,
+          "linux": 19.047619047619047,
+          "local": 8.333333333333334,
+          "macos": 26.19047619047619,
+          "simulator": 14.285714285714286
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 0.2619047619047619
+      },
+      "20": {
+        "background_queue_p95_median": 120.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 116.0,
+        "makespan_ticks_median": 242.0,
+        "max_wait_ratio": 6.777777777777778,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 49.586776859504134,
+          "linux": 66.11570247933884,
+          "local": 28.925619834710744,
+          "macos": 90.9090909090909,
+          "simulator": 24.793388429752067
+        },
+        "queue_p95_median": 118.0,
+        "throughput_median": 0.9090909090909091
+      },
+      "4": {
+        "background_queue_p95_median": 18.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 18.0,
+        "makespan_ticks_median": 56.0,
+        "max_wait_ratio": 1.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 42.857142857142854,
+          "linux": 57.142857142857146,
+          "local": 25.0,
+          "macos": 78.57142857142857,
+          "simulator": 21.428571428571427
+        },
+        "queue_p95_median": 18.0,
+        "throughput_median": 0.7857142857142857
+      }
+    },
+    "independent-provider-guard": {
+      "1": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 2.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.1111111111111111,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 0.0,
+          "linux": 19.047619047619047,
+          "local": 8.333333333333334,
+          "macos": 26.19047619047619,
+          "simulator": 14.285714285714286
+        },
+        "queue_p95_median": 2.0,
+        "throughput_median": 0.2619047619047619
+      },
+      "20": {
+        "background_queue_p95_median": 132.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 136.0,
+        "makespan_ticks_median": 259.0,
+        "max_wait_ratio": 12.777777777777779,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 4,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 46.33204633204633,
+          "linux": 61.77606177606177,
+          "local": 27.027027027027028,
+          "macos": 84.94208494208495,
+          "simulator": 23.166023166023166
+        },
+        "queue_p95_median": 133.5,
+        "throughput_median": 0.8494208494208494
+      },
+      "4": {
+        "background_queue_p95_median": 10.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 18.5,
+        "makespan_ticks_median": 64.0,
+        "max_wait_ratio": 1.8333333333333333,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 37.5,
+          "linux": 50.0,
+          "local": 21.875,
+          "macos": 68.75,
+          "simulator": 18.75
+        },
+        "queue_p95_median": 18.0,
+        "throughput_median": 0.6875
+      }
+    },
+    "independent-unguarded-negative-control": {
+      "1": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 0.0,
+          "linux": 19.047619047619047,
+          "local": 8.333333333333334,
+          "macos": 26.19047619047619,
+          "simulator": 14.285714285714286
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 0.2619047619047619
+      },
+      "20": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 11702,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 33.333333333333336,
+          "linux": 57.142857142857146,
+          "local": 26.19047619047619,
+          "macos": 61.904761904761905,
+          "simulator": 33.333333333333336
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 5.238095238095238
+      },
+      "4": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 1204,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 33.333333333333336,
+          "linux": 52.38095238095238,
+          "local": 20.238095238095237,
+          "macos": 61.904761904761905,
+          "simulator": 28.571428571428573
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 1.0476190476190477
+      }
+    },
+    "shared-fifo": {
+      "1": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 0.0,
+          "linux": 19.047619047619047,
+          "local": 8.333333333333334,
+          "macos": 26.19047619047619,
+          "simulator": 14.285714285714286
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 0.2619047619047619
+      },
+      "20": {
+        "background_queue_p95_median": 120.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 116.0,
+        "makespan_ticks_median": 242.0,
+        "max_wait_ratio": 6.777777777777778,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 49.586776859504134,
+          "linux": 66.11570247933884,
+          "local": 28.925619834710744,
+          "macos": 90.9090909090909,
+          "simulator": 24.793388429752067
+        },
+        "queue_p95_median": 118.0,
+        "throughput_median": 0.9090909090909091
+      },
+      "4": {
+        "background_queue_p95_median": 18.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 18.0,
+        "makespan_ticks_median": 56.0,
+        "max_wait_ratio": 1.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 42.857142857142854,
+          "linux": 57.142857142857146,
+          "local": 25.0,
+          "macos": 78.57142857142857,
+          "simulator": 21.428571428571427
+        },
+        "queue_p95_median": 18.0,
+        "throughput_median": 0.7857142857142857
+      }
+    },
+    "shared-strict-interactive": {
+      "1": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 0.0,
+          "linux": 19.047619047619047,
+          "local": 8.333333333333334,
+          "macos": 26.19047619047619,
+          "simulator": 14.285714285714286
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 0.2619047619047619
+      },
+      "20": {
+        "background_queue_p95_median": 136.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 54.0,
+        "makespan_ticks_median": 232.0,
+        "max_wait_ratio": 8.555555555555555,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 51.724137931034484,
+          "linux": 68.96551724137932,
+          "local": 30.17241379310345,
+          "macos": 94.82758620689656,
+          "simulator": 25.862068965517242
+        },
+        "queue_p95_median": 130.0,
+        "throughput_median": 0.9482758620689655
+      },
+      "4": {
+        "background_queue_p95_median": 18.0,
+        "capacity_violations": 0,
+        "interactive_queue_p95_median": 8.0,
+        "makespan_ticks_median": 56.0,
+        "max_wait_ratio": 1.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 42.857142857142854,
+          "linux": 57.142857142857146,
+          "local": 25.0,
+          "macos": 78.57142857142857,
+          "simulator": 21.428571428571427
+        },
+        "queue_p95_median": 12.0,
+        "throughput_median": 0.7857142857142857
+      }
+    },
+    "shared-weighted-aging": {
+      "1": {
+        "background_queue_p95_median": 0.0,
+        "capacity_violations": 0,
+        "fairness_pass": true,
+        "interactive_queue_p95_median": 0.0,
+        "makespan_ticks_median": 42.0,
+        "material_benefit": {
+          "interactive_queue_ratio": 0.0,
+          "makespan_ratio": 1.0,
+          "pass": false,
+          "saturated_provider_utilization_regression_pp": 0,
+          "throughput_ratio": 1.0
+        },
+        "max_wait_ratio": 0.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 0.0,
+          "linux": 19.047619047619047,
+          "local": 8.333333333333334,
+          "macos": 26.19047619047619,
+          "simulator": 14.285714285714286
+        },
+        "queue_p95_median": 0.0,
+        "throughput_median": 0.2619047619047619
+      },
+      "20": {
+        "background_queue_p95_median": 104.0,
+        "capacity_violations": 0,
+        "fairness_pass": true,
+        "interactive_queue_p95_median": 106.0,
+        "makespan_ticks_median": 242.0,
+        "material_benefit": {
+          "interactive_queue_ratio": 0.7794117647058824,
+          "makespan_ratio": 0.9343629343629344,
+          "pass": false,
+          "saturated_provider_utilization_regression_pp": -5.96700596700596,
+          "throughput_ratio": 1.0702479338842976
+        },
+        "max_wait_ratio": 7.0,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 49.586776859504134,
+          "linux": 66.11570247933884,
+          "local": 28.925619834710744,
+          "macos": 90.9090909090909,
+          "simulator": 24.793388429752067
+        },
+        "queue_p95_median": 104.0,
+        "throughput_median": 0.9090909090909091
+      },
+      "4": {
+        "background_queue_p95_median": 14.0,
+        "capacity_violations": 0,
+        "fairness_pass": true,
+        "interactive_queue_p95_median": 8.0,
+        "makespan_ticks_median": 62.0,
+        "material_benefit": {
+          "interactive_queue_ratio": 0.43243243243243246,
+          "makespan_ratio": 0.96875,
+          "pass": false,
+          "saturated_provider_utilization_regression_pp": 0,
+          "throughput_ratio": 1.032258064516129
+        },
+        "max_wait_ratio": 1.2222222222222223,
+        "maximum_drain_leases": 0,
+        "maximum_starved": 0,
+        "minimum_jain_by_class": {
+          "background": 1.0,
+          "interactive": 1.0
+        },
+        "minimum_terminal_ratio": 1.0,
+        "provider_utilization_median": {
+          "device": 38.70967741935484,
+          "linux": 51.61290322580645,
+          "local": 22.580645161290324,
+          "macos": 70.96774193548387,
+          "simulator": 19.35483870967742
+        },
+        "queue_p95_median": 12.0,
+        "throughput_median": 0.7096774193548387
+      }
+    }
+  },
+  "decision_matrix_source": "decision-matrix.json",
+  "decision_precedence_order": 6,
+  "format_version": "e05-scorecard-v1-experimental",
+  "gates": {
+    "attachment": true,
+    "broker_interactive_queue_difference_fraction": 0.1346153846153846,
+    "broker_throughput_over_weighted": 1.0,
+    "cleanup": true,
+    "durability": true,
+    "material_benefit_scale_20": false,
+    "material_benefit_scale_4_or_20": false,
+    "operations": true,
+    "single_agent_makespan_regression_fraction": 0.0,
+    "unique_full_run_ownership_passing_result_count": 2,
+    "weighted_fairness_all_scales": true,
+    "weighted_safety": true
+  },
+  "selected_branch": "stop-narrow",
+  "thresholds_source": "thresholds.json"
+}

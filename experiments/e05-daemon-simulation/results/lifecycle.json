@@ -1,0 +1,81 @@
+{
+  "attachment_cases": [
+    {
+      "attached": true,
+      "case": "exact-match",
+      "expected": true
+    },
+    {
+      "attached": false,
+      "case": "project",
+      "expected": false
+    },
+    {
+      "attached": false,
+      "case": "source",
+      "expected": false
+    },
+    {
+      "attached": false,
+      "case": "operation",
+      "expected": false
+    },
+    {
+      "attached": false,
+      "case": "arguments",
+      "expected": false
+    },
+    {
+      "attached": false,
+      "case": "plan_digest",
+      "expected": false
+    },
+    {
+      "attached": false,
+      "case": "namespace_policy",
+      "expected": false
+    },
+    {
+      "attached": false,
+      "case": "caller_authorized",
+      "expected": false
+    }
+  ],
+  "concurrency_groups": [
+    {
+      "policy": "queue-all",
+      "release_before_replacement": true,
+      "terminals": [
+        "completed",
+        "completed",
+        "completed"
+      ]
+    },
+    {
+      "policy": "keep-newest-pending",
+      "release_before_replacement": true,
+      "terminals": [
+        "completed",
+        "superseded-pending",
+        "completed"
+      ]
+    },
+    {
+      "policy": "cancel-superseded-active",
+      "release_before_replacement": true,
+      "terminals": [
+        "cancelled-superseded",
+        "completed"
+      ]
+    }
+  ],
+  "disconnect": {
+    "accepted_run_survives_client": true,
+    "lease_expiry_tick": 5,
+    "reclaimed_tick": 6,
+    "ticks_after_expiry": 1
+  },
+  "duplicate_active_run_avoided_count": 1,
+  "false_attachment_count": 0,
+  "format_version": "e05-lifecycle-v1-experimental"
+}

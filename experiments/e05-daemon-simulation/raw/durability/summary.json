@@ -1,0 +1,11 @@
+{
+  "committed_event_duplicate_count": 0,
+  "committed_event_loss_count": 0,
+  "deliberate_child_exit_code": 73,
+  "event_sequence_gap_or_reorder_count": 0,
+  "format_version": "e05-durability-v1-experimental",
+  "fresh_process_case_count": 60,
+  "post_recovery_capacity_violation_count": 0,
+  "sqlite_integrity_failure_count": 0,
+  "visible_uncommitted_transition_count": 0
+}
