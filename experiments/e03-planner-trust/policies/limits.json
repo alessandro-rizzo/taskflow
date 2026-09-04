@@ -1,0 +1,13 @@
+{
+  "schema_version": "taskflow-e03-resource-limits/v1",
+  "per_attempt_wall_seconds_maximum": 2,
+  "candidate_suite_wall_seconds_maximum": 30,
+  "cpu_seconds_hard": 1,
+  "address_space_bytes_hard": 268435456,
+  "file_descriptors_hard": 64,
+  "combined_output_bytes_maximum": 1048576,
+  "accepted_w1_plan_bytes_maximum": 1048576,
+  "descendant_cleanup_seconds_maximum": 1,
+  "processes_hard_when_supported": 32,
+  "unsupported_hard_limit_result": "trusted_local_limitation"
+}

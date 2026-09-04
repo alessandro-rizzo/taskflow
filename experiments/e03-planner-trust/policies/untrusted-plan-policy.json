@@ -1,0 +1,56 @@
+{
+  "schema_version": "taskflow-e03-untrusted-plan-policy/v1",
+  "policy_id": "untrusted-w1-no-authority",
+  "accepted_document_kind": "plan",
+  "accepted_format_versions": [
+    "t1-plan-conformance-plan-v2"
+  ],
+  "accepted_fixture_ids": [
+    "w1-fast-project-check"
+  ],
+  "maximums": {
+    "document_bytes": 1048576,
+    "json_depth": 32,
+    "nodes": 1024,
+    "artifacts": 2048,
+    "services": 0,
+    "secrets": 0,
+    "effects": 0,
+    "cpu_millicores_per_node": 2000,
+    "memory_mib_per_node": 4096,
+    "cpu_millicores_total": 4096,
+    "memory_mib_total": 8192
+  },
+  "allowed_execution": {
+    "os": [
+      "any"
+    ],
+    "toolchains": [
+      "go1.25.12",
+      "none"
+    ],
+    "profile_ids": [],
+    "target_roles": []
+  },
+  "allowed_network_routes": [],
+  "allowed_secret_capabilities": [],
+  "allowed_effect_kinds": [],
+  "path_fields": [
+    "$.nodes[*].planning_condition.patterns[*]",
+    "$.nodes[*].planning_condition.exclude_patterns[*]"
+  ],
+  "path_rules": {
+    "absolute": "deny",
+    "parent_traversal_segment": "deny",
+    "nul": "deny"
+  },
+  "parser_rules": {
+    "duplicate_members": "deny",
+    "trailing_data": "deny",
+    "invalid_utf8": "deny",
+    "unknown_fields": "deny"
+  },
+  "effect_target_must_reference_declared_service": true,
+  "planner_supplied_policy_or_approval_fields": "deny-as-unknown",
+  "trusted_policy_digest_required_by_runner": true
+}

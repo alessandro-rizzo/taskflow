@@ -1,0 +1,29 @@
+(version 1)
+
+; This is a frozen Phase A template, not an observed security boundary.
+; Phase B substitutes canonical real paths only after validating that each
+; placeholder occurs exactly once and that no substituted value contains a
+; newline, quote, or Seatbelt expression delimiter.
+
+(deny default)
+
+; Runtime and executable reads needed by a prebuilt Go binary on macOS.
+(allow file-read* (subpath "/System"))
+(allow file-read* (subpath "/usr/lib"))
+(allow file-read* (subpath "/private/var/db/dyld"))
+(allow file-read* (literal "/dev/null"))
+(allow file-read* (literal "/dev/urandom"))
+(allow file-read* (literal "{{PLANNER_EXECUTABLE}}"))
+
+; The only project-visible inputs.
+(allow file-read* (subpath "{{SELECTED_SOURCE_VIEW}}"))
+(allow file-read* (literal "{{DECLARED_INPUTS}}"))
+
+; Invocation-private state only.
+(allow file-read* file-write* (subpath "{{INVOCATION_SCRATCH}}"))
+
+; Process spawning remains allowed so the descendant case tests the trusted
+; supervisor cleanup boundary. No network operation is granted.
+(allow process-exec)
+(allow process-fork)
+(allow signal (target self))

@@ -1,0 +1,515 @@
+{
+  "schema_version": "taskflow-e03-experiment-protocol/v1",
+  "roadmap_id": "E03",
+  "task_id": "TF-003.10",
+  "status": "phase-a-contract-only",
+  "base_revision": "21a55f3ea9eac0016d55b7827e80c01c237c9020",
+  "question": "Can compiled project code emit an independently validated W1 plan without inheriting daemon filesystem, credential, network, process, resource, or authorization power?",
+  "requirements": {
+    "canonical": [
+      "SEC-1",
+      "SEC-2",
+      "SEC-3",
+      "PLAN-2",
+      "PLAN-5",
+      "AGENT-6"
+    ],
+    "ticket_provenance": "TF-003.10 says SEC-1 through SEC-6",
+    "undefined_in_product_specification": [
+      "SEC-4",
+      "SEC-5",
+      "SEC-6"
+    ],
+    "undefined_aliases_may_be_invented": false
+  },
+  "formats": {
+    "attack_matrix": "taskflow-e03-attack-matrix/v1",
+    "resource_limits": "taskflow-e03-resource-limits/v1",
+    "untrusted_plan_policy": "taskflow-e03-untrusted-plan-policy/v1",
+    "native_policy_template": "taskflow-e03-native-seatbelt-template/v1",
+    "container_policy": "taskflow-e03-container-policy/v1",
+    "attempt_result": "taskflow-e03-attempt-result/v1",
+    "candidate_result": "taskflow-e03-candidate-result/v1",
+    "evidence_manifest": "taskflow-e03-evidence-manifest/v1",
+    "benchmark_record": "taskflow-t1-benchmark/v2",
+    "accepted_plan": "t1-plan-conformance-plan-v2"
+  },
+  "disposable_boundaries": {
+    "all_e03_code_policy_and_results_are_experimental": true,
+    "production_go_module_selected": false,
+    "public_package_selected": false,
+    "production_policy_language_selected": false,
+    "production_sandbox_selected": false,
+    "production_container_or_vm_provider_selected": false,
+    "prototype_import_allowed": false,
+    "fixture_or_prior_experiment_mutation_allowed": false,
+    "compatibility_promise": false
+  },
+  "threat_model": {
+    "hostile": [
+      "compiled-project-planner",
+      "planner-stdout",
+      "planner-stderr",
+      "planner-emitted-json",
+      "planner-exit-status",
+      "planner-claimed-policy-identity"
+    ],
+    "trusted": [
+      "outer-supervisor",
+      "immutable-view-builder",
+      "host-kernel",
+      "exercised-isolation-mechanism",
+      "limit-setting-launcher",
+      "independent-python-validator",
+      "verified-phase-a-contract-and-policy"
+    ],
+    "structural_oracle_not_authority": "fixtures/t1-plan-conformance",
+    "real_secret_allowed": false,
+    "public_or_unrelated_network_target_allowed": false,
+    "external_effect_allowed": false
+  },
+  "planner_input_contract": {
+    "selected_source_view": {
+      "single": true,
+      "digest_verified_before_launch": true,
+      "immutable_for_invocation": true,
+      "writable_by_planner": false
+    },
+    "declared_inputs": {
+      "single_json_document": true,
+      "digest_verified_before_launch": true,
+      "writable_by_planner": false
+    },
+    "environment": {
+      "inherit_parent": false,
+      "fixed_minimal_allowlist": [
+        "PATH",
+        "TMPDIR",
+        "LANG",
+        "LC_ALL"
+      ],
+      "path_value": "/usr/bin:/bin",
+      "locale_value": "C",
+      "home_present": false,
+      "daemon_provider_secret_canaries_present": false
+    },
+    "writable_paths": "one-invocation-private-scratch",
+    "runtime_or_credential_sockets": [],
+    "daemon_provider_or_secret_handles": [],
+    "parent_synthetic_canaries": [
+      "TASKFLOW_E03_SYNTHETIC_DAEMON_TOKEN",
+      "TASKFLOW_E03_SYNTHETIC_PROVIDER_TOKEN",
+      "TASKFLOW_E03_SYNTHETIC_SECRET_VALUE"
+    ]
+  },
+  "safe_attack_boundary": {
+    "filesystem_targets": "experiment-owned temporary root only",
+    "network_targets": "still-open harness-owned TCP and Unix listeners only",
+    "process_targets": "one experiment-built descendant only",
+    "secret_material": "obviously synthetic E03 markers only",
+    "marker_encodings_scanned": [
+      "raw",
+      "hex-lowercase",
+      "base64-standard"
+    ],
+    "image_pull_allowed": false,
+    "vm_creation_or_start_allowed": false,
+    "host_credential_use_allowed": false
+  },
+  "hard_limits": {
+    "per_attempt_wall_seconds_maximum": 2,
+    "candidate_suite_wall_seconds_maximum": 30,
+    "cpu_seconds_hard": 1,
+    "address_space_bytes_hard": 268435456,
+    "file_descriptors_hard": 64,
+    "combined_output_bytes_maximum": 1048576,
+    "accepted_w1_plan_bytes_maximum": 1048576,
+    "descendant_cleanup_seconds_maximum": 1,
+    "processes_hard_when_supported": 32,
+    "unsupported_hard_limit_result": "trusted_local_limitation"
+  },
+  "hard_gates": {
+    "selected_source_digest_changes": 0,
+    "outside_canary_changes": 0,
+    "planner_visible_daemon_provider_secret_canary_bytes": 0,
+    "retained_evidence_canary_or_encoded_canary_bytes": 0,
+    "unauthorized_listener_accepts": 0,
+    "surviving_descendants": 0,
+    "post_exit_marker_writes": 0,
+    "accepted_unauthorized_plans": 0,
+    "allowed_attack_outcomes": [
+      "blocked",
+      "bounded",
+      "trusted_local_limitation"
+    ],
+    "trusted_local_limitation_qualifies_for_untrusted_agent_planning": false,
+    "per_attempt_required_fields": [
+      "format_version",
+      "candidate",
+      "attempt_id",
+      "case_id",
+      "outcome",
+      "duration_seconds",
+      "mechanism_identity",
+      "policy_digest",
+      "applied_limits",
+      "denial_reason",
+      "leak_scan"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "native",
+      "order": 1,
+      "execution": "compiled-project-code",
+      "requirements": [
+        "fresh-process-group",
+        "trusted-limit-setting-launcher",
+        "minimal-noninherited-environment",
+        "capped-stdout-stderr",
+        "wall-deadline-and-kill-group",
+        "deny-first-sandbox-exec-profile",
+        "policy-template-digest-in-evidence"
+      ],
+      "nested-sandbox-denial_result": "unavailable",
+      "unsupported_security_control_result": "trusted_local_limitation"
+    },
+    {
+      "id": "pooled-container",
+      "order": 2,
+      "execution": "compiled-project-code",
+      "requirements": [
+        "prestarted-local-scratch-image",
+        "no-network",
+        "read-only-root",
+        "all-capabilities-dropped",
+        "no-new-privileges",
+        "no-host-runtime-or-credential-sockets",
+        "read-only-input-mounts",
+        "tmpfs-scratch",
+        "hard-cpu-memory-pid-fd-limits",
+        "fresh-exec-per-sample"
+      ],
+      "remote_image_pull_allowed": false,
+      "daemon_unreachable_result": "unavailable"
+    },
+    {
+      "id": "helper-vm",
+      "order": 3,
+      "execution": "compiled-project-code",
+      "requirements": [
+        "already-authorized-dedicated-endpoint",
+        "read-only-input-transfer",
+        "network-denial",
+        "resource-quotas",
+        "descendant-cleanup",
+        "guest-image-and-policy-identity"
+      ],
+      "implicit_create_or_start_allowed": false,
+      "missing_endpoint_result": "unavailable"
+    },
+    {
+      "id": "static-descriptor",
+      "order": 4,
+      "execution": "no-project-code",
+      "requirements": [
+        "hash-bound-e01-schema",
+        "hash-bound-e02-canonical-w1-plan",
+        "declared-input-selection-only",
+        "independent-policy-validation"
+      ],
+      "declared_limitation": "arbitrary-dynamic-graph-construction-unavailable"
+    }
+  ],
+  "independent_validator": {
+    "language": "python3-standard-library",
+    "may_import_planner_or_e02_go_implementation": false,
+    "trusted_policy_path": "experiments/e03-planner-trust/policies/untrusted-plan-policy.json",
+    "planner_supplied_policy_is_authoritative": false,
+    "known_good": "experiments/e02-plan-ir/evidence/raw/plans/w1.json",
+    "must_accept_known_good": true,
+    "must_reject": [
+      "duplicate-json-members",
+      "trailing-data",
+      "invalid-utf8",
+      "missing-or-unknown-version",
+      "unknown-fields",
+      "document-size-depth-or-count-over-limit",
+      "resource-request-over-limit",
+      "absolute-or-parent-traversing-path-bearing-values",
+      "target-outside-allowlist",
+      "unapproved-service-or-network-route",
+      "unapproved-secret-capability",
+      "unapproved-effect",
+      "dangling-effect-target",
+      "planner-policy-or-approval-fields"
+    ],
+    "stable_semantic_path_diagnostics": true,
+    "t1_conformance_is_additional_not_authoritative": true
+  },
+  "performance_gate": {
+    "metric": "warm-w1-planning-through-independent-validation",
+    "candidate_order": [
+      "native",
+      "pooled-container",
+      "helper-vm",
+      "static-descriptor"
+    ],
+    "samples_per_exercised_candidate": 30,
+    "state": "warm",
+    "driver": "prebuilt",
+    "invocation": "fresh-per-sample",
+    "concurrent_measurement_allowed": false,
+    "timed_boundary_start": "immutable-selected-source-and-declared-inputs-ready",
+    "timed_boundary_end": "w1-plan-independently-validated-and-accepted",
+    "pool_creation_in_timed_boundary": false,
+    "per_invocation_pool_exec_capture_and_validation_in_timed_boundary": true,
+    "p95_seconds_exclusive": 0.25,
+    "statistics": "fixtures/t1-benchmark-harness taskflow-t1-benchmark/v2",
+    "correctness_gate_must_pass_before_sampling": true
+  },
+  "rerun_rules": {
+    "failed_or_invalid_set": "retain the complete set, document cause and exact mechanical correction, then rerun from sample one",
+    "maximum_corrected_reruns_per_candidate": 1,
+    "individual_sample_replacement_allowed": false,
+    "threshold_or_branch_change_after_results_allowed": false,
+    "discretionary_reruns_allowed": false,
+    "unavailable_candidate_record_required": true
+  },
+  "decision_branches": {
+    "priority": [
+      "stop-or-narrow-on-correctness",
+      "native",
+      "pooled-container",
+      "helper-vm",
+      "static-descriptor",
+      "stop-or-narrow-on-latency"
+    ],
+    "stop-or-narrow-on-correctness": "Select when the validator leaks authority, no approach bounds every malicious case, or static descriptors cannot represent the required W1 plan.",
+    "native": "Select for untrusted local and agent planning only when every hard gate passes without a security-relevant trusted-local limitation and warm p95 is below 0.250 seconds.",
+    "pooled-container": "Select when native does not qualify and an actually exercised pooled container passes every hard gate and warm p95 below 0.250 seconds.",
+    "helper-vm": "Select when native and container do not qualify and an actually exercised approved helper VM passes every hard gate and warm p95 below 0.250 seconds.",
+    "static-descriptor": "Select for untrusted runs when executable candidates fail, are unavailable, or miss latency and the no-project-code descriptor passes validation and warm p95; an explicit trusted-local executable mode may remain with disclosed limitations.",
+    "stop-or-narrow-on-latency": "Select when every safe candidate, including static descriptors, is incompatible with the W1 planning budget.",
+    "correctness_and_secret_leakage_precede_latency_or_availability": true
+  },
+  "catalogue_contract": {
+    "path": "experiments/e03-planner-trust/attacks.json",
+    "stable_t1_ids": [
+      "fs-read-outside-source",
+      "env-read-ambient",
+      "net-dial-loopback",
+      "process-spawn-and-persist",
+      "resource-unbounded-growth",
+      "output-secret-leak"
+    ],
+    "runtime_parity_fields": [
+      "id",
+      "category",
+      "expected_outcome",
+      "diagnostic_assertion"
+    ],
+    "fixture_mutation_allowed": false
+  },
+  "phase_a": {
+    "allowed_files": [
+      "README.md",
+      "Taskfile.yml",
+      "attacks.json",
+      "policies/container.json",
+      "policies/limits.json",
+      "policies/native.sb.in",
+      "policies/untrusted-plan-policy.json",
+      "protocol.json",
+      "protocol.sha256",
+      "scope-hashes.json",
+      "scripts/run_attacks.py",
+      "scripts/run_benchmarks.py",
+      "scripts/verify_contract.py",
+      "tests/test_verify_contract.py",
+      "threat-model.md"
+    ],
+    "forbidden_before_contract_commit": [
+      "bin/",
+      "cmd/",
+      "evidence/",
+      "go.mod",
+      "internal/",
+      "results/",
+      "validator/"
+    ],
+    "scope_hashes_path": "experiments/e03-planner-trust/scope-hashes.json",
+    "contract_commit_required_before_phase_b": true,
+    "attack_or_benchmark_execution_allowed": false
+  },
+  "bindings": [
+    {
+      "role": "t1-malicious-catalogue-metadata",
+      "path": "fixtures/malicious-planner/attack.go",
+      "sha256": "58445b3fda8a09fc00a826972e813da9eb7bf5415082a5e2c398a362676da65b"
+    },
+    {
+      "role": "t1-malicious-result-types",
+      "path": "fixtures/malicious-planner/result.go",
+      "sha256": "cf5703069f000cd069eb892579c04c77b36cab8871c2b45d4305b7626711563d"
+    },
+    {
+      "role": "t1-malicious-safety-and-limitations",
+      "path": "fixtures/malicious-planner/README.md",
+      "sha256": "8645559c44943b0c829792a37c5577789906c99a0957f74d0638caa0d086d82e"
+    },
+    {
+      "role": "t1-conformance-cli",
+      "path": "fixtures/t1-plan-conformance/cmd/t1conform/main.go",
+      "sha256": "791db0499ab8f76db59dc9f15621d4cc2e7dbca36271afa2a738cd4a4ed95275"
+    },
+    {
+      "role": "t1-conformance-validation",
+      "path": "fixtures/t1-plan-conformance/validate.go",
+      "sha256": "24b596942f555a6f3b9071dd2b29eb602e9fac2208b1e442a643bca298de8f7b"
+    },
+    {
+      "role": "t1-conformance-field-contract",
+      "path": "fixtures/t1-plan-conformance/plan.go",
+      "sha256": "94642c985d10de7c1ec3e669628d0ece7c07ba3ff49d0960ff0e0d24b5cb0e7a"
+    },
+    {
+      "role": "t1-conformance-json-decoder",
+      "path": "fixtures/t1-plan-conformance/decode.go",
+      "sha256": "a70acd097364684380681d9207b3a169b85d7e7e4bf65077335ab5ab2d6f889a"
+    },
+    {
+      "role": "t1-benchmark-v2-runner",
+      "path": "fixtures/t1-benchmark-harness/cmd/t1bench/main.go",
+      "sha256": "d4c10e124c223f538897bb3ea1553c4c39d79b9b821805ac240ebab6d72547d3"
+    },
+    {
+      "role": "t1-benchmark-v2-record",
+      "path": "fixtures/t1-benchmark-harness/record.go",
+      "sha256": "b0bb479abc9d2095d3f8f3067001125312c0be98d5ed67f3b295b72a13f0a659"
+    },
+    {
+      "role": "t1-benchmark-v2-validation",
+      "path": "fixtures/t1-benchmark-harness/validate.go",
+      "sha256": "07dedcd217927500b6a9758aeaf8c6ebf9b780e4ab66b8577ced793ef57d071a"
+    },
+    {
+      "role": "e01-b-go-module",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/go.mod",
+      "sha256": "0d1be68ebb3aeafda772cc4193f03aed856628147192b1a306273cf36e055e7f"
+    },
+    {
+      "role": "e01-b-generator",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/generator.go",
+      "sha256": "9daefcb8ed194869d6eafa75d3669d543bc834b5db3de6066d4b3d95aa69c0d9"
+    },
+    {
+      "role": "e01-b-authored-project",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/project.go",
+      "sha256": "e759b5b113a99a9eecce901e2f66b0c133dae417d3380dff1eea5f1a786f9c96"
+    },
+    {
+      "role": "e01-b-runtime",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/runtime.go",
+      "sha256": "c2123b9a3a14d64b5ab0e1073c958c37293c0732130da5568637cb455263a429"
+    },
+    {
+      "role": "e01-b-cli",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/cmd/e01b/main.go",
+      "sha256": "66bf667458ed6ad273f8fac94ce9cf6436ecc8cc688e7889c031cf44197fad9f"
+    },
+    {
+      "role": "e01-b-w1-schema",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/outputs/w1-fast-project-check.schema.json",
+      "sha256": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878"
+    },
+    {
+      "role": "e01-b-w1-trace",
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/outputs/w1-logical-trace.json",
+      "sha256": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+    },
+    {
+      "role": "e02-go-module",
+      "path": "experiments/e02-plan-ir/candidate-json/go.mod",
+      "sha256": "643bc2314ab090c2972db601a83b75a9c6c76ee9d4832b8c22d3f71e925f2cec"
+    },
+    {
+      "role": "e02-w1-planner",
+      "path": "experiments/e02-plan-ir/candidate-json/plan.go",
+      "sha256": "f24a0c3a5b966de6abecfc4d8cc379132ee583f187adbfa32de88e1499f6eaac"
+    },
+    {
+      "role": "e02-planner-validation",
+      "path": "experiments/e02-plan-ir/candidate-json/validate.go",
+      "sha256": "2774d35be2e4b68379b977833e801b799c746b17c31dd9ab4510c6fcd97bd53b"
+    },
+    {
+      "role": "e02-canonicalization",
+      "path": "experiments/e02-plan-ir/candidate-json/canonical.go",
+      "sha256": "d4fa4d8e404c1783bb6f2439c7df229d7e75d206cad37758a7fd07817fbaf783"
+    },
+    {
+      "role": "e02-typed-plan-inputs",
+      "path": "experiments/e02-plan-ir/candidate-json/typed.go",
+      "sha256": "cb7f7b478904404ccce3f748867ab7c5f122baedda34c389c273861fce6c5d85"
+    },
+    {
+      "role": "e02-planner-cli",
+      "path": "experiments/e02-plan-ir/candidate-json/cmd/e02plan/main.go",
+      "sha256": "cb23239a0c97d431ced99b59d10de1e14e74ae5eebf736e0bb01f3e6a06cc868"
+    },
+    {
+      "role": "e02-retained-w1-plan",
+      "path": "experiments/e02-plan-ir/evidence/raw/plans/w1.json",
+      "sha256": "29e06a85f4cb342a23d12550bed665faec9556220fc0d2b51c02a4317d50e9a5"
+    },
+    {
+      "role": "e02-measured-implementation-manifest",
+      "path": "experiments/e02-plan-ir/evidence/implementation-manifest.json",
+      "sha256": "eb1b63e65ee7599be7d0c9ae83232956ce3dbe2e9e6d2b9657fe1717fb4d4b7f"
+    },
+    {
+      "role": "e02-frozen-protocol",
+      "path": "experiments/e02-plan-ir/protocol.json",
+      "sha256": "c419ad34b075c617b5f7062b365b7ccb7138dd6f93e56d9469bec65f1804e999"
+    }
+  ],
+  "wrappers": {
+    "attack": {
+      "path": "experiments/e03-planner-trust/scripts/run_attacks.py",
+      "candidate_order": [
+        "native",
+        "pooled-container",
+        "helper-vm",
+        "static-descriptor"
+      ],
+      "runner_interface": "e03run suite --candidate ID --protocol PATH --attacks PATH --contract-commit FULL_SHA --output PATH",
+      "describe_only_in_phase_a": true
+    },
+    "benchmark": {
+      "path": "experiments/e03-planner-trust/scripts/run_benchmarks.py",
+      "candidate_order": [
+        "native",
+        "pooled-container",
+        "helper-vm",
+        "static-descriptor"
+      ],
+      "samples": 30,
+      "state": "warm",
+      "prepare": "true",
+      "describe_only_in_phase_a": true
+    }
+  },
+  "evidence_locations": {
+    "availability": "experiments/e03-planner-trust/evidence/availability/",
+    "attacks": "experiments/e03-planner-trust/evidence/raw/attacks/",
+    "validator": "experiments/e03-planner-trust/evidence/raw/validator/",
+    "benchmarks": "experiments/e03-planner-trust/evidence/raw/benchmarks/",
+    "failures": "experiments/e03-planner-trust/evidence/failures/",
+    "implementation_manifest": "experiments/e03-planner-trust/evidence/implementation-manifest.json",
+    "evidence_manifest": "experiments/e03-planner-trust/evidence/manifest.json",
+    "scorecard": "experiments/e03-planner-trust/evidence/scorecard.json",
+    "summary": "experiments/e03-planner-trust/evidence/summary.md"
+  },
+  "phase_a_verification_command": "mise exec -- task --dir experiments/e03-planner-trust check:contract"
+}

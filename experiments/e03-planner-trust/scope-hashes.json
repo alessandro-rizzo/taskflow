@@ -1,0 +1,205 @@
+{
+  "schema_version": "taskflow-e03-scope-hashes/v1",
+  "entries": [
+    {
+      "path": "experiments/e03-planner-trust/README.md",
+      "role": "phase-a-contract",
+      "sha256": "194bd91e5fd3afeaf19945f099635bd2e170e896d412dac2ebbb0064082663a4"
+    },
+    {
+      "path": "experiments/e03-planner-trust/Taskfile.yml",
+      "role": "phase-a-contract",
+      "sha256": "c36d5e9bd3460f390f1673cf5ff99e849211fa3ead03ea86c847fc88f19fb4ca"
+    },
+    {
+      "path": "experiments/e03-planner-trust/attacks.json",
+      "role": "phase-a-contract",
+      "sha256": "5cca09b0cb66e65ed7f623a5496a4a6d9afcfb2a75fc18e1cf6bf7436f4a55e9"
+    },
+    {
+      "path": "experiments/e03-planner-trust/policies/container.json",
+      "role": "phase-a-contract",
+      "sha256": "bd53ed3902fe5b02a1958f63976504fd633e991a99711cd5e39afd77a18d4725"
+    },
+    {
+      "path": "experiments/e03-planner-trust/policies/limits.json",
+      "role": "phase-a-contract",
+      "sha256": "5ca5abb6dcd1dff8f22202cb9b0e69d8b894b00861850b9e634fb2b7c00b604b"
+    },
+    {
+      "path": "experiments/e03-planner-trust/policies/native.sb.in",
+      "role": "phase-a-contract",
+      "sha256": "fe39abb7f3090c508bd1d5ff1061a037f8490ebb0ccac7fa885ece07ff4dd34e"
+    },
+    {
+      "path": "experiments/e03-planner-trust/policies/untrusted-plan-policy.json",
+      "role": "phase-a-contract",
+      "sha256": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06"
+    },
+    {
+      "path": "experiments/e03-planner-trust/protocol.json",
+      "role": "phase-a-contract",
+      "sha256": "2d801910b647d65e9aac0fa6a797011c04921d58c3cac8f2740cd15d93a82cbb"
+    },
+    {
+      "path": "experiments/e03-planner-trust/protocol.sha256",
+      "role": "phase-a-contract",
+      "sha256": "da5ceb57170ce92d5a584f4631b7166e150c9c892f17cd02473f53961859d990"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/run_attacks.py",
+      "role": "phase-a-frozen-wrapper",
+      "sha256": "10abd4a5e87f5bb1c677c9056bfd1f9d16ae71e9da54c14493b3b5486f67fd8d"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/run_benchmarks.py",
+      "role": "phase-a-frozen-wrapper",
+      "sha256": "eca6a4c37c85a318c844882db0755669eff009f0e17b885e0732dd71758a6757"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/verify_contract.py",
+      "role": "phase-a-verifier",
+      "sha256": "acd43713300d2420309a0d63948e83b5d20dda80b1cb22294ac8c51ff45f3710"
+    },
+    {
+      "path": "experiments/e03-planner-trust/tests/test_verify_contract.py",
+      "role": "phase-a-contract-test",
+      "sha256": "cef87702602ca37ca09d27308e5a4d7c28e5f397cec0cb47fcdb40fa6ccfa12e"
+    },
+    {
+      "path": "experiments/e03-planner-trust/threat-model.md",
+      "role": "phase-a-contract",
+      "sha256": "d630672154ccf030633785e7a7c33b49e407d2a50b57b18287e61c275478ce18"
+    },
+    {
+      "path": "fixtures/malicious-planner/attack.go",
+      "role": "bound-read-only-input",
+      "sha256": "58445b3fda8a09fc00a826972e813da9eb7bf5415082a5e2c398a362676da65b"
+    },
+    {
+      "path": "fixtures/malicious-planner/result.go",
+      "role": "bound-read-only-input",
+      "sha256": "cf5703069f000cd069eb892579c04c77b36cab8871c2b45d4305b7626711563d"
+    },
+    {
+      "path": "fixtures/malicious-planner/README.md",
+      "role": "bound-read-only-input",
+      "sha256": "8645559c44943b0c829792a37c5577789906c99a0957f74d0638caa0d086d82e"
+    },
+    {
+      "path": "fixtures/t1-plan-conformance/cmd/t1conform/main.go",
+      "role": "bound-read-only-input",
+      "sha256": "791db0499ab8f76db59dc9f15621d4cc2e7dbca36271afa2a738cd4a4ed95275"
+    },
+    {
+      "path": "fixtures/t1-plan-conformance/validate.go",
+      "role": "bound-read-only-input",
+      "sha256": "24b596942f555a6f3b9071dd2b29eb602e9fac2208b1e442a643bca298de8f7b"
+    },
+    {
+      "path": "fixtures/t1-plan-conformance/plan.go",
+      "role": "bound-read-only-input",
+      "sha256": "94642c985d10de7c1ec3e669628d0ece7c07ba3ff49d0960ff0e0d24b5cb0e7a"
+    },
+    {
+      "path": "fixtures/t1-plan-conformance/decode.go",
+      "role": "bound-read-only-input",
+      "sha256": "a70acd097364684380681d9207b3a169b85d7e7e4bf65077335ab5ab2d6f889a"
+    },
+    {
+      "path": "fixtures/t1-benchmark-harness/cmd/t1bench/main.go",
+      "role": "bound-read-only-input",
+      "sha256": "d4c10e124c223f538897bb3ea1553c4c39d79b9b821805ac240ebab6d72547d3"
+    },
+    {
+      "path": "fixtures/t1-benchmark-harness/record.go",
+      "role": "bound-read-only-input",
+      "sha256": "b0bb479abc9d2095d3f8f3067001125312c0be98d5ed67f3b295b72a13f0a659"
+    },
+    {
+      "path": "fixtures/t1-benchmark-harness/validate.go",
+      "role": "bound-read-only-input",
+      "sha256": "07dedcd217927500b6a9758aeaf8c6ebf9b780e4ab66b8577ced793ef57d071a"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/go.mod",
+      "role": "bound-read-only-input",
+      "sha256": "0d1be68ebb3aeafda772cc4193f03aed856628147192b1a306273cf36e055e7f"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/generator.go",
+      "role": "bound-read-only-input",
+      "sha256": "9daefcb8ed194869d6eafa75d3669d543bc834b5db3de6066d4b3d95aa69c0d9"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/project.go",
+      "role": "bound-read-only-input",
+      "sha256": "e759b5b113a99a9eecce901e2f66b0c133dae417d3380dff1eea5f1a786f9c96"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/runtime.go",
+      "role": "bound-read-only-input",
+      "sha256": "c2123b9a3a14d64b5ab0e1073c958c37293c0732130da5568637cb455263a429"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/cmd/e01b/main.go",
+      "role": "bound-read-only-input",
+      "sha256": "66bf667458ed6ad273f8fac94ce9cf6436ecc8cc688e7889c031cf44197fad9f"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/outputs/w1-fast-project-check.schema.json",
+      "role": "bound-read-only-input",
+      "sha256": "9b08663477b30b981a68ed3f07ea76da9e3e8ae84ff05088ac1156394e4c3878"
+    },
+    {
+      "path": "experiments/e01-authoring-schema/candidates/b-generated-go/outputs/w1-logical-trace.json",
+      "role": "bound-read-only-input",
+      "sha256": "8fbf0840779bf1e41d8fc21bdf9f6351b16e16f1ccfb1184ff28703bab21e0d3"
+    },
+    {
+      "path": "experiments/e02-plan-ir/candidate-json/go.mod",
+      "role": "bound-read-only-input",
+      "sha256": "643bc2314ab090c2972db601a83b75a9c6c76ee9d4832b8c22d3f71e925f2cec"
+    },
+    {
+      "path": "experiments/e02-plan-ir/candidate-json/plan.go",
+      "role": "bound-read-only-input",
+      "sha256": "f24a0c3a5b966de6abecfc4d8cc379132ee583f187adbfa32de88e1499f6eaac"
+    },
+    {
+      "path": "experiments/e02-plan-ir/candidate-json/validate.go",
+      "role": "bound-read-only-input",
+      "sha256": "2774d35be2e4b68379b977833e801b799c746b17c31dd9ab4510c6fcd97bd53b"
+    },
+    {
+      "path": "experiments/e02-plan-ir/candidate-json/canonical.go",
+      "role": "bound-read-only-input",
+      "sha256": "d4fa4d8e404c1783bb6f2439c7df229d7e75d206cad37758a7fd07817fbaf783"
+    },
+    {
+      "path": "experiments/e02-plan-ir/candidate-json/typed.go",
+      "role": "bound-read-only-input",
+      "sha256": "cb7f7b478904404ccce3f748867ab7c5f122baedda34c389c273861fce6c5d85"
+    },
+    {
+      "path": "experiments/e02-plan-ir/candidate-json/cmd/e02plan/main.go",
+      "role": "bound-read-only-input",
+      "sha256": "cb23239a0c97d431ced99b59d10de1e14e74ae5eebf736e0bb01f3e6a06cc868"
+    },
+    {
+      "path": "experiments/e02-plan-ir/evidence/raw/plans/w1.json",
+      "role": "bound-read-only-input",
+      "sha256": "29e06a85f4cb342a23d12550bed665faec9556220fc0d2b51c02a4317d50e9a5"
+    },
+    {
+      "path": "experiments/e02-plan-ir/evidence/implementation-manifest.json",
+      "role": "bound-read-only-input",
+      "sha256": "eb1b63e65ee7599be7d0c9ae83232956ce3dbe2e9e6d2b9657fe1717fb4d4b7f"
+    },
+    {
+      "path": "experiments/e02-plan-ir/protocol.json",
+      "role": "bound-read-only-input",
+      "sha256": "c419ad34b075c617b5f7062b365b7ccb7138dd6f93e56d9469bec65f1804e999"
+    }
+  ]
+}

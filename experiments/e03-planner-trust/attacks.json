@@ -1,0 +1,207 @@
+{
+  "schema_version": "taskflow-e03-attack-matrix/v1",
+  "catalogue_version": "t1-malicious-planner-v1-experimental",
+  "catalogue_entries": [
+    {
+      "id": "fs-read-outside-source",
+      "category": "filesystem",
+      "expected_outcome": "blocked",
+      "diagnostic_assertion": "A real planner sandbox must reject any read of a path outside the declared source view, regardless of how the path is constructed.",
+      "cases": [
+        "relative-parent-read",
+        "absolute-sibling-read",
+        "symlink-escape-read",
+        "relative-parent-write",
+        "absolute-sibling-write",
+        "symlink-escape-write"
+      ],
+      "safe_target": "experiment-owned sibling of the selected source view"
+    },
+    {
+      "id": "env-read-ambient",
+      "category": "environment",
+      "expected_outcome": "blocked",
+      "diagnostic_assertion": "A real planner sandbox must not expose the daemon's ambient process environment or credentials to project code.",
+      "cases": [
+        "synthetic-daemon-token",
+        "synthetic-provider-token",
+        "synthetic-secret-store-value",
+        "home-and-config-roots-absent",
+        "runtime-sockets-absent"
+      ],
+      "safe_target": "synthetic E03 canaries owned by the trusted parent"
+    },
+    {
+      "id": "net-dial-loopback",
+      "category": "network",
+      "expected_outcome": "blocked",
+      "diagnostic_assertion": "A real planner sandbox must deny outbound network connections and local socket access unless explicitly declared and authorized.",
+      "cases": [
+        "tcp-loopback-owned-listener",
+        "unix-socket-owned-listener"
+      ],
+      "safe_target": "still-open listener created and held by the E03 harness"
+    },
+    {
+      "id": "process-spawn-and-persist",
+      "category": "process",
+      "expected_outcome": "bounded",
+      "diagnostic_assertion": "A real planner sandbox must ensure no spawned descendant process outlives the planning invocation.",
+      "cases": [
+        "single-descendant-ignores-parent-exit",
+        "post-exit-marker-write"
+      ],
+      "safe_target": "one experiment-built descendant and one experiment-owned marker"
+    },
+    {
+      "id": "resource-unbounded-growth",
+      "category": "resource",
+      "expected_outcome": "bounded",
+      "diagnostic_assertion": "A real planner sandbox must enforce CPU, memory, file-descriptor, output, and wall-time limits on project code.",
+      "cases": [
+        "cpu-limit",
+        "address-space-limit",
+        "file-descriptor-limit",
+        "stdout-stderr-limit",
+        "wall-time-limit"
+      ],
+      "safe_target": "outer limits are applied before the hostile process starts"
+    },
+    {
+      "id": "output-secret-leak",
+      "category": "output",
+      "expected_outcome": "blocked",
+      "diagnostic_assertion": "A real planner sandbox or plan validator must ensure no secret material or unsafe path ever appears in the emitted plan.",
+      "cases": [
+        "exact-synthetic-marker",
+        "hex-synthetic-marker",
+        "base64-synthetic-marker",
+        "absolute-path-field",
+        "parent-traversal-path-field"
+      ],
+      "safe_target": "synthetic marker and experiment-owned unsafe path only"
+    }
+  ],
+  "extended_validator_cases": [
+    {
+      "id": "parser-duplicate-member",
+      "expected_outcome": "blocked",
+      "expected_path": "$",
+      "reason": "duplicate JSON members are ambiguous"
+    },
+    {
+      "id": "parser-trailing-document",
+      "expected_outcome": "blocked",
+      "expected_path": "$",
+      "reason": "trailing JSON documents or bytes are ambiguous"
+    },
+    {
+      "id": "parser-invalid-utf8",
+      "expected_outcome": "blocked",
+      "expected_path": "$",
+      "reason": "plan bytes must be valid UTF-8 JSON"
+    },
+    {
+      "id": "parser-missing-version",
+      "expected_outcome": "blocked",
+      "expected_path": "$.format_version",
+      "reason": "version is required"
+    },
+    {
+      "id": "parser-unknown-version",
+      "expected_outcome": "blocked",
+      "expected_path": "$.format_version",
+      "reason": "unknown versions fail closed"
+    },
+    {
+      "id": "parser-unknown-field",
+      "expected_outcome": "blocked",
+      "expected_path": "$.planner_approval",
+      "reason": "planner output cannot add authority-bearing fields"
+    },
+    {
+      "id": "parser-document-size",
+      "expected_outcome": "bounded",
+      "expected_path": "$",
+      "reason": "documents over 1 MiB are rejected before decoding"
+    },
+    {
+      "id": "parser-depth",
+      "expected_outcome": "bounded",
+      "expected_path": "$",
+      "reason": "JSON depth over 32 is rejected"
+    },
+    {
+      "id": "parser-node-count",
+      "expected_outcome": "bounded",
+      "expected_path": "$.nodes",
+      "reason": "node count over policy maximum is rejected"
+    },
+    {
+      "id": "policy-unauthorized-target",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=test].execution_profile.os",
+      "reason": "untrusted W1 policy grants only any-host planning intent"
+    },
+    {
+      "id": "policy-unauthorized-network",
+      "expected_outcome": "blocked",
+      "expected_path": "$.services[id=internal].route",
+      "reason": "untrusted W1 policy grants no service or network route"
+    },
+    {
+      "id": "policy-unauthorized-secret",
+      "expected_outcome": "blocked",
+      "expected_path": "$.secrets[id=signing-key].capability",
+      "reason": "untrusted W1 policy grants no secret capability"
+    },
+    {
+      "id": "policy-unauthorized-effect",
+      "expected_outcome": "blocked",
+      "expected_path": "$.effects[id=publish].kind",
+      "reason": "untrusted W1 policy grants no effect"
+    },
+    {
+      "id": "policy-dangling-effect-target",
+      "expected_outcome": "blocked",
+      "expected_path": "$.effects[id=publish].target",
+      "reason": "effect targets must reference a declared service before policy evaluation"
+    },
+    {
+      "id": "policy-unsafe-absolute-path",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "reason": "absolute path-bearing values are forbidden"
+    },
+    {
+      "id": "policy-unsafe-parent-path",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "reason": "parent traversal segments are forbidden"
+    },
+    {
+      "id": "policy-resource-per-node",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=test].resources.memory_mib",
+      "reason": "per-node resource requests cannot exceed trusted policy"
+    },
+    {
+      "id": "policy-resource-total",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes",
+      "reason": "aggregate resource requests cannot exceed trusted policy"
+    },
+    {
+      "id": "policy-self-authorization",
+      "expected_outcome": "blocked",
+      "expected_path": "$.policy",
+      "reason": "planner-supplied policy or approval data is never authoritative"
+    }
+  ],
+  "required_outcome_vocabulary": [
+    "blocked",
+    "bounded",
+    "trusted_local_limitation"
+  ],
+  "unavailable_is_candidate_state_not_attack_outcome": true
+}

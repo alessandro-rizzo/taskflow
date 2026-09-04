@@ -1,0 +1,36 @@
+{
+  "schema_version": "taskflow-e03-container-policy/v1",
+  "engine": "docker",
+  "image": {
+    "construction": "local-scratch-image-from-e03-binaries",
+    "network_during_build": "none",
+    "remote_pull_allowed": false,
+    "digest_required_before_credit": true
+  },
+  "pool": {
+    "prestarted_for_warm_measurement": true,
+    "fresh_exec_per_invocation": true,
+    "one_time_creation_in_timed_boundary": false
+  },
+  "runtime": {
+    "network": "none",
+    "read_only_root": true,
+    "cap_drop": [
+      "ALL"
+    ],
+    "security_options": [
+      "no-new-privileges"
+    ],
+    "memory_bytes": 268435456,
+    "nano_cpus": 1000000000,
+    "pids_limit": 32,
+    "file_descriptors": 64,
+    "source_mount": "read-only",
+    "declared_inputs_mount": "read-only",
+    "scratch_mount": "tmpfs",
+    "host_runtime_socket_mounts": [],
+    "host_credential_mounts": []
+  },
+  "unreachable_daemon_result": "unavailable",
+  "command_presence_is_evidence": false
+}
