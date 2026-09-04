@@ -54,6 +54,21 @@ class ContractVerifierTests(unittest.TestCase):
             lambda protocol: protocol["rerun_rules"].__setitem__("other_discretionary_reruns_allowed", True)
         )
 
+    def test_rejects_unbound_preliminary_samples(self) -> None:
+        self.assert_semantic_rejection(
+            lambda protocol: protocol["scope"]["measurement_wrapper"].__setitem__(
+                "preliminary_samples_before_binding_are_evidence", True
+            )
+        )
+
+    def test_rejects_measurement_order_drift(self) -> None:
+        self.assert_semantic_rejection(
+            lambda protocol: protocol["scope"]["measurement_wrapper"].__setitem__(
+                "enforces_execution_order",
+                ["large-generation-canonicalization", "w1-plan", "large-reader-validation-digest"],
+            )
+        )
+
     def test_rejects_mandatory_empty_declaration_arrays(self) -> None:
         self.assert_semantic_rejection(
             lambda protocol: protocol["plan_grammar"]["objects"]["plan"].__setitem__(

@@ -17,7 +17,7 @@ REPOSITORY = EXPERIMENT.parents[1]
 PROTOCOL = EXPERIMENT / "protocol.json"
 PROTOCOL_DIGEST = EXPERIMENT / "protocol.sha256"
 SCOPE_HASHES = EXPERIMENT / "scope-hashes.json"
-EXPECTED_PROTOCOL_SHA256 = "37fbf82c7f11711b9b477ecda014a1eb8ad4869d0298d8a497f82592a44e8083"
+EXPECTED_PROTOCOL_SHA256 = "c419ad34b075c617b5f7062b365b7ccb7138dd6f93e56d9469bec65f1804e999"
 SIGNED_INT64_MIN = -(2**63)
 SIGNED_INT64_MAX = 2**63 - 1
 
@@ -29,6 +29,7 @@ EXPECTED_PHASE_A_FILES = {
     "scope-hashes.json",
     "scripts/test_verify_contract.py",
     "scripts/verify_contract.py",
+    "scripts/run_benchmarks.py",
 }
 
 EXPECTED_BINDINGS = {
@@ -64,6 +65,7 @@ EXPECTED_SCOPE_PATHS = EXPECTED_BINDINGS.keys() | {
     "experiments/e02-plan-ir/protocol.sha256",
     "experiments/e02-plan-ir/scripts/test_verify_contract.py",
     "experiments/e02-plan-ir/scripts/verify_contract.py",
+    "experiments/e02-plan-ir/scripts/run_benchmarks.py",
     "fixtures/t1-benchmark-harness/Taskfile.yml",
     "fixtures/t1-benchmark-harness/go.mod",
     "fixtures/t1-benchmark-harness/record.go",
@@ -226,6 +228,12 @@ def validate_protocol_semantics(protocol: dict[str, Any]) -> None:
 
     scope = protocol["scope"]
     require(set(scope["phase_a_allowed_files"]) == EXPECTED_PHASE_A_FILES, "Phase A file allowlist changed")
+    require(scope["measurement_wrapper"] == {
+        "path": "experiments/e02-plan-ir/scripts/run_benchmarks.py",
+        "must_match_contract_commit": True,
+        "enforces_execution_order": ["w1-plan", "large-generation-canonicalization", "large-reader-validation-digest"],
+        "preliminary_samples_before_binding_are_evidence": False,
+    }, "measurement wrapper binding changed")
     bindings = {entry["path"]: entry["sha256"] for entry in scope["bindings"]}
     require(bindings == EXPECTED_BINDINGS, "bound E01/T1 inputs changed")
     require(scope["fixture_boundaries"] == {

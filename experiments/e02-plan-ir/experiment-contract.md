@@ -164,6 +164,15 @@ benchmark-v2 runner source used later. If Phase B adds a measurement wrapper,
 its bytes must be added to the scope manifest and reviewed before any sample is
 collected; thresholds, sample counts, order, and rerun rules may not change.
 
+The reviewed amendment binds `scripts/run_benchmarks.py` as that wrapper. It
+requires a full contract commit, verifies its own bytes against that commit,
+and alone fixes the three benchmark commands, execution order, and sample
+counts. Machine metadata remains an explicit required input because managed
+macOS processes may be unable to read it from `sysctl`. Samples collected by
+an unbound earlier generator are preliminary and are not E02 evidence; Phase B
+must retain an audit record and collect every accepted set again from sample
+one after this amendment is committed.
+
 Phase A verification command:
 
 ```sh

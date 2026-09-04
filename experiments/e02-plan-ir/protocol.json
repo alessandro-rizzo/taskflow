@@ -165,7 +165,8 @@
       "protocol.sha256",
       "scope-hashes.json",
       "scripts/test_verify_contract.py",
-      "scripts/verify_contract.py"
+      "scripts/verify_contract.py",
+      "scripts/run_benchmarks.py"
     ],
     "phase_b_forbidden_before_contract_commit": [
       "candidate-json/",
@@ -175,6 +176,12 @@
       "benchmarks/"
     ],
     "scope_hashes_path": "experiments/e02-plan-ir/scope-hashes.json",
+    "measurement_wrapper": {
+      "path": "experiments/e02-plan-ir/scripts/run_benchmarks.py",
+      "must_match_contract_commit": true,
+      "enforces_execution_order": ["w1-plan", "large-generation-canonicalization", "large-reader-validation-digest"],
+      "preliminary_samples_before_binding_are_evidence": false
+    },
     "bindings": [
       {"id": "e01-candidate-b-go-module", "role": "accepted-e01-w1-import-surface", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/go.mod", "sha256": "0d1be68ebb3aeafda772cc4193f03aed856628147192b1a306273cf36e055e7f"},
       {"id": "e01-candidate-b-project", "role": "accepted-e01-w1-source", "path": "experiments/e01-authoring-schema/candidates/b-generated-go/project.go", "sha256": "e759b5b113a99a9eecce901e2f66b0c133dae417d3380dff1eea5f1a786f9c96"},
