@@ -1,0 +1,179 @@
+{
+  "all_passed": true,
+  "case_count": 19,
+  "format_version": "taskflow-e03-validator-matrix/v1",
+  "known_good_accepted": true,
+  "results": [
+    {
+      "case_id": "parser-duplicate-member",
+      "expected_outcome": "blocked",
+      "expected_path": "$",
+      "observed_outcome": "blocked",
+      "observed_path": "$",
+      "passed": true,
+      "reason": "duplicate member 'document_kind'"
+    },
+    {
+      "case_id": "parser-trailing-document",
+      "expected_outcome": "blocked",
+      "expected_path": "$",
+      "observed_outcome": "blocked",
+      "observed_path": "$",
+      "passed": true,
+      "reason": "trailing data"
+    },
+    {
+      "case_id": "parser-invalid-utf8",
+      "expected_outcome": "blocked",
+      "expected_path": "$",
+      "observed_outcome": "blocked",
+      "observed_path": "$",
+      "passed": true,
+      "reason": "invalid UTF-8"
+    },
+    {
+      "case_id": "parser-missing-version",
+      "expected_outcome": "blocked",
+      "expected_path": "$.format_version",
+      "observed_outcome": "blocked",
+      "observed_path": "$.format_version",
+      "passed": true,
+      "reason": "missing or unsupported version"
+    },
+    {
+      "case_id": "parser-unknown-version",
+      "expected_outcome": "blocked",
+      "expected_path": "$.format_version",
+      "observed_outcome": "blocked",
+      "observed_path": "$.format_version",
+      "passed": true,
+      "reason": "missing or unsupported version"
+    },
+    {
+      "case_id": "parser-unknown-field",
+      "expected_outcome": "blocked",
+      "expected_path": "$.planner_approval",
+      "observed_outcome": "blocked",
+      "observed_path": "$.planner_approval",
+      "passed": true,
+      "reason": "unknown field"
+    },
+    {
+      "case_id": "parser-document-size",
+      "expected_outcome": "bounded",
+      "expected_path": "$",
+      "observed_outcome": "bounded",
+      "observed_path": "$",
+      "passed": true,
+      "reason": "document exceeds 1048576 bytes"
+    },
+    {
+      "case_id": "parser-depth",
+      "expected_outcome": "bounded",
+      "expected_path": "$",
+      "observed_outcome": "bounded",
+      "observed_path": "$",
+      "passed": true,
+      "reason": "JSON depth exceeds 32"
+    },
+    {
+      "case_id": "parser-node-count",
+      "expected_outcome": "bounded",
+      "expected_path": "$.nodes",
+      "observed_outcome": "bounded",
+      "observed_path": "$.nodes",
+      "passed": true,
+      "reason": "count exceeds 1024"
+    },
+    {
+      "case_id": "policy-unauthorized-target",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=test].execution_profile.os",
+      "observed_outcome": "blocked",
+      "observed_path": "$.nodes[id=test].execution_profile.os",
+      "passed": true,
+      "reason": "target OS is not authorized"
+    },
+    {
+      "case_id": "policy-unauthorized-network",
+      "expected_outcome": "blocked",
+      "expected_path": "$.services[id=internal].route",
+      "observed_outcome": "blocked",
+      "observed_path": "$.services[id=internal].route",
+      "passed": true,
+      "reason": "network route is not authorized"
+    },
+    {
+      "case_id": "policy-unauthorized-secret",
+      "expected_outcome": "blocked",
+      "expected_path": "$.secrets[id=signing-key].capability",
+      "observed_outcome": "blocked",
+      "observed_path": "$.secrets[id=signing-key].capability",
+      "passed": true,
+      "reason": "secret capability is not authorized"
+    },
+    {
+      "case_id": "policy-unauthorized-effect",
+      "expected_outcome": "blocked",
+      "expected_path": "$.effects[id=publish].kind",
+      "observed_outcome": "blocked",
+      "observed_path": "$.effects[id=publish].kind",
+      "passed": true,
+      "reason": "effect is not authorized"
+    },
+    {
+      "case_id": "policy-dangling-effect-target",
+      "expected_outcome": "blocked",
+      "expected_path": "$.effects[id=publish].target",
+      "observed_outcome": "blocked",
+      "observed_path": "$.effects[id=publish].target",
+      "passed": true,
+      "reason": "target does not reference a declared service"
+    },
+    {
+      "case_id": "policy-unsafe-absolute-path",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "observed_outcome": "blocked",
+      "observed_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "passed": true,
+      "reason": "unsafe path"
+    },
+    {
+      "case_id": "policy-unsafe-parent-path",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "observed_outcome": "blocked",
+      "observed_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "passed": true,
+      "reason": "unsafe path"
+    },
+    {
+      "case_id": "policy-resource-per-node",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes[id=test].resources.memory_mib",
+      "observed_outcome": "blocked",
+      "observed_path": "$.nodes[id=test].resources.memory_mib",
+      "passed": true,
+      "reason": "resource exceeds policy"
+    },
+    {
+      "case_id": "policy-resource-total",
+      "expected_outcome": "blocked",
+      "expected_path": "$.nodes",
+      "observed_outcome": "blocked",
+      "observed_path": "$.nodes",
+      "passed": true,
+      "reason": "aggregate resources exceed policy"
+    },
+    {
+      "case_id": "policy-self-authorization",
+      "expected_outcome": "blocked",
+      "expected_path": "$.policy",
+      "observed_outcome": "blocked",
+      "observed_path": "$.policy",
+      "passed": true,
+      "reason": "unknown field"
+    }
+  ]
+}

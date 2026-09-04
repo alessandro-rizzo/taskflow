@@ -1,0 +1,50 @@
+{
+  "contract_commit": "b8039d4dc48410c43dec7702ff88086714327b2e",
+  "entries": [
+    {
+      "path": "experiments/e03-planner-trust/go.mod",
+      "sha256": "adef297d69d220d4fdf2e065dcc8464d80cd9c25a920619f79ca5f5aaaae231f"
+    },
+    {
+      "path": "experiments/e03-planner-trust/cmd/e03attack/main.go",
+      "sha256": "455f0a774418b974aaca5c25b3e3dbd9d8a5cd646af583f5cc1fde337f2b5f98"
+    },
+    {
+      "path": "experiments/e03-planner-trust/cmd/e03limit/main.go",
+      "sha256": "98b9c0a6a641a01d87a14c5983858746337998247f8abed0ef28b8eedb8bc5d9"
+    },
+    {
+      "path": "experiments/e03-planner-trust/cmd/e03pool/main.go",
+      "sha256": "ec3d18ffbfa5812da89a166b79c960b7a2a2d7afee950daaa8821a414e163abb"
+    },
+    {
+      "path": "experiments/e03-planner-trust/container/Dockerfile",
+      "sha256": "aaf10c2e51ba9a856ada18b31dc11641d03dbab3d3a422ba9689d2f6c9936a11"
+    },
+    {
+      "path": "experiments/e03-planner-trust/validator/e03_validator.py",
+      "sha256": "b41e37c17cfb5286b439b48736a6184727372da10fddfe4d632d6a9d805129fd"
+    },
+    {
+      "path": "experiments/e03-planner-trust/validator/test_validator.py",
+      "sha256": "9aa75b6725c0117a04add8791fc1ad939e081655ceeafbc40842add8de76d8a5"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/e03_runner.py",
+      "sha256": "65dcefbd342fb79679de6ee6e301b7eaa5a36607671b6c1d767e354c4757e1f0"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/run_validator_matrix.py",
+      "sha256": "e1fc0c86d93dc3d70673eb4adbd69effa49eef41d2bbfee76f36002c6677f450"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/finalize_evidence.py",
+      "sha256": "c43b70da7fe1a10f83ad0f2e9c31b66da721d05795593c9144eddca7f9f9a787"
+    },
+    {
+      "path": "experiments/e03-planner-trust/scripts/verify_phase_b.py",
+      "sha256": "e6365f5e8e25944f299ed73fbd78340d63b2d30160a19d5ac1281054ed417077"
+    }
+  ],
+  "format_version": "taskflow-e03-implementation-manifest/v1"
+}

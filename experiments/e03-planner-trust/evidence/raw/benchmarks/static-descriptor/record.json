@@ -1,0 +1,70 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E03",
+  "fixture_id": "w1-fast-project-check",
+  "source_revision": "b8039d4dc48410c43dec7702ff88086714327b2e",
+  "timestamp": "2026-09-04T16:07:17Z",
+  "hardware": {
+    "cpu": "Apple M5 Max",
+    "cores": 18,
+    "ram_gib": 64
+  },
+  "os": {
+    "name": "macOS",
+    "version": "26.5.2",
+    "build": "25F84",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    },
+    {
+      "name": "python",
+      "version": "3.9.6"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "true",
+  "cache_dimensions": {
+    "candidate": "static-descriptor",
+    "driver": "prebuilt"
+  },
+  "samples": [
+    0.122835542,
+    0.118059708,
+    0.1173675,
+    0.11585025,
+    0.117010583,
+    0.116958584,
+    0.114607792,
+    0.109816458,
+    0.1126925,
+    0.11129875,
+    0.110713625,
+    0.111601042,
+    0.108984541,
+    0.108741917,
+    0.109312208,
+    0.108829084,
+    0.110079667,
+    0.109161542,
+    0.109551333,
+    0.109333416,
+    0.109742583,
+    0.109157625,
+    0.1087,
+    0.109765916,
+    0.112860917,
+    0.108733584,
+    0.109694667,
+    0.109013459,
+    0.108861,
+    0.109141625
+  ],
+  "sample_count": 30,
+  "median": 0.10975424950000001,
+  "p95": 0.118059708,
+  "raw_result_location": "samples.txt"
+}

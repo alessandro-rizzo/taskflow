@@ -1,0 +1,660 @@
+{
+  "attempts": [
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:relative-parent-read",
+      "candidate": "native",
+      "case_id": "relative-parent-read",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.004466,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:absolute-sibling-read",
+      "candidate": "native",
+      "case_id": "absolute-sibling-read",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.00384,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:symlink-escape-read",
+      "candidate": "native",
+      "case_id": "symlink-escape-read",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003677,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:relative-parent-write",
+      "candidate": "native",
+      "case_id": "relative-parent-write",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003588,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:absolute-sibling-write",
+      "candidate": "native",
+      "case_id": "absolute-sibling-write",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003606,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:symlink-escape-write",
+      "candidate": "native",
+      "case_id": "symlink-escape-write",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003539,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:synthetic-daemon-token",
+      "candidate": "native",
+      "case_id": "synthetic-daemon-token",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003525,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:synthetic-provider-token",
+      "candidate": "native",
+      "case_id": "synthetic-provider-token",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003514,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:synthetic-secret-store-value",
+      "candidate": "native",
+      "case_id": "synthetic-secret-store-value",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003491,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:home-and-config-roots-absent",
+      "candidate": "native",
+      "case_id": "home-and-config-roots-absent",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003234,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:runtime-sockets-absent",
+      "candidate": "native",
+      "case_id": "runtime-sockets-absent",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003155,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:tcp-loopback-owned-listener",
+      "candidate": "native",
+      "case_id": "tcp-loopback-owned-listener",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003153,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:unix-socket-owned-listener",
+      "candidate": "native",
+      "case_id": "unix-socket-owned-listener",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003059,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:single-descendant-ignores-parent-exit",
+      "candidate": "native",
+      "case_id": "single-descendant-ignores-parent-exit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003256,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:post-exit-marker-write",
+      "candidate": "native",
+      "case_id": "post-exit-marker-write",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003285,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:cpu-limit",
+      "candidate": "native",
+      "case_id": "cpu-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003396,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:address-space-limit",
+      "candidate": "native",
+      "case_id": "address-space-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003198,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:file-descriptor-limit",
+      "candidate": "native",
+      "case_id": "file-descriptor-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003255,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:stdout-stderr-limit",
+      "candidate": "native",
+      "case_id": "stdout-stderr-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003265,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:wall-time-limit",
+      "candidate": "native",
+      "case_id": "wall-time-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.003219,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:exact-synthetic-marker",
+      "candidate": "native",
+      "case_id": "exact-synthetic-marker",
+      "denial_reason": "invalid JSON",
+      "diagnostic_path": "$",
+      "duration_seconds": 0.003267,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:hex-synthetic-marker",
+      "candidate": "native",
+      "case_id": "hex-synthetic-marker",
+      "denial_reason": "invalid JSON",
+      "diagnostic_path": "$",
+      "duration_seconds": 0.004284,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:base64-synthetic-marker",
+      "candidate": "native",
+      "case_id": "base64-synthetic-marker",
+      "denial_reason": "invalid JSON",
+      "diagnostic_path": "$",
+      "duration_seconds": 0.004464,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:absolute-path-field",
+      "candidate": "native",
+      "case_id": "absolute-path-field",
+      "denial_reason": "invalid JSON",
+      "diagnostic_path": "$",
+      "duration_seconds": 0.00448,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "native:parent-traversal-path-field",
+      "candidate": "native",
+      "case_id": "parent-traversal-path-field",
+      "denial_reason": "invalid JSON",
+      "diagnostic_path": "$",
+      "duration_seconds": 0.00448,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 28,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "macos-seatbelt-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 125,
+      "timed_out": false
+    }
+  ],
+  "candidate": "native",
+  "format_version": "taskflow-e03-candidate-result/v1",
+  "outside_canary_unchanged": true,
+  "state": "exercised",
+  "suite_duration_seconds": 0.537393,
+  "unauthorized_listener_accepts": 0
+}

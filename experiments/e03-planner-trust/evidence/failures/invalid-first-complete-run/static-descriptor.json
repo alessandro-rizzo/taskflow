@@ -1,0 +1,513 @@
+{
+  "accepted_plan": true,
+  "attempts": [
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:relative-parent-read",
+      "candidate": "static-descriptor",
+      "case_id": "relative-parent-read",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:absolute-sibling-read",
+      "candidate": "static-descriptor",
+      "case_id": "absolute-sibling-read",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:symlink-escape-read",
+      "candidate": "static-descriptor",
+      "case_id": "symlink-escape-read",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:relative-parent-write",
+      "candidate": "static-descriptor",
+      "case_id": "relative-parent-write",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:absolute-sibling-write",
+      "candidate": "static-descriptor",
+      "case_id": "absolute-sibling-write",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:symlink-escape-write",
+      "candidate": "static-descriptor",
+      "case_id": "symlink-escape-write",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:synthetic-daemon-token",
+      "candidate": "static-descriptor",
+      "case_id": "synthetic-daemon-token",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:synthetic-provider-token",
+      "candidate": "static-descriptor",
+      "case_id": "synthetic-provider-token",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:synthetic-secret-store-value",
+      "candidate": "static-descriptor",
+      "case_id": "synthetic-secret-store-value",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:home-and-config-roots-absent",
+      "candidate": "static-descriptor",
+      "case_id": "home-and-config-roots-absent",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:runtime-sockets-absent",
+      "candidate": "static-descriptor",
+      "case_id": "runtime-sockets-absent",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:tcp-loopback-owned-listener",
+      "candidate": "static-descriptor",
+      "case_id": "tcp-loopback-owned-listener",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:unix-socket-owned-listener",
+      "candidate": "static-descriptor",
+      "case_id": "unix-socket-owned-listener",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:single-descendant-ignores-parent-exit",
+      "candidate": "static-descriptor",
+      "case_id": "single-descendant-ignores-parent-exit",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:post-exit-marker-write",
+      "candidate": "static-descriptor",
+      "case_id": "post-exit-marker-write",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:cpu-limit",
+      "candidate": "static-descriptor",
+      "case_id": "cpu-limit",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:address-space-limit",
+      "candidate": "static-descriptor",
+      "case_id": "address-space-limit",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:file-descriptor-limit",
+      "candidate": "static-descriptor",
+      "case_id": "file-descriptor-limit",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:stdout-stderr-limit",
+      "candidate": "static-descriptor",
+      "case_id": "stdout-stderr-limit",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:wall-time-limit",
+      "candidate": "static-descriptor",
+      "case_id": "wall-time-limit",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:exact-synthetic-marker",
+      "candidate": "static-descriptor",
+      "case_id": "exact-synthetic-marker",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:hex-synthetic-marker",
+      "candidate": "static-descriptor",
+      "case_id": "hex-synthetic-marker",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:base64-synthetic-marker",
+      "candidate": "static-descriptor",
+      "case_id": "base64-synthetic-marker",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:absolute-path-field",
+      "candidate": "static-descriptor",
+      "case_id": "absolute-path-field",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {},
+      "attempt_id": "static-descriptor:parent-traversal-path-field",
+      "candidate": "static-descriptor",
+      "case_id": "parent-traversal-path-field",
+      "denial_reason": "project code is not executed",
+      "diagnostic_path": null,
+      "duration_seconds": 0,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "hash-bound-static-descriptor-no-project-code",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    }
+  ],
+  "candidate": "static-descriptor",
+  "format_version": "taskflow-e03-candidate-result/v1",
+  "state": "exercised",
+  "validation": {
+    "accepted": true,
+    "fixture_id": "w1-fast-project-check",
+    "nodes": 4
+  }
+}

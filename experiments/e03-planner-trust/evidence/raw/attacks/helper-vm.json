@@ -1,0 +1,7 @@
+{
+  "attempts": [],
+  "candidate": "helper-vm",
+  "format_version": "taskflow-e03-candidate-result/v1",
+  "reason": "no approved dedicated helper VM endpoint",
+  "state": "unavailable"
+}

@@ -1,0 +1,48 @@
+{
+  "candidates": {
+    "helper-vm": {
+      "qualifies": false,
+      "reason": "no approved dedicated helper VM endpoint",
+      "state": "unavailable"
+    },
+    "native": {
+      "qualifies": false,
+      "reason": "frozen Seatbelt profile failed benign positive control with returncode -6",
+      "state": "unavailable"
+    },
+    "pooled-container": {
+      "blocked": 17,
+      "bounded": 7,
+      "qualifies": false,
+      "state": "exercised",
+      "trusted_local_limitations": [
+        "home-and-config-roots-absent"
+      ]
+    },
+    "static-descriptor": {
+      "blocked": 25,
+      "p95_seconds": 0.118059708,
+      "qualifies": true,
+      "state": "exercised",
+      "threshold_seconds_exclusive": 0.25
+    }
+  },
+  "contract_commit": "b8039d4dc48410c43dec7702ff88086714327b2e",
+  "format_version": "taskflow-e03-scorecard/v1",
+  "hard_gates": {
+    "accepted_unauthorized_plans": 0,
+    "outside_canary_changes": 0,
+    "planner_visible_daemon_provider_secret_canary_bytes": 0,
+    "post_exit_marker_writes": 0,
+    "retained_evidence_canary_or_encoded_canary_bytes": 0,
+    "selected_source_digest_changes": 0,
+    "surviving_descendants": 0,
+    "unauthorized_listener_accepts": 0
+  },
+  "selected_branch": "static-descriptor",
+  "validator": {
+    "known_good_accepted": true,
+    "negative_case_count": 19,
+    "negative_cases_passed": 19
+  }
+}

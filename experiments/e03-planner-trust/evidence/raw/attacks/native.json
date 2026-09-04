@@ -1,0 +1,10 @@
+{
+  "attempts": [],
+  "candidate": "native",
+  "format_version": "taskflow-e03-candidate-result/v1",
+  "limitations": [
+    "Darwin RLIMIT_AS unsupported"
+  ],
+  "reason": "frozen Seatbelt profile failed benign positive control with returncode -6",
+  "state": "unavailable"
+}

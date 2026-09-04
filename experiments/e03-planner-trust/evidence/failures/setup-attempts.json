@@ -1,0 +1,33 @@
+{
+  "format_version": "taskflow-e03-setup-failures/v1",
+  "contract_commit": "b8039d4dc48410c43dec7702ff88086714327b2e",
+  "attempts": [
+    {
+      "id": "preexec-address-space",
+      "classification": "incomplete-setup-no-candidate-result",
+      "reason": "Python pre-exec address-space setup failed before the native candidate started",
+      "retained_result_directory": false
+    },
+    {
+      "id": "trusted-runner-docker-path",
+      "classification": "incomplete-setup",
+      "reason": "The trusted supervisor incorrectly used the planner PATH for the Docker client",
+      "retained_result_directory": "evidence/failures/incomplete-docker-path-setup"
+    },
+    {
+      "id": "launcher-positive-control",
+      "classification": "first-complete-run-invalidated-wholesale",
+      "reason": "The native launcher returned before executing probes because Darwin rejected RLIMIT_AS",
+      "retained_result_directory": "evidence/failures/invalid-first-complete-run"
+    },
+    {
+      "id": "accepted-corrected-run",
+      "classification": "single-permitted-full-rerun",
+      "reason": "Native now fails closed at a benign positive control and unsupported RLIMIT_AS is explicit",
+      "retained_result_directory": "evidence/raw/attacks"
+    }
+  ],
+  "individual_result_or_sample_replacement": false,
+  "threshold_changed": false,
+  "branch_rule_changed": false
+}

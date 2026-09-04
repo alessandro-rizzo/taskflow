@@ -1,0 +1,660 @@
+{
+  "attempts": [
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:relative-parent-read",
+      "candidate": "pooled-container",
+      "case_id": "relative-parent-read",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.027357,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 48,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:absolute-sibling-read",
+      "candidate": "pooled-container",
+      "case_id": "absolute-sibling-read",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.025329,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 48,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:symlink-escape-read",
+      "candidate": "pooled-container",
+      "case_id": "symlink-escape-read",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.02291,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 47,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:relative-parent-write",
+      "candidate": "pooled-container",
+      "case_id": "relative-parent-write",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.030443,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 48,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:absolute-sibling-write",
+      "candidate": "pooled-container",
+      "case_id": "absolute-sibling-write",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.026996,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 48,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:symlink-escape-write",
+      "candidate": "pooled-container",
+      "case_id": "symlink-escape-write",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.02712,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 43,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:synthetic-daemon-token",
+      "candidate": "pooled-container",
+      "case_id": "synthetic-daemon-token",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.025428,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:synthetic-provider-token",
+      "candidate": "pooled-container",
+      "case_id": "synthetic-provider-token",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.024095,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:synthetic-secret-store-value",
+      "candidate": "pooled-container",
+      "case_id": "synthetic-secret-store-value",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.026801,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:home-and-config-roots-absent",
+      "candidate": "pooled-container",
+      "case_id": "home-and-config-roots-absent",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.026466,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "trusted_local_limitation",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:runtime-sockets-absent",
+      "candidate": "pooled-container",
+      "case_id": "runtime-sockets-absent",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.023122,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:tcp-loopback-owned-listener",
+      "candidate": "pooled-container",
+      "case_id": "tcp-loopback-owned-listener",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.025519,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 114,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:unix-socket-owned-listener",
+      "candidate": "pooled-container",
+      "case_id": "unix-socket-owned-listener",
+      "denial_reason": "candidate boundary returned non-success",
+      "diagnostic_path": null,
+      "duration_seconds": 0.028054,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 64,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 1,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:single-descendant-ignores-parent-exit",
+      "candidate": "pooled-container",
+      "case_id": "single-descendant-ignores-parent-exit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.027856,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:post-exit-marker-write",
+      "candidate": "pooled-container",
+      "case_id": "post-exit-marker-write",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.027743,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 0,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:cpu-limit",
+      "candidate": "pooled-container",
+      "case_id": "cpu-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.027086,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1313,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 2,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:address-space-limit",
+      "candidate": "pooled-container",
+      "case_id": "address-space-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.025616,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1313,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 2,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:file-descriptor-limit",
+      "candidate": "pooled-container",
+      "case_id": "file-descriptor-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.027392,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1313,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 2,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:stdout-stderr-limit",
+      "candidate": "pooled-container",
+      "case_id": "stdout-stderr-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.029248,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1313,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 2,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:wall-time-limit",
+      "candidate": "pooled-container",
+      "case_id": "wall-time-limit",
+      "denial_reason": "outer supervisor bounded execution",
+      "diagnostic_path": null,
+      "duration_seconds": 0.026253,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1313,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "bounded",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 2,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:exact-synthetic-marker",
+      "candidate": "pooled-container",
+      "case_id": "exact-synthetic-marker",
+      "denial_reason": "unknown field",
+      "diagnostic_path": "$.planner_approval",
+      "duration_seconds": 0.029543,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1776,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:hex-synthetic-marker",
+      "candidate": "pooled-container",
+      "case_id": "hex-synthetic-marker",
+      "denial_reason": "unknown field",
+      "diagnostic_path": "$.planner_approval",
+      "duration_seconds": 0.02624,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1809,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:base64-synthetic-marker",
+      "candidate": "pooled-container",
+      "case_id": "base64-synthetic-marker",
+      "denial_reason": "unknown field",
+      "diagnostic_path": "$.planner_approval",
+      "duration_seconds": 0.030004,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1787,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:absolute-path-field",
+      "candidate": "pooled-container",
+      "case_id": "absolute-path-field",
+      "denial_reason": "unsafe path",
+      "diagnostic_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "duration_seconds": 0.024169,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1732,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    },
+    {
+      "applied_limits": {
+        "address_space_bytes": 268435456,
+        "cpu_seconds": 1,
+        "file_descriptors": 64,
+        "output_bytes": 1048576,
+        "wall_seconds": 2
+      },
+      "attempt_id": "pooled-container:parent-traversal-path-field",
+      "candidate": "pooled-container",
+      "case_id": "parent-traversal-path-field",
+      "denial_reason": "unsafe path",
+      "diagnostic_path": "$.nodes[id=lint].planning_condition.patterns[0]",
+      "duration_seconds": 0.024523,
+      "format_version": "taskflow-e03-attempt-result/v1",
+      "leak_scan": {
+        "captured_bytes": 1726,
+        "synthetic_parent_canary_found": false,
+        "truncated": false
+      },
+      "mechanism_identity": "docker-none-readonly-cgroup-rlimit",
+      "outcome": "blocked",
+      "policy_digest": "4f06d678aa42a79f56b41eebe61e7c8f061eaa8925c584831d98dc6cdde12b06",
+      "returncode": 0,
+      "timed_out": false
+    }
+  ],
+  "candidate": "pooled-container",
+  "format_version": "taskflow-e03-candidate-result/v1",
+  "outside_canary_unchanged": true,
+  "state": "exercised",
+  "suite_duration_seconds": 1.457796,
+  "unauthorized_listener_accepts": 0
+}

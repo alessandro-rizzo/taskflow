@@ -1,0 +1,98 @@
+{
+  "contract_commit": "b8039d4dc48410c43dec7702ff88086714327b2e",
+  "entries": [
+    {
+      "path": "experiments/e03-planner-trust/PHASE_B.md",
+      "sha256": "5f4e8472b38ec72a55fc1530aec1b8d4bff65bf05527a77fa39a1c70c54eb936"
+    },
+    {
+      "path": "experiments/e03-planner-trust/decision.md",
+      "sha256": "5b592f0747c00a0dc65f02ade06123cc725c01f1deae86a40288f016ce648ebc"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/availability/helper-vm.json",
+      "sha256": "1c6fd278cb1dc389f105580683ddf5f303aee91797fccd506d6028c4ff4153b0"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/availability/native.json",
+      "sha256": "5a3325d615a087a4c2b1061232057c499eb39f8d44dc99d887ed4468cf0f9c37"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/availability/pooled-container.json",
+      "sha256": "243f9e4c587d9bb1b74e5bbf0c6c16cc285d924cb544b1582ea3d2ade51e2f30"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/availability/static-descriptor.json",
+      "sha256": "7b83ff3b71c7c36e590e18dca9876587f367b5ef9f75b22cdaa8d52f5b7ec4d4"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/failures/incomplete-docker-path-setup/native.json",
+      "sha256": "19606b53f8cb4f5f5cda7163bcd47de2c55c251b500ce6476a1ee37256f91e62"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/failures/invalid-first-complete-run/helper-vm.json",
+      "sha256": "5dfaf8c9b6b537bb358c76682f40077b2dadd631c86219e0522d9d5c9a0345c9"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/failures/invalid-first-complete-run/native.json",
+      "sha256": "4b924f53411e7fcecac75fc71998493e82a36cc38e636838dde5ec83395224cc"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/failures/invalid-first-complete-run/pooled-container.json",
+      "sha256": "396a1adfd03c1fe89ef368ce0e392f67f899b716d8919601607de58213dc2546"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/failures/invalid-first-complete-run/static-descriptor.json",
+      "sha256": "6caed02671d6f33a3cc2cc7ccd0f7b6de65a4ef2a23a3cc8c933ceb5e64c825e"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/failures/setup-attempts.json",
+      "sha256": "5696fad6615a90ec034b15e7923da8ee969e1eab555d21ed1503e2d905b5f96a"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/implementation-manifest.json",
+      "sha256": "437f10cd1fa5371f8d41cc7dc03e0437a8d8374bf6105a5ae0ccfce9ec460ede"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/attacks/helper-vm.json",
+      "sha256": "5dfaf8c9b6b537bb358c76682f40077b2dadd631c86219e0522d9d5c9a0345c9"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/attacks/native.json",
+      "sha256": "c35405b8e08eef44a926cfce6586e9ebb71879da316a21e4d80b8359b9df09aa"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/attacks/pooled-container.json",
+      "sha256": "429e6d8de318bd6c900a597c21c7e58eb20a5531660509943d52d4ad0dd719bf"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/attacks/static-descriptor.json",
+      "sha256": "6caed02671d6f33a3cc2cc7ccd0f7b6de65a4ef2a23a3cc8c933ceb5e64c825e"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/benchmarks/static-descriptor/record.json",
+      "sha256": "7b5db90c093e1d191a12fe0ead1a8633d609e3b7fcca952c0dee50f08799fb7b"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/benchmarks/static-descriptor/samples.txt",
+      "sha256": "503ee8dfbc52ec9db7f4e74f9472050e06b4fe0a7eed82ae79a4e392558eda4a"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/raw/validator/cases.json",
+      "sha256": "741d5329016146034ffc244a459db51bf4cacd81482e61d4cce6eba4c9564a5c"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/scorecard.json",
+      "sha256": "22faa61914fdb2d2d48db0a28ab25ef492570da08ad67b0661a2c765c8543415"
+    },
+    {
+      "path": "experiments/e03-planner-trust/evidence/summary.md",
+      "sha256": "5291151f157162875874602cb77ec924615786de0bc76217e4b00e67adac8aa2"
+    },
+    {
+      "path": "experiments/e03-planner-trust/limitations.md",
+      "sha256": "671427993eb8bb3d5514f321168ef071ba96483ebf35350ef2499fa34bad1cf4"
+    }
+  ],
+  "format_version": "taskflow-e03-evidence-manifest/v1"
+}

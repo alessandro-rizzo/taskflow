@@ -1,0 +1,24 @@
+{
+  "candidate": "pooled-container",
+  "capabilities_dropped": [
+    "ALL"
+  ],
+  "container_id": "2dc7e4b300847c321fc678590bfdcfa183692645cf16ce6cc7cbd06f622d4dd6",
+  "engine": "docker",
+  "file_descriptors": 64,
+  "format_version": "taskflow-e03-availability/v1",
+  "image_digest": "sha256:614f10914c2a5980f85b1c011dcc413fcd46e4b1ba2818ac4ef72e245d591ce9",
+  "limitations": [
+    "home-and-config-roots-absent"
+  ],
+  "memory_bytes": 268435456,
+  "nano_cpus": 1000000000,
+  "network": "none",
+  "no_new_privileges": true,
+  "pids_limit": 32,
+  "read_only_root": true,
+  "remote_pull_used": false,
+  "server_version": "29.2.1",
+  "source_and_declared_inputs_read_only": true,
+  "state": "exercised"
+}

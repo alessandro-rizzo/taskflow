@@ -1,0 +1,7 @@
+{
+  "candidate": "static-descriptor",
+  "format_version": "taskflow-e03-availability/v1",
+  "known_good_accepted": true,
+  "project_code_executed": false,
+  "state": "exercised"
+}
