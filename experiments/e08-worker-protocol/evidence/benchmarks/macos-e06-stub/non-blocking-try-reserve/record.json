@@ -1,0 +1,67 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E08",
+  "fixture_id": "e08-worker-protocol",
+  "source_revision": "fe41c6428c4d7d432cdd463c82dd12c3465e1103",
+  "timestamp": "2026-09-04T17:46:57Z",
+  "hardware": {
+    "cpu": "managed-arm64",
+    "cores": 18,
+    "ram_gib": 1
+  },
+  "os": {
+    "name": "darwin",
+    "version": "25.5.0",
+    "build": "Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:34 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6050",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "true",
+  "cache_dimensions": {
+    "adapter": "macos-e06-stub",
+    "metric": "non-blocking-try-reserve"
+  },
+  "samples": [
+    0.005588458,
+    0.005334041,
+    0.005264792,
+    0.00550375,
+    0.005476541,
+    0.005257292,
+    0.005317917,
+    0.005227709,
+    0.005305583,
+    0.005140917,
+    0.005579084,
+    0.005423792,
+    0.005318208,
+    0.0053595,
+    0.005374584,
+    0.005317291,
+    0.005230333,
+    0.005053583,
+    0.005300125,
+    0.005452417,
+    0.005398125,
+    0.005684542,
+    0.005556334,
+    0.005402667,
+    0.005514042,
+    0.0052385,
+    0.005495625,
+    0.005292833,
+    0.005331292,
+    0.005214
+  ],
+  "sample_count": 30,
+  "median": 0.0053326664999999995,
+  "p95": 0.005588458,
+  "lease_count": 0,
+  "raw_result_location": "samples.txt"
+}

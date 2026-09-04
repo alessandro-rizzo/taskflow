@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "path": "PhaseBTaskfile.yml",
+      "sha256": "c85bab256a955eefde9cfb477b2677748e494fadd27a44617e074db7d28a849f"
+    },
+    {
+      "path": "adapters.go",
+      "sha256": "8a32096f6d20979e1f6caa32c51d1e9fc658eb5e205dccfa62216eced257e5d9"
+    },
+    {
+      "path": "cmd/e08evidence/main.go",
+      "sha256": "41306ee2b77d88b29d03dd22a309c0f5be780b6a5dfd3f41c0eb43741831e71f"
+    },
+    {
+      "path": "cmd/e08probe/main.go",
+      "sha256": "99f6cfd8d910e24457fcbe50c40d31255ebcc6cebf9e7ebed118a414d90088bb"
+    },
+    {
+      "path": "core.go",
+      "sha256": "5454d4f4841e8e3d078a37792c96b3cdff2cafa80a663f7fcf4cadffd94ed197"
+    },
+    {
+      "path": "core_test.go",
+      "sha256": "7953fb4d6d560e79815df34bee4523f8044b166c22700d867f0085a98a28dabe"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "2798454ec848e96ccb37bed64e5193ad14e46b41ac85696f79eac06f14da59fe"
+    },
+    {
+      "path": "protocol.go",
+      "sha256": "f7da36a9f0e73fc329075c6ea6759f6cc3f65900af465c0d6c991a39343cbe9b"
+    },
+    {
+      "path": "scripts/run_experiment.py",
+      "sha256": "9e59ef32a07bc3fc38e3beabef4199d41c8eca7a8afcf82ebde0c8f1cec9d7b3"
+    },
+    {
+      "path": "scripts/verify_phase_b.py",
+      "sha256": "5fe19f85fae4e0b9cca4581de05261c3d6a8619931463e0ba1cbd7a18688d5cd"
+    }
+  ],
+  "format_version": "taskflow-e08-implementation-manifest/v1",
+  "phase_a_commit": "fe41c6428c4d7d432cdd463c82dd12c3465e1103"
+}

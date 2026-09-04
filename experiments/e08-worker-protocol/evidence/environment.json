@@ -1,0 +1,9 @@
+{
+  "format_version": "taskflow-e08-environment/v1",
+  "go": "go version go1.25.12 darwin/arm64",
+  "machine": "arm64",
+  "macos_external_host_mutations": 0,
+  "release": "25.5.0",
+  "ssh_connections": 0,
+  "system": "Darwin"
+}

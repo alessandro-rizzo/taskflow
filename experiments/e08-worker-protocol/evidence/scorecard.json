@@ -1,0 +1,151 @@
+{
+  "blocked_adapter": "ssh-linux",
+  "contract_digest": "a270d6efa007b4991aacc85843c1558a03385c322c8b7828ccac336c5ddd33ed",
+  "decision_evaluation": [
+    {
+      "branch": "stop-or-narrow",
+      "precedence": 1,
+      "reason": "No exercised local hard gate failed; an approved representative remote path remains specified but unavailable.",
+      "selected": false
+    },
+    {
+      "branch": "state-machine-first-transport-deferral",
+      "precedence": 2,
+      "reason": "Local core semantics pass, but representative approved SSH/Linux evidence and transport/reconnect evidence are unavailable.",
+      "selected": true
+    },
+    {
+      "branch": "separated-worker-sandbox-session-protocols",
+      "precedence": 3,
+      "reason": "Not reached by precedence; the optional E06-shaped session remains isolated without distorting stateless in-process execution.",
+      "selected": false
+    },
+    {
+      "branch": "one-typed-core-with-capability-extensions",
+      "precedence": 4,
+      "reason": "Not reached and all-three-adapter evidence is absent.",
+      "selected": false
+    }
+  ],
+  "evaluated_adapters": [
+    "in-process",
+    "macos-e06-stub"
+  ],
+  "executable_or_typed_core_rows": 200,
+  "failed_exercised_rows": 0,
+  "fault_rows": 260,
+  "format_version": "taskflow-e08-scorecard/v1-experimental",
+  "hard_gate_observations": {
+    "corrupt_input_use_count": 0,
+    "cross_attempt_output_count": 0,
+    "double_publication_count": 0,
+    "leaked_reservation_count": 0,
+    "log_cursor_gap_count": 0,
+    "log_duplicate_identity_count": 0,
+    "planned_profile_rewrite_count": 0,
+    "replayed_log_byte_difference_count": 0,
+    "stale_success_count": 0,
+    "unowned_cleanup_target_count": 0,
+    "unrecorded_orphan_count": 0
+  },
+  "macos_stub_external_host_mutations": 0,
+  "measurements": [
+    {
+      "adapter": "in-process",
+      "metric": "ready-result-hit",
+      "observed_milliseconds": 5.765000000000001,
+      "operator": "strictly-less-than",
+      "passed": true,
+      "record": "evidence/benchmarks/in-process/ready-result-hit/record.json",
+      "sample_count": 30,
+      "statistic": "p95",
+      "threshold_milliseconds": 300
+    },
+    {
+      "adapter": "in-process",
+      "metric": "non-blocking-try-reserve",
+      "observed_milliseconds": 5.745709,
+      "operator": "less-than-or-equal",
+      "passed": true,
+      "record": "evidence/benchmarks/in-process/non-blocking-try-reserve/record.json",
+      "sample_count": 30,
+      "statistic": "maximum",
+      "threshold_milliseconds": 100
+    },
+    {
+      "adapter": "in-process",
+      "metric": "cancellation-acknowledgement",
+      "observed_milliseconds": 5.569292,
+      "operator": "less-than-or-equal",
+      "passed": true,
+      "record": "evidence/benchmarks/in-process/cancellation-acknowledgement/record.json",
+      "sample_count": 5,
+      "statistic": "maximum",
+      "threshold_milliseconds": 1000
+    },
+    {
+      "adapter": "in-process",
+      "metric": "bounded-cleanup",
+      "observed_milliseconds": 13.823042000000001,
+      "operator": "less-than-or-equal",
+      "passed": true,
+      "record": "evidence/benchmarks/in-process/bounded-cleanup/record.json",
+      "sample_count": 5,
+      "statistic": "maximum",
+      "threshold_milliseconds": 30000
+    },
+    {
+      "adapter": "macos-e06-stub",
+      "metric": "ready-result-hit",
+      "observed_milliseconds": 5.6544170000000005,
+      "operator": "strictly-less-than",
+      "passed": true,
+      "record": "evidence/benchmarks/macos-e06-stub/ready-result-hit/record.json",
+      "sample_count": 30,
+      "statistic": "p95",
+      "threshold_milliseconds": 300
+    },
+    {
+      "adapter": "macos-e06-stub",
+      "metric": "non-blocking-try-reserve",
+      "observed_milliseconds": 5.6845419999999995,
+      "operator": "less-than-or-equal",
+      "passed": true,
+      "record": "evidence/benchmarks/macos-e06-stub/non-blocking-try-reserve/record.json",
+      "sample_count": 30,
+      "statistic": "maximum",
+      "threshold_milliseconds": 100
+    },
+    {
+      "adapter": "macos-e06-stub",
+      "metric": "cancellation-acknowledgement",
+      "observed_milliseconds": 6.0897499999999996,
+      "operator": "less-than-or-equal",
+      "passed": true,
+      "record": "evidence/benchmarks/macos-e06-stub/cancellation-acknowledgement/record.json",
+      "sample_count": 5,
+      "statistic": "maximum",
+      "threshold_milliseconds": 1000
+    },
+    {
+      "adapter": "macos-e06-stub",
+      "metric": "bounded-cleanup",
+      "observed_milliseconds": 5.566167,
+      "operator": "less-than-or-equal",
+      "passed": true,
+      "record": "evidence/benchmarks/macos-e06-stub/bounded-cleanup/record.json",
+      "sample_count": 5,
+      "statistic": "maximum",
+      "threshold_milliseconds": 30000
+    }
+  ],
+  "phase_a_commit": "fe41c6428c4d7d432cdd463c82dd12c3465e1103",
+  "production_contract_allowed_to_stabilize": false,
+  "provider_option_leak_count": 0,
+  "representative_ssh_linux_evidence": false,
+  "selected_branch": "state-machine-first-transport-deferral",
+  "ssh_availability_manifest_present": false,
+  "ssh_connections": 0,
+  "state_machine_analysis_only_rows": 60,
+  "transport_frozen": false
+}
