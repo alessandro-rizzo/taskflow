@@ -20,6 +20,32 @@ configuration paths are rebuilt beneath that root rather than inherited from
 the operator environment. Native viability of this policy is deliberately
 unverified until the separately approved execution-window preflight.
 
+Every ledger row carries a top-level namespace, repetition, and cleanup action.
+Cleanup references may point only forward to an exact simulator delete or an
+owned path removal that covers the row's target; failures retain the exact
+owned target as an orphan and stop. Read-only assertions that observe live
+owned state likewise retain that state on failure instead of claiming that no
+orphan exists.
+
+Native entry recomputes component bindings from the checkout. The execution
+and fixture aggregate digests are SHA-256 of canonical JSON
+(`sort_keys=true`, compact separators) shaped as
+`{"format_version":"taskflow-e06-file-inventory/v1-experimental","files":[...]}`.
+`files` uses the fixed lexicographically ordered path lists in `guard.py`, and
+each entry binds both its repository-relative path and the SHA-256 of its exact
+bytes. Separate named hashes bind the expanded ledger, fixture, sandbox/reset
+policies, accepted manifest schema, and Phase-B frozen-artifact, protocol, and
+scope controls. A changed byte, missing file, symlink, extra binding field, or
+claim that does not match the recomputation rejects native entry.
+
+The schedule re-attests the complete semantic host/toolchain profile before
+each build set. Simulator readiness ends only after bootstatus, exact identity,
+and a custom-device-set `listapps` installation-service probe. Build, install,
+reset, and cleanup boundaries have explicit typed assertions. Terminal evidence
+contains `taskflow-t1-benchmark/v2` records plus a deterministic mechanical
+recommendation; correctness gates precede latency and concurrency branches,
+and the runner never edits the decision ADR.
+
 The Seatbelt profile constrains the invoked command process tree. It cannot by
 itself prove where an already-running CoreSimulatorService writes after Mach
 IPC. A future execution therefore also requires an approved attestation for a

@@ -163,9 +163,14 @@ def verify_contract_and_schedule() -> None:
     guard.validate_ledger(ledger)
     operations = ledger["operations"]
     identifiers = [item["id"] for item in operations]
-    require(ledger["operation_count"] == 3733, "expanded operation count drifted")
+    require(ledger["operation_count"] == 9032, "expanded operation count drifted")
+    require(all(set(("namespace", "repetition", "cleanup_action")) <= set(item) for item in operations), "operation scope/cleanup metadata missing")
     require(sum(item["action"] == "record-timing-and-assert-clean-workspace" for item in operations if item["kind"] == "effect") == 30, "warm workspace sample expansion drifted")
     require(sum(item["action"] == "record-timing-and-attest-simulator-identity" for item in operations if item["kind"] == "effect") == 90, "simulator readiness sample expansion drifted")
+    ready_samples = [item for item in operations if item.get("action") == "record-timing-and-attest-simulator-identity"]
+    require(all(item["parameters"]["timed_operation_ids"][-2:] == [item["parameters"]["identity_operation_id"], item["parameters"]["installation_service_operation_id"]] for item in ready_samples), "simulator readiness omits identity or installation service")
+    require(sum(item.get("action") == "attest-live-profile" for item in operations) >= 1, "live profile attestations missing")
+    require(sum(item.get("action") == "verify-build-output-manifest" for item in operations) > 0 and sum(item.get("action") == "verify-installed-bundle-identity" for item in operations) > 0, "build/install evidence assertions missing")
     require(sum(item["action"] == "record-build-install-test-timings-and-structured-result" for item in operations if item["kind"] == "effect") == 45, "mobile lifecycle sample expansion drifted")
     require(sum(item["action"] == "assert-zero-cross-namespace-observations" for item in operations if item["kind"] == "effect") == 20, "contamination expansion drifted")
     require(sum(item["action"] == "assert-zero-path-device-lease-or-identity-collision" for item in operations if item["kind"] == "effect") == 10, "two-namespace expansion drifted")
@@ -183,14 +188,20 @@ def verify_contract_and_schedule() -> None:
     reclaim_checks = [item for item in operations if item.get("action") == "verify-caller-loss-reclaim-order-and-deadline"]
     require(all(item["parameters"]["expected_events"] == ["lease.heartbeat.missed", "lease.expired", "orphan.detected", "orphan.reclaimed"] and item["parameters"]["cleanup_grace_seconds"] == 30.0 for item in reclaim_checks), "caller-loss W3 order/deadline drifted")
     require(sum(item.get("expected_result") == "failure" for item in operations) == 5, "lost-session rejection commands drifted")
-    require(identifiers.index("gate.root-absence") < identifiers.index("attest.runtimes"), "custom set is touched before root-absence gate")
+    require(identifiers.index("gate.root-absence") < identifiers.index("attestation.initial.profile.runtime"), "custom set is touched before root-absence gate")
     grouped = [item for item in operations if "parallel_group" in item]
     require(grouped and all(item["kind"] == "command" for item in grouped), "parallel native commands are not explicitly enumerated")
     contamination = [item for item in operations if item.get("action") == "assert-zero-cross-namespace-observations"]
     require(all(item["parameters"]["dimensions"] == ["workspace", "HOME", "TMPDIR", "DerivedData", "installed-app-data", "preferences", "keychain-canary-name", "lease-identifier"] for item in contamination), "contamination dimensions drifted")
     lifecycle = [item for item in operations if item.get("action") == "record-reset-cleanup-timings-and-residue"]
     require(all(item["parameters"]["reset_operation_ids"] and item["parameters"]["cleanup_operation_ids"] and not set(item["parameters"]["reset_operation_ids"]) & set(item["parameters"]["cleanup_operation_ids"]) for item in lifecycle), "reset and cleanup timing boundaries overlap")
+    cleanup_samples = [item for item in operations if item.get("action") == "record-cleanup-timing-and-residue"]
+    require(len(lifecycle) == len(cleanup_samples) == 45, "independent reset/cleanup samples drifted")
+    require(all(set(item["parameters"]["preparation_operation_ids"]).isdisjoint(item["parameters"]["cleanup_operation_ids"]) for item in cleanup_samples), "cleanup preparation overlaps timed cleanup")
     require(identifiers[-1] == "evidence.finalize", "terminal evidence finalization missing")
+    emit = next(item for item in operations if item.get("action") == "emit-benchmark-v2-and-decision")
+    require(emit["parameters"]["series"] == [[metric, mechanism] for metric, mechanism in schedule.BENCHMARK_SERIES] and emit["parameters"]["adr_edit_forbidden"] is True, "benchmark/decision evidence order drifted")
+    require(emit["prerequisites"] == ["cleanup.verify-absence"] and identifiers.index("cleanup.verify-absence") < identifiers.index(emit["id"]) < identifiers.index("evidence.finalize"), "decision emitted before final cleanup")
 
 
 def verify_no_execution_state() -> None:
@@ -216,7 +227,7 @@ def main() -> int:
     except (KeyError, OSError, json.JSONDecodeError, guard.GuardError, VerificationError) as error:
         print(f"verify-e06-execution: {error}")
         return 1
-    print("verify-e06-execution: immutable anchors, 3733-operation schedule, guards, and zero-execution state valid")
+    print("verify-e06-execution: immutable anchors, 9032-operation schedule, guards, and zero-execution state valid")
     return 0
 
 

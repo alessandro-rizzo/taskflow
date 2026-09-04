@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import threading
@@ -50,9 +51,9 @@ def future_manifest(ledger):
         "profile": {
             "expected_profile_digest": "a" * 64,
             "base_image_digest": None,
-            "runner_digest": "b" * 64,
-            "sandbox_policy_digest": "6a8defba7731fc5a3e560be9cd80e815930b77bab61e07b2b94f2f95ffda07c3",
-            "reset_policy_digest": "978219e5255d47a79df6a8161a8df0ec73066fb3b9852923d2ee3e69cc43907c",
+            "runner_digest": guard.implementation_component_hashes()["execution_files_sha256"],
+            "sandbox_policy_digest": guard.implementation_component_hashes()["sandbox_policy_sha256"],
+            "reset_policy_digest": guard.implementation_component_hashes()["reset_policy_sha256"],
         },
         "paths": {
             "mutable_root": guard.ROOT,
@@ -90,7 +91,7 @@ class ExecutionPreparationTests(unittest.TestCase):
 
     def test_expanded_ledger_is_deterministic(self):
         self.assertEqual(self.ledger, schedule.build_ledger())
-        self.assertEqual(3733, self.ledger["operation_count"])
+        self.assertEqual(9032, self.ledger["operation_count"])
 
     def test_recording_backend_reaches_no_native_or_filesystem_primitive(self):
         backend = runner.RecordingBackend()
@@ -112,14 +113,14 @@ class ExecutionPreparationTests(unittest.TestCase):
 
     def test_default_device_set_is_rejected(self):
         changed = copy.deepcopy(self.ledger)
-        operation = next(item for item in changed["operations"] if "/usr/bin/xcrun" in item.get("argv", []))
+        operation = next(item for item in changed["operations"] if "--set" in item.get("argv", []))
         operation["argv"] = operation["argv"][:3] + ["/usr/bin/xcrun", "simctl", "list", "devices"]
         with self.assertRaises(guard.GuardError):
             guard.validate_ledger(changed)
 
     def test_mismatched_device_set_is_rejected(self):
         changed = copy.deepcopy(self.ledger)
-        operation = next(item for item in changed["operations"] if "/usr/bin/xcrun" in item.get("argv", []))
+        operation = next(item for item in changed["operations"] if "--set" in item.get("argv", []))
         index = operation["argv"].index("--set")
         operation["argv"][index + 1] = f"{guard.ROOT}/OtherCoreSimulator"
         with self.assertRaises(guard.GuardError):
@@ -260,13 +261,13 @@ class ExecutionPreparationTests(unittest.TestCase):
                 "service_side_cleanup_policy_sha256": "6" * 64,
             }, sort_keys=True) + "\n", encoding="utf-8")
             manifest_digest = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+            components = guard.implementation_component_hashes()
             binding = {
                 "format_version": "taskflow-e06-implementation-binding/v1-experimental",
                 "implementation_commit": "1" * 40,
                 "implementation_tree": "2" * 40,
                 "manifest_sha256": manifest_digest,
-                "expanded_ledger_sha256": guard.sha256(EXECUTION / "expanded-ledger.json"),
-                "execution_files_sha256": "b" * 64,
+                **components,
                 "host_attestation_sha256": hashlib.sha256(host_path.read_bytes()).hexdigest(),
                 "coresimulator_attestation_sha256": hashlib.sha256(core_path.read_bytes()).hexdigest(),
                 "approved_by": manifest["approval"]["approved_by"],
@@ -279,10 +280,278 @@ class ExecutionPreparationTests(unittest.TestCase):
                 return "2" * 40 if arguments[-1] == "HEAD^{tree}" else "1" * 40
             with mock.patch.object(guard, "APPROVED_MANIFEST", manifest_path), mock.patch.object(guard, "APPROVED_BINDING", binding_path), mock.patch.object(guard, "APPROVED_HOST_ATTESTATION", host_path), mock.patch.object(guard, "APPROVED_CORESIMULATOR_ATTESTATION", core_path), mock.patch.object(guard, "git_value", side_effect=fake_git):
                 guard.validate_execution_binding(manifest_path, binding_path, self.ledger)
+                for field in components:
+                    drifted = dict(components)
+                    drifted[field] = ("0" if components[field][0] != "0" else "1") + components[field][1:]
+                    with self.subTest(component=field), mock.patch.object(guard, "implementation_component_hashes", return_value=drifted):
+                        with self.assertRaisesRegex(guard.GuardError, "component digest drifted"):
+                            guard.validate_execution_binding(manifest_path, binding_path, self.ledger)
                 manifest["approval"]["approved_by"] = "changed-reviewer"
                 manifest_path.write_text(json.dumps(manifest, sort_keys=True) + "\n", encoding="utf-8")
                 with self.assertRaises(guard.GuardError):
                     guard.validate_execution_binding(manifest_path, binding_path, self.ledger)
+
+    def test_inventory_digest_binds_path_and_changed_bytes(self):
+        with tempfile.TemporaryDirectory(prefix="taskflow-e06-inventory-") as temporary:
+            repository = Path(temporary)
+            (repository / "component").write_bytes(b"one\n")
+            before = guard.inventory_sha256(("component",), repository)
+            (repository / "component").write_bytes(b"two\n")
+            self.assertNotEqual(before, guard.inventory_sha256(("component",), repository))
+        self.assertEqual("experiments/e06-macos-feasibility/phase-b/frozen-artifacts.json", guard.COMPONENT_PATHS["phase_b_frozen_artifacts_sha256"])
+
+    def test_every_operation_has_exact_scope_and_semantic_cleanup(self):
+        for operation in self.ledger["operations"]:
+            self.assertIn("namespace", operation)
+            self.assertIsInstance(operation["repetition"], int)
+            self.assertIn("cleanup_action", operation)
+        create = next(item for item in self.ledger["operations"] if item.get("argv", [None] * 8)[7:8] == ["create"])
+        cleanup_ids = create["cleanup_action"]["on_success"]["operation_ids"]
+        cleanups = [next(item for item in self.ledger["operations"] if item["id"] == identifier) for identifier in cleanup_ids]
+        self.assertTrue(any(item.get("argv", [None] * 8)[7:8] == ["delete"] and create["targets"][0] in item["targets"] for item in cleanups))
+        build = next(item for item in self.ledger["operations"] if item.get("argv", [None] * 4)[3:4] == ["/usr/bin/xcodebuild"] and item["kind"] == "command" and "build" in item["argv"])
+        build_cleanup = [next(item for item in self.ledger["operations"] if item["id"] == identifier) for identifier in build["cleanup_action"]["on_success"]["operation_ids"]]
+        self.assertTrue(any(item.get("argv", [])[3:6] == ["/bin/rm", "-rf", "--"] for item in build_cleanup))
+        identity = next(item for item in self.ledger["operations"] if item["id"].endswith(".identity"))
+        self.assertEqual("retain-orphan", identity["cleanup_action"]["on_failure"]["disposition"])
+        evidence = next(item for item in self.ledger["operations"] if item.get("action") == "emit-benchmark-v2-and-decision")
+        self.assertEqual("approved-evidence-retained", evidence["cleanup_action"]["on_success"]["reason"])
+
+    def test_invalid_cleanup_mappings_are_rejected(self):
+        for mutate in ("missing", "nonexistent", "earlier", "noncleanup"):
+            changed = copy.deepcopy(self.ledger)
+            operation = next(item for item in changed["operations"] if item["id"].endswith(".create") and item["cleanup_action"]["on_success"]["disposition"] == "later-operations")
+            if mutate == "missing":
+                del operation["cleanup_action"]
+            elif mutate == "nonexistent":
+                operation["cleanup_action"]["on_success"]["operation_ids"] = ["not-present"]
+            elif mutate == "earlier":
+                operation["cleanup_action"]["on_success"]["operation_ids"] = ["setup.controller-roots"]
+            else:
+                operation["cleanup_action"]["on_success"]["operation_ids"] = [next(item["id"] for item in changed["operations"] if item["id"] > operation["id"] and item["kind"] == "command" and item["mutates"])]
+            with self.subTest(mutation=mutate), self.assertRaises(guard.GuardError):
+                guard.validate_ledger(changed)
+
+    def test_builds_have_live_profile_and_output_install_reset_attestations(self):
+        operations = self.ledger["operations"]
+        by_id = {item["id"]: item for item in operations}
+        builds = [item for item in operations if item.get("argv", [None] * 4)[3:4] == ["/usr/bin/xcodebuild"] and "build" in item.get("argv", [])]
+        self.assertTrue(builds)
+        for build in builds:
+            self.assertEqual(1, len(build["prerequisites"]))
+            profile = by_id[build["prerequisites"][0]]
+            self.assertEqual("attest-live-profile", profile.get("action"))
+            self.assertEqual(9, len(profile["parameters"]["source_operation_ids"]))
+            if build["kind"] == "command":
+                self.assertIn(build["id"] + ".verify-output", by_id)
+        self.assertTrue(all(item["parameters"]["timed_operation_ids"][-2:] == [item["parameters"]["identity_operation_id"], item["parameters"]["installation_service_operation_id"]] for item in operations if item.get("action") == "record-timing-and-attest-simulator-identity"))
+        self.assertTrue(any(item.get("action") == "verify-installed-bundle-identity" for item in operations))
+        reset = [item for item in operations if item.get("action") == "attest-reset-reusable-state"]
+        self.assertTrue(reset)
+        for item in reset:
+            self.assertEqual(guard.implementation_component_hashes()["reset_policy_sha256"], item["parameters"]["reset_policy_sha256"])
+
+    def test_live_profile_is_derived_and_missing_or_drifted_output_fails(self):
+        identifiers = [f"profile-{index}" for index in range(9)]
+        outputs = [
+            "26.5.2", "25F84", "arm64", "Xcode 26.6\nBuild version 17F113",
+            "26.5", "23F81a", "26.5", "23F81a",
+            json.dumps({"runtimes": [{"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5", "buildversion": "23F77", "supportedArchitectures": ["arm64"]}]}),
+        ]
+        backend = runner.NativeBackend(future_manifest(self.ledger))
+        backend.results.update({identifier: {"status": "passed", "stdout": output} for identifier, output in zip(identifiers, outputs)})
+        profile = backend._live_profile(identifiers)
+        expected = guard.canonical_sha256(profile)
+        self.assertEqual(expected, backend._compare_profile(profile, expected))
+        with self.assertRaisesRegex(guard.GuardError, "digest mismatch"):
+            backend._compare_profile(profile, "0" * 64)
+        backend.results[identifiers[0]]["stdout"] = ""
+        with self.assertRaisesRegex(guard.GuardError, "output missing"):
+            backend._live_profile(identifiers)
+
+    def test_simulator_ready_wall_boundary_requires_identity_and_install_service(self):
+        operation = next(item for item in self.ledger["operations"] if item.get("action") == "record-timing-and-attest-simulator-identity")
+        parameters = operation["parameters"]
+        backend = runner.NativeBackend(future_manifest(self.ledger))
+        for index, identifier in enumerate(parameters["timed_operation_ids"]):
+            backend.results[identifier] = {"status": "passed", "started_monotonic_ns": index * 1_000_000_000, "ended_monotonic_ns": (index + 1) * 1_000_000_000, "duration_ns": 1_000_000_000, "started_at_utc": "2026-09-04T10:00:00+00:00", "stdout": ""}
+        backend.results[parameters["identity_operation_id"]]["stdout"] = json.dumps({"devices": {"runtime": [{"name": parameters["expected_device_name"], "state": "Booted"}]}})
+        backend.results[parameters["installation_service_operation_id"]]["observed_result"] = "success"
+        result = backend._run_effect(operation)
+        self.assertEqual(float(len(parameters["timed_operation_ids"])), result["duration_seconds"])
+        changed = copy.deepcopy(operation)
+        changed["parameters"]["timed_operation_ids"] = changed["parameters"]["timed_operation_ids"][:-1]
+        with self.assertRaisesRegex(guard.GuardError, "omits"):
+            backend._run_effect(changed)
+
+    def test_build_install_and_reset_handlers_fail_closed(self):
+        backend = runner.NativeBackend(future_manifest(self.ledger))
+        build = next(item for item in self.ledger["operations"] if item.get("action") == "verify-build-output-manifest")
+        with self.assertRaises(guard.GuardError):
+            backend._run_effect(build)
+        install = next(item for item in self.ledger["operations"] if item.get("action") == "verify-installed-bundle-identity")
+        backend.results[install["parameters"]["container_operation_id"]] = {"status": "passed", "stdout": "/unowned/app"}
+        with self.assertRaisesRegex(guard.GuardError, "outside"):
+            backend._run_effect(install)
+        reset = copy.deepcopy(next(item for item in self.ledger["operations"] if item.get("action") == "attest-reset-reusable-state"))
+        reset["parameters"]["reset_policy_sha256"] = "0" * 64
+        with self.assertRaisesRegex(guard.GuardError, "policy digest"):
+            backend._run_effect(reset)
+
+    def test_reset_attestation_success_has_no_self_reference_and_rejects_canary(self):
+        operation = copy.deepcopy(next(item for item in self.ledger["operations"] if item.get("action") == "attest-reset-reusable-state" and item["phase"] == "timing.mobile-lifecycle"))
+        self.assertNotIn(operation["id"], operation["parameters"]["reset_operation_ids"])
+        with tempfile.TemporaryDirectory(prefix="taskflow-e06-reset-success-", dir="/private/tmp") as temporary, mock.patch.object(guard, "ROOT", temporary):
+            namespace_root = Path(temporary) / "namespace-a"
+            empty_paths = [namespace_root / name for name in ("workspace", "home", "tmp", "DerivedData", "results")]
+            for path in empty_paths:
+                path.mkdir(parents=True, exist_ok=True)
+            canaries = [str(path / ".taskflow-e06-reset-canary") for path in empty_paths]
+            operation["parameters"].update({"namespace_root": str(namespace_root), "expected_empty_paths": [str(path) for path in empty_paths], "reset_canary_paths": canaries})
+            backend = runner.NativeBackend(future_manifest(self.ledger))
+            for index, identifier in enumerate(operation["parameters"]["reset_operation_ids"]):
+                backend.results[identifier] = {"status": "passed", "started_monotonic_ns": index, "ended_monotonic_ns": index + 1, "duration_ns": 1}
+            expected_state = operation["parameters"]["expected_device_state"]
+            devices = [] if expected_state == "absent" else [{"name": operation["parameters"]["device_name"], "state": "Shutdown"}]
+            backend.results[operation["parameters"]["identity_operation_id"]] = {"status": "passed", "stdout": json.dumps({"devices": {"runtime": devices}})}
+            self.assertEqual(expected_state, backend._run_effect(operation)["reusable_state"])
+            Path(canaries[0]).write_text("retained\n", encoding="utf-8")
+            with self.assertRaisesRegex(guard.GuardError, "residue|canary"):
+                backend._run_effect(operation)
+
+    def test_reset_policy_order_and_independent_cleanup_samples(self):
+        operations = self.ledger["operations"]
+        positions = {item["id"]: index for index, item in enumerate(operations)}
+        reset_results = [item for item in operations if item.get("action") == "record-reset-cleanup-timings-and-residue"]
+        cleanup_results = [item for item in operations if item.get("action") == "record-cleanup-timing-and-residue"]
+        self.assertEqual(45, len(reset_results))
+        self.assertEqual(45, len(cleanup_results))
+        for result in reset_results:
+            ids = result["parameters"]["reset_operation_ids"]
+            rows = [operations[positions[identifier]] for identifier in ids]
+            self.assertEqual("shutdown", rows[0]["argv"][7])
+            self.assertIn(rows[1]["argv"][7], {"erase", "delete"})
+            self.assertEqual(["/bin/rm", "-rf", "--"], rows[2]["argv"][3:6])
+            self.assertEqual("/bin/mkdir", rows[3]["argv"][3])
+            self.assertEqual("probe-reset-residue", rows[4]["action"])
+            self.assertEqual("attest-reset-reusable-state", rows[-1]["action"])
+            cleanup_ids = set(result["parameters"]["cleanup_operation_ids"])
+            self.assertFalse(set(ids) & cleanup_ids)
+        for result in cleanup_results:
+            self.assertTrue(result["parameters"]["preparation_operation_ids"])
+            self.assertTrue(all(positions[identifier] < positions[result["parameters"]["cleanup_operation_ids"][0]] for identifier in result["parameters"]["preparation_operation_ids"]))
+
+    def test_lifecycle_metrics_keep_distinct_utc_starts_and_verified_preparation_chains(self):
+        operation = copy.deepcopy(next(item for item in self.ledger["operations"] if item.get("action") == "record-build-install-test-timings-and-structured-result"))
+        parameters = operation["parameters"]
+        expected_times = {
+            "xcode-build": "2026-09-04T10:00:01Z",
+            "simulator-install": "2026-09-04T10:00:02Z",
+            "mobile-test": "2026-09-04T10:00:03Z",
+        }
+        backend = runner.NativeBackend(future_manifest(self.ledger))
+        for metric, boundary in zip(parameters["metrics"], parameters["timed_operation_boundaries"]):
+            for offset, identifier in enumerate(boundary):
+                backend.results[identifier] = {
+                    "status": "passed",
+                    "started_at_utc": expected_times[metric] if offset == 0 else "2026-09-04T10:00:09Z",
+                    "started_monotonic_ns": offset,
+                    "ended_monotonic_ns": offset + 1,
+                    "duration_ns": 1,
+                }
+        for preparation in parameters["preparation_operation_ids_by_metric"].values():
+            for identifier in preparation:
+                backend.results.setdefault(identifier, {"status": "passed"})
+        backend.results[parameters["identity_operation_id"]] = {"status": "passed", "stdout": json.dumps({"devices": {"runtime": [{"name": parameters["expected_device_name"], "state": "Booted"}]}})}
+        backend.results[parameters["timed_operation_ids"][-1]].update({"stdout": 'TASKFLOW_E06_RESULT:{"status":"ok","namespace":"namespace-a"}\n'})
+        memory, disk, thermal = parameters["capacity_operation_ids"]
+        backend.results[memory] = {"status": "passed", "stdout": "Mach Virtual Memory Statistics: (page size of 4096 bytes)\nPages free: 5000000.\nPages inactive: 1.\nPages speculative: 1.\n"}
+        backend.results[disk] = {"status": "passed", "stdout": "Filesystem 1024-blocks Used Available Capacity Mounted on\n/dev/test 1 1 314572800 1% /\n"}
+        backend.results[thermal] = {"status": "passed", "stdout": "0\n"}
+        result = backend._run_effect(operation)
+        self.assertEqual(expected_times, result["sample_started_at_utc_by_metric"])
+        chains = result["preparation_operation_ids_by_metric"]
+        build_boundary, install_boundary, launch_boundary = parameters["timed_operation_boundaries"]
+        self.assertTrue(chains["xcode-build"])
+        self.assertTrue(set(chains["xcode-build"]).isdisjoint(build_boundary))
+        self.assertEqual(chains["xcode-build"] + build_boundary, chains["simulator-install"])
+        self.assertEqual(chains["simulator-install"] + install_boundary, chains["mobile-test"])
+        self.assertIn(next(identifier for identifier in build_boundary if identifier.endswith("verify-output")), chains["simulator-install"])
+        self.assertIn(next(identifier for identifier in install_boundary if identifier.endswith("verify-installed")), chains["mobile-test"])
+        self.assertTrue(set(chains["mobile-test"]).isdisjoint(launch_boundary))
+
+    def test_benchmark_records_align_validate_and_reproduce_deterministically(self):
+        operation = next(item for item in self.ledger["operations"] if item.get("action") == "emit-benchmark-v2-and-decision")
+        manifest = future_manifest(self.ledger)
+        backend = runner.NativeBackend(manifest, self.ledger, source_revision="e" * 40)
+        timestamp = "2026-09-04T10:00:00Z"
+        backend.results.update({
+            "attest.hardware-cpu": {"status": "passed", "stdout": "Apple M4 Max"},
+            "attest.hardware-cores": {"status": "passed", "stdout": "12"},
+            "attest.hardware-ram": {"status": "passed", "stdout": str(64 * 1024 ** 3)},
+            "attestation.initial.profile.compare": {"status": "passed", "profile": {"macos_version": "26.5.2", "macos_build": "25F84", "architecture": "arm64", "xcode_version": "26.6", "xcode_build": "17F113"}},
+            "concurrency": {"status": "passed", "concurrency": 4},
+            "cleanup.assert-no-owned-devices-or-record-orphans": {"status": "passed", "orphan_count": 0},
+            "cleanup.remove-owned-root": {"status": "passed"},
+            "cleanup.verify-absence": {"status": "passed", "orphan_count": 0},
+        })
+        for repetition in range(1, 31):
+            backend.results[f"warm-{repetition}"] = {"status": "passed", "metric": "warm-workspace-ready", "repetition": repetition, "duration_seconds": 1.0, "sample_started_at_utc": timestamp, "preparation_operation_ids": [f"warm-{repetition}-remove", f"warm-{repetition}-mkdir"]}
+        for mechanism in schedule.MECHANISMS:
+            for repetition in range(1, 31):
+                backend.results[f"ready-{mechanism}-{repetition}"] = {"status": "passed", "metric": "simulator-ready-to-install", "mechanism": mechanism, "repetition": repetition, "duration_seconds": 2.0, "sample_started_at_utc": timestamp, "preparation_operation_ids": [f"ready-{mechanism}-{repetition}-prepare"]}
+            for repetition in range(1, 16):
+                common = {"status": "passed", "mechanism": mechanism, "repetition": repetition, "sample_started_at_utc": timestamp, "preparation_operation_ids": [f"lifecycle-{mechanism}-{repetition}-prepare"]}
+                lifecycle_metrics = {"xcode-build": 3.0, "simulator-install": 1.0, "mobile-test": 1.0}
+                backend.results[f"lifecycle-{mechanism}-{repetition}"] = {
+                    "status": "passed",
+                    "mechanism": mechanism,
+                    "repetition": repetition,
+                    "metrics": lifecycle_metrics,
+                    "sample_started_at_utc_by_metric": {metric: timestamp for metric in lifecycle_metrics},
+                    "preparation_operation_ids_by_metric": {metric: [f"lifecycle-{mechanism}-{repetition}-{metric}-prepare"] for metric in lifecycle_metrics},
+                }
+                backend.results[f"reset-{mechanism}-{repetition}"] = {**common, "metrics": {"candidate-reset": 1.0, "candidate-cleanup": 1.0}, "orphan_count": 0}
+        with tempfile.TemporaryDirectory(prefix="taskflow-e06-benchmark-") as temporary, mock.patch.object(runner, "REPOSITORY", Path(temporary)):
+            missing_cleanup = backend.results.pop("cleanup.verify-absence")
+            with self.assertRaisesRegex(guard.GuardError, "result missing"):
+                backend._run_effect(operation)
+            self.assertFalse(any((Path(temporary) / path).exists() for path in operation["parameters"]["output_paths"]))
+            backend.results["cleanup.verify-absence"] = missing_cleanup
+            missing_sample = backend.results.pop("warm-30")
+            with self.assertRaisesRegex(guard.GuardError, "incomplete/duplicated"):
+                backend._run_effect(operation)
+            backend.results["warm-30"] = missing_sample
+            backend.results["warm-30"]["repetition"] = 29
+            with self.assertRaisesRegex(guard.GuardError, "incomplete/duplicated"):
+                backend._run_effect(operation)
+            backend.results["warm-30"]["repetition"] = 30
+            result = backend._run_effect(operation)
+            self.assertEqual(19, result["record_count"])
+            record_paths = operation["parameters"]["output_paths"][:-2]
+            before = {path: (Path(temporary) / path).read_bytes() for path in operation["parameters"]["output_paths"]}
+            backend._run_effect(operation)
+            self.assertEqual(before, {path: (Path(temporary) / path).read_bytes() for path in operation["parameters"]["output_paths"]})
+            for path, (metric, mechanism) in zip(record_paths, schedule.BENCHMARK_SERIES):
+                record = json.loads((Path(temporary) / path).read_text(encoding="utf-8"))
+                self.assertEqual("taskflow-t1-benchmark/v2", record["schema_version"])
+                self.assertIn(metric, path)
+                if mechanism:
+                    self.assertIn(mechanism, path)
+                self.assertEqual(30 if metric in {"warm-workspace-ready", "simulator-ready-to-install"} else 15, record["sample_count"])
+                self.assertNotEqual(manifest["approval"]["approved_at"], record["timestamp"])
+                self.assertTrue(record["preparation_command"].startswith("python3 experiments/e06-macos-feasibility/phase-b/execution/scripts/runner.py --execute"))
+                self.assertEqual(record["sample_count"], len(record["sample_preparation_operation_ids"]))
+            validator = Path(temporary) / "validator"
+            validator.mkdir()
+            (validator / "go.mod").write_text(f"module taskflow-e06-record-validator\n\ngo 1.25.12\n\nrequire github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness v0.0.0\nreplace github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness => {verify_execution.REPOSITORY / 'fixtures/t1-benchmark-harness'}\n", encoding="utf-8")
+            (validator / "main.go").write_text('package main\nimport ("encoding/json"; "os"; benchmark "github.com/alessandro-rizzo/taskflow/fixtures/t1-benchmark-harness")\nfunc main(){ for _, p := range os.Args[1:] { f,e:=os.Open(p); if e!=nil { panic(e) }; var r benchmark.Record; if e=json.NewDecoder(f).Decode(&r); e!=nil { panic(e) }; if e=benchmark.Validate(r); e!=nil { panic(e) } } }\n', encoding="utf-8")
+            environment = {"PATH": os.environ["PATH"], "HOME": temporary, "GOCACHE": str(Path(temporary) / "go-cache"), "GOMODCACHE": str(Path(temporary) / "go-mod-cache")}
+            completed = subprocess.run(["go", "run", ".", *[str(Path(temporary) / path) for path in record_paths]], cwd=validator, env=environment, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            self.assertEqual(0, completed.returncode, completed.stderr)
+            decision = json.loads((Path(temporary) / operation["parameters"]["output_paths"][-1]).read_text())
+            self.assertEqual("trusted-native-host", decision["recommendation"])
+            self.assertFalse(decision["adr_edit_performed"])
 
     def test_caller_loss_lease_uses_injected_clock_and_w3_order(self):
         class FakeClock:

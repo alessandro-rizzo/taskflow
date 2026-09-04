@@ -8,12 +8,14 @@ import hashlib
 import json
 import math
 import os
+import plistlib
 import re
 import signal
 import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
@@ -93,7 +95,7 @@ def namespace_paths_for(namespace: str) -> list[str]:
 class NativeBackend:
     """Native backend reachable only after guard.validate_execution_binding."""
 
-    def __init__(self, manifest: dict[str, Any], ledger: dict[str, Any] | None = None, *, monotonic_ns: Callable[[], int] = time.monotonic_ns, wait: Callable[[float], None] = time.sleep) -> None:
+    def __init__(self, manifest: dict[str, Any], ledger: dict[str, Any] | None = None, *, source_revision: str = "repository-test-revision", monotonic_ns: Callable[[], int] = time.monotonic_ns, wait: Callable[[float], None] = time.sleep) -> None:
         self.manifest = manifest
         self.ledger = ledger
         self.children: dict[str, tuple[subprocess.Popen[str], int]] = {}
@@ -101,6 +103,7 @@ class NativeBackend:
         self.evidence_root = REPOSITORY / manifest["evidence_root"]
         self.monotonic_ns = monotonic_ns
         self.wait = wait
+        self.source_revision = source_revision
 
     def _result(self, identifier: str) -> dict[str, Any]:
         record = self.results.get(identifier)
@@ -177,6 +180,45 @@ class NativeBackend:
         guard.require(thermal_state in {"nominal", "fair"}, f"thermal stop reached: {thermal_state}")
         return {"free_ram_gib": free_ram_gib, "free_disk_gib": free_disk_gib, "thermal_state": thermal_state}
 
+    def _compare_profile(self, profile: dict[str, Any], expected_digest: str) -> str:
+        observed = guard.canonical_sha256(profile)
+        guard.require(observed == expected_digest, f"live profile digest mismatch: expected {expected_digest}, observed {observed}")
+        return observed
+
+    def _live_profile(self, identifiers: list[str]) -> dict[str, Any]:
+        guard.require(len(identifiers) == 9, "profile attestation requires nine owned command results")
+        outputs = [self._result(identifier).get("stdout", "").strip() for identifier in identifiers]
+        guard.require(all(outputs), "profile attestation command output missing")
+        xcode = outputs[3].splitlines()
+        guard.require(len(xcode) == 2 and xcode[0].startswith("Xcode ") and xcode[1].startswith("Build version "), "Xcode identity output invalid")
+        try:
+            runtime_json = json.loads(outputs[8])
+        except json.JSONDecodeError as error:
+            raise RunnerError("runtime profile JSON invalid") from error
+        matches = [item for item in runtime_json.get("runtimes", []) if isinstance(item, dict) and item.get("identifier") == "com.apple.CoreSimulator.SimRuntime.iOS-26-5"]
+        guard.require(len(matches) == 1, "approved simulator runtime missing or duplicated")
+        runtime = matches[0]
+        architectures = runtime.get("supportedArchitectures")
+        guard.require(isinstance(architectures, list) and architectures and all(isinstance(item, str) for item in architectures), "runtime architectures missing")
+        components = guard.implementation_component_hashes()
+        profile = {
+            "mechanism_id": "trusted-native-host",
+            "mechanism_version": f"native-macos-{outputs[1]}-xcode-{xcode[1].removeprefix('Build version ')}",
+            "base_image_digest": None,
+            "macos_version": outputs[0],
+            "macos_build": outputs[1],
+            "architecture": outputs[2],
+            "xcode_version": xcode[0].removeprefix("Xcode "),
+            "xcode_build": xcode[1].removeprefix("Build version "),
+            "sdk_identifiers_and_builds": [f"iphoneos{outputs[4]}@{outputs[5]}", f"iphonesimulator{outputs[6]}@{outputs[7]}"],
+            "simulator_runtime_identifier_build_and_architectures": f"{runtime['identifier']}@{runtime.get('buildversion')}@{','.join(sorted(architectures))}",
+            "runner_digest": components["execution_files_sha256"],
+            "sandbox_policy_digest": components["sandbox_policy_sha256"],
+            "reset_policy_digest": components["reset_policy_sha256"],
+        }
+        guard.require(profile["mechanism_version"] == "native-macos-25F84-xcode-17F113", "live mechanism version drifted")
+        return profile
+
     def _wait_until(self, deadline_ns: int) -> int:
         while self.monotonic_ns() < deadline_ns:
             remaining = (deadline_ns - self.monotonic_ns()) / 1_000_000_000
@@ -219,13 +261,14 @@ class NativeBackend:
             if guard.under_root(target, allow_root=True):
                 ensure_no_symlink_chain(target)
         started = self.monotonic_ns()
+        started_at_utc = datetime.now(timezone.utc).isoformat()
         environment = child_environment(operation)
         if operation["kind"] == "child-command":
             process = subprocess.Popen(operation["argv"], cwd=REPOSITORY, env=environment, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
             process_group = os.getpgid(process.pid)
             guard.require(process.pid > 1 and process_group == process.pid, f"child did not acquire an owned process group: {operation['id']}")
             self.children[operation["child_handle"]] = (process, process_group)
-            return {"status": "started", "pid": process.pid, "process_group": process_group, "started_monotonic_ns": started}
+            return {"status": "started", "pid": process.pid, "process_group": process_group, "started_monotonic_ns": started, "started_at_utc": started_at_utc}
         completed = subprocess.run(operation["argv"], cwd=REPOSITORY, env=environment, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=operation["timeout_seconds"])
         ended = self.monotonic_ns()
         expected_result = operation["expected_result"]
@@ -239,6 +282,7 @@ class NativeBackend:
             "started_monotonic_ns": started,
             "ended_monotonic_ns": ended,
             "duration_ns": ended - started,
+            "started_at_utc": started_at_utc,
             "stdout": sanitized(completed.stdout),
             "stderr": sanitized(completed.stderr),
         }
@@ -267,26 +311,97 @@ class NativeBackend:
         parameters = operation["parameters"]
         if action == "assert-profile-mismatch-rejected-before-mutation":
             planned = self.manifest["profile"]["expected_profile_digest"]
-            mismatch = ("0" if planned[0] != "0" else "1") + planned[1:]
             try:
-                guard.require(mismatch == planned, "deliberate profile mismatch")
+                self._compare_profile({"deliberate": "profile-mismatch"}, planned)
             except guard.GuardError:
-                return {"status": "passed", "rejections": 1, "mutation_count": 0, "observed_digest": mismatch}
+                return {"status": "passed", "rejections": 1, "mutation_count": 0, "comparison_path": "canonical-live-profile-digest"}
             raise RunnerError("deliberate profile mismatch was not rejected")
+        if action == "attest-live-profile":
+            profile = self._live_profile(parameters["source_operation_ids"])
+            observed = self._compare_profile(profile, self.manifest["profile"]["expected_profile_digest"])
+            return {"status": "passed", "profile": profile, "observed_profile_digest": observed, "repetition": parameters["repetition"]}
         if action == "assert-root-absence-before-native":
             guard.require(not os.path.lexists(guard.ROOT), "owned mutable root exists before first native operation")
             return {"status": "passed", "mutable_root_absent": True}
         if action == "assert-capacity-thermal-window":
             return {"status": "passed", **self._capacity(parameters["source_operation_ids"])}
         if action == "record-timing-and-assert-clean-workspace":
+            guard.require(parameters["reset_policy_sha256"] == guard.implementation_component_hashes()["reset_policy_sha256"], "warm workspace reset policy digest drifted")
             for target in operation["targets"]:
                 path = Path(target)
                 guard.require(path.is_dir() and not path.is_symlink(), f"workspace root missing or unsafe: {target}")
                 guard.require(not any(path.iterdir()), f"workspace root not empty: {target}")
-            return {"status": "passed", "metric": parameters["metric"], "repetition": parameters["repetition"], "duration_seconds": self._duration_seconds(parameters["timed_operation_ids"])}
+            return {"status": "passed", "metric": parameters["metric"], "repetition": parameters["repetition"], "duration_seconds": self._duration_seconds(parameters["timed_operation_ids"]), "sample_started_at_utc": self._result(parameters["timed_operation_ids"][0]).get("started_at_utc"), "preparation_operation_ids": parameters["preparation_operation_ids"]}
         if action == "record-timing-and-attest-simulator-identity":
             self._attest_device(parameters["identity_operation_id"], parameters["expected_device_name"])
-            return {"status": "passed", "metric": parameters["metric"], "mechanism": parameters["mechanism"], "repetition": parameters["repetition"], "duration_seconds": self._duration_seconds(parameters["timed_operation_ids"]), "device_name": parameters["expected_device_name"]}
+            service = self._result(parameters["installation_service_operation_id"])
+            guard.require(service.get("observed_result") == "success", "installation service is not reachable")
+            guard.require(parameters["timed_operation_ids"][-2:] == [parameters["identity_operation_id"], parameters["installation_service_operation_id"]], "simulator-ready boundary omits identity or installation service")
+            return {"status": "passed", "metric": parameters["metric"], "mechanism": parameters["mechanism"], "repetition": parameters["repetition"], "duration_seconds": self._wall_duration_seconds(parameters["timed_operation_ids"]), "sample_started_at_utc": self._result(parameters["timed_operation_ids"][0]).get("started_at_utc"), "preparation_operation_ids": parameters["preparation_operation_ids"], "device_name": parameters["expected_device_name"], "installation_service_reachable": True}
+        if action == "seed-reset-contamination-markers":
+            guard.require(parameters["reset_policy_sha256"] == guard.implementation_component_hashes()["reset_policy_sha256"], "reset contamination policy digest drifted")
+            created = []
+            for target_value in operation["targets"]:
+                target = Path(target_value)
+                ensure_no_symlink_chain(str(target))
+                guard.require(target.is_dir() and not target.is_symlink(), f"reset contamination target missing: {target}")
+                marker = target / ".taskflow-e06-reset-canary"
+                marker.write_text(parameters["namespace"] + "\n", encoding="utf-8")
+                created.append(str(marker))
+            return {"status": "passed", "marker_paths": created, "reset_policy_sha256": parameters["reset_policy_sha256"]}
+        if action == "probe-reset-residue":
+            guard.require(parameters["reset_policy_sha256"] == guard.implementation_component_hashes()["reset_policy_sha256"], "reset residue policy digest drifted")
+            empty_paths = parameters["expected_empty_paths"]
+            canaries = parameters["reset_canary_paths"]
+            guard.require(empty_paths and all(guard.under_root(path) for path in [*empty_paths, *canaries]), "reset residue paths invalid")
+            for path_value in empty_paths:
+                path = Path(path_value)
+                guard.require(path.is_dir() and not path.is_symlink() and not any(path.iterdir()), f"reset residue remains: {path_value}")
+            guard.require(not any(os.path.lexists(path) for path in canaries), "reset canary remains after namespace recreation")
+            return {"status": "passed", "namespace": parameters["namespace"], "empty_path_count": len(empty_paths), "canary_count": 0}
+        if action == "verify-build-output-manifest":
+            app = Path(parameters["app_path"])
+            manifest = Path(parameters["output_manifest_path"])
+            ensure_no_symlink_chain(str(app))
+            ensure_no_symlink_chain(str(manifest))
+            guard.require(app.is_dir() and not app.is_symlink(), "declared app build output missing or unsafe")
+            info = app / "Info.plist"
+            guard.require(info.is_file() and not info.is_symlink(), "built app Info.plist missing")
+            with info.open("rb") as stream:
+                plist = plistlib.load(stream)
+            guard.require(plist.get("CFBundleIdentifier") == parameters["bundle_identifier"], "built app bundle identifier drifted")
+            files = [{"path": path.relative_to(app).as_posix(), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for path in sorted(app.rglob("*")) if path.is_file() and not path.is_symlink()]
+            guard.require(files, "built app output manifest is empty")
+            payload = {"format_version": "taskflow-e06-build-output/v1-experimental", "bundle_identifier": parameters["bundle_identifier"], "files": files}
+            manifest.write_text(json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+            guard.require(json.loads(manifest.read_text(encoding="utf-8")) == payload, "build output manifest readback mismatch")
+            return {"status": "passed", "app_path": str(app), "output_manifest_path": str(manifest), "file_count": len(files), "manifest_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest()}
+        if action == "verify-installed-bundle-identity":
+            output = self._result(parameters["container_operation_id"]).get("stdout", "").strip()
+            guard.require(output and guard.under_root(output), "installed bundle container is absent or outside custom device set")
+            guard.require(output.startswith(guard.DEVICE_SET + "/"), "installed bundle did not resolve inside the approved custom set")
+            return {"status": "passed", "device_name": parameters["device_name"], "bundle_identifier": parameters["bundle_identifier"], "container_path": output}
+        if action == "attest-reset-reusable-state":
+            components = guard.implementation_component_hashes()
+            guard.require(parameters["reset_policy_sha256"] == components["reset_policy_sha256"], "reset policy digest drifted")
+            if parameters["expected_device_state"] == "absent":
+                self._assert_device_absent(parameters["identity_operation_id"], parameters["device_name"])
+            else:
+                guard.require(parameters["expected_device_state"] == "Shutdown", "reset device-state contract invalid")
+                self._attest_device(parameters["identity_operation_id"], parameters["device_name"], expected_state="Shutdown")
+            guard.require(parameters["reset_operation_ids"], "reset operation set missing")
+            namespace_root = parameters.get("namespace_root")
+            empty_paths = parameters.get("expected_empty_paths")
+            canaries = parameters.get("reset_canary_paths")
+            guard.require(namespace_root is None or (isinstance(namespace_root, str) and guard.under_root(namespace_root)), "reset namespace root invalid")
+            guard.require(isinstance(empty_paths, list) and isinstance(canaries, list) and all(isinstance(path, str) and guard.under_root(path) for path in [*empty_paths, *canaries]), "reset residue paths invalid")
+            if namespace_root is not None:
+                guard.require(Path(namespace_root).is_dir() and not Path(namespace_root).is_symlink(), f"reset namespace was not recreated: {namespace_root}")
+                for path_value in empty_paths:
+                    path = Path(path_value)
+                    guard.require(path.is_dir() and not path.is_symlink() and not any(path.iterdir()), f"reset residue remains at attestation: {path_value}")
+            guard.require(not any(os.path.lexists(path) for path in canaries), "reset canary contamination remains")
+            return {"status": "passed", "device_name": parameters["device_name"], "reusable_state": parameters["expected_device_state"], "reset_policy_sha256": parameters["reset_policy_sha256"], "reset_seconds": self._wall_duration_seconds(parameters["reset_operation_ids"])}
         if action == "aggregate-strict-p95":
             samples = [self._result(identifier).get("duration_seconds") for identifier in parameters["sample_result_ids"]]
             guard.require(len(samples) == parameters["expected_sample_count"] and all(isinstance(item, (int, float)) for item in samples), f"{parameters['metric']}: incomplete samples")
@@ -366,16 +481,44 @@ class NativeBackend:
             self._attest_device(parameters["identity_operation_id"], parameters["expected_device_name"])
             smoke = self._smoke_result(parameters["timed_operation_ids"][-1])
             guard.require(smoke.get("namespace") in guard.NAMESPACE_NAMES, "mobile smoke namespace invalid")
-            durations = {metric: self._duration_seconds([identifier]) for metric, identifier in zip(parameters["metrics"], parameters["timed_operation_ids"])}
-            return {"status": "passed", "metrics": durations, "repetition": parameters["repetition"], "mechanism": parameters["mechanism"], "capacity": self._capacity(parameters["capacity_operation_ids"])}
+            boundaries = parameters.get("timed_operation_boundaries")
+            guard.require(isinstance(boundaries, list) and len(boundaries) == len(parameters["metrics"]), "mobile timing boundaries missing")
+            durations = {metric: self._wall_duration_seconds(identifiers) for metric, identifiers in zip(parameters["metrics"], boundaries)}
+            preparation_by_metric = parameters.get("preparation_operation_ids_by_metric")
+            guard.require(isinstance(preparation_by_metric, dict) and set(preparation_by_metric) == set(parameters["metrics"]), "mobile preparation boundaries missing")
+            expected_preparation = list(preparation_by_metric[parameters["metrics"][0]])
+            for metric, boundary in zip(parameters["metrics"], boundaries):
+                preparation = preparation_by_metric[metric]
+                guard.require(isinstance(preparation, list) and preparation == expected_preparation, f"{metric}: preparation chain does not end immediately before sample boundary")
+                guard.require(set(preparation).isdisjoint(boundary), f"{metric}: measured boundary is incorrectly included in preparation")
+                guard.require(all(identifier in self.results for identifier in preparation), f"{metric}: preparation result missing")
+                expected_preparation.extend(boundary)
+            return {
+                "status": "passed",
+                "metrics": durations,
+                "repetition": parameters["repetition"],
+                "mechanism": parameters["mechanism"],
+                "sample_started_at_utc_by_metric": {
+                    metric: self._result(boundary[0]).get("started_at_utc")
+                    for metric, boundary in zip(parameters["metrics"], boundaries)
+                },
+                "preparation_operation_ids_by_metric": preparation_by_metric,
+                "capacity": self._capacity(parameters["capacity_operation_ids"]),
+            }
         if action == "record-reset-cleanup-timings-and-residue":
             self._assert_device_absent(parameters["post_cleanup_identity_operation_id"], parameters["expected_absent_device_name"])
-            reset_seconds = self._duration_seconds(parameters["reset_operation_ids"])
-            cleanup_seconds = self._duration_seconds(parameters["cleanup_operation_ids"])
+            reset_seconds = self._wall_duration_seconds(parameters["reset_operation_ids"])
+            cleanup_seconds = self._wall_duration_seconds(parameters["cleanup_operation_ids"])
             guard.require(cleanup_seconds <= parameters["cleanup_deadline_seconds"], f"cleanup deadline exceeded: {cleanup_seconds:.6f}s")
             namespace_root = Path(operation["targets"][1])
             guard.require(not namespace_root.exists(), f"namespace cleanup incomplete: {namespace_root}")
-            return {"status": "passed", "metrics": {"candidate-reset": reset_seconds, "candidate-cleanup": cleanup_seconds}, "orphan_count": 0}
+            return {"status": "passed", "metrics": {"candidate-reset": reset_seconds}, "reset_teardown_seconds": cleanup_seconds, "mechanism": parameters["mechanism"], "repetition": parameters["repetition"], "sample_started_at_utc": self._result(parameters["reset_operation_ids"][0]).get("started_at_utc"), "preparation_operation_ids": parameters.get("preparation_operation_ids", []), "orphan_count": 0}
+        if action == "record-cleanup-timing-and-residue":
+            self._assert_device_absent(parameters["post_cleanup_identity_operation_id"], parameters["expected_absent_device_name"])
+            cleanup_seconds = self._wall_duration_seconds(parameters["cleanup_operation_ids"])
+            guard.require(cleanup_seconds <= parameters["cleanup_deadline_seconds"], f"cleanup deadline exceeded: {cleanup_seconds:.6f}s")
+            guard.require(not os.path.lexists(parameters["namespace_root"]), f"cleanup namespace remains: {parameters['namespace_root']}")
+            return {"status": "passed", "metrics": {"candidate-cleanup": cleanup_seconds}, "mechanism": parameters["mechanism"], "repetition": parameters["repetition"], "sample_started_at_utc": self._result(parameters["cleanup_operation_ids"][0]).get("started_at_utc"), "preparation_operation_ids": parameters["preparation_operation_ids"], "orphan_count": 0}
         if action == "assert-lost-session-rejected-and-clean-retry-possible":
             lost_use = self._result(parameters["lost_use_operation_id"])
             guard.require(lost_use.get("expected_result") == "failure" and lost_use.get("observed_result") == "failure", "lost-session use was not rejected")
@@ -455,15 +598,105 @@ class NativeBackend:
             guard.require(parameters["not_applicable"] == ["cold-vm-boot", "vm-loss", "immutable-base-integrity", "image-import-update"], "not-applicable set drifted")
             guard.require(parameters["unmeasured"] == ["network-image-distribution", "native-xcode-sdk-runtime-update-and-rollback"], "unmeasured limitation set drifted")
             return {"status": "passed", **parameters}
+        if action == "emit-benchmark-v2-and-decision":
+            guard.require(parameters["adr_edit_forbidden"] is True, "evidence generation may not edit the ADR")
+            final_cleanup = [self._result(identifier) for identifier in parameters["final_cleanup_operation_ids"]]
+            guard.require(all(result.get("status") == "passed" for result in final_cleanup), "final cleanup did not pass")
+            cpu, cores, ram = [self._result(identifier).get("stdout", "").strip() for identifier in parameters["hardware_operation_ids"]]
+            guard.require(cpu and cores.isdigit() and ram.isdigit() and int(cores) > 0 and int(ram) > 0, "benchmark hardware attestation incomplete")
+            profile_result = self._result(parameters["profile_operation_id"])
+            profile = profile_result.get("profile")
+            guard.require(isinstance(profile, dict), "benchmark profile attestation missing")
+
+            def statistics(samples: list[float]) -> tuple[float, float]:
+                guard.require(samples and all(isinstance(value, (int, float)) and value >= 0 for value in samples), "benchmark samples missing or invalid")
+                ordered = sorted(float(value) for value in samples)
+                middle = len(ordered) // 2
+                median = ordered[middle] if len(ordered) % 2 else (ordered[middle - 1] + ordered[middle]) / 2
+                p95 = ordered[int(math.floor(0.95 * (len(ordered) - 1) + 0.5))]
+                return median, p95
+
+            sample_sets: list[tuple[str, str | None, list[dict[str, Any]]]] = []
+            warm = [result for result in self.results.values() if result.get("metric") == "warm-workspace-ready" and "duration_seconds" in result]
+            sample_sets.append(("warm-workspace-ready", None, warm))
+            for mechanism in schedule.MECHANISMS:
+                ready = [result for result in self.results.values() if result.get("metric") == "simulator-ready-to-install" and result.get("mechanism") == mechanism and "duration_seconds" in result]
+                sample_sets.append(("simulator-ready-to-install", mechanism, ready))
+                lifecycle = [result for result in self.results.values() if result.get("mechanism") == mechanism and isinstance(result.get("metrics"), dict)]
+                for metric in ("xcode-build", "simulator-install", "mobile-test", "candidate-reset", "candidate-cleanup"):
+                    sample_sets.append((metric, mechanism, [result for result in lifecycle if metric in result["metrics"]]))
+            output_paths = parameters["output_paths"]
+            record_paths = output_paths[:-2]
+            guard.require(len(sample_sets) == len(record_paths) and parameters["series"] == [[metric, mechanism] for metric, mechanism, _ in sample_sets], "benchmark output ledger series is incomplete or misordered")
+            generated: list[str] = []
+            records = []
+            for path_value, (metric, mechanism, sample_results) in zip(record_paths, sample_sets):
+                expected_count = 30 if metric in {"warm-workspace-ready", "simulator-ready-to-install"} else 15
+                repetitions = [result.get("repetition") for result in sample_results]
+                guard.require(len(sample_results) == expected_count and sorted(repetitions) == list(range(1, expected_count + 1)), f"{metric}/{mechanism or 'native-host'}: sample count or repetitions incomplete/duplicated")
+                samples = [result["duration_seconds"] if "duration_seconds" in result else result["metrics"][metric] for result in sample_results]
+                median, p95 = statistics(samples)
+                timestamps = [
+                    result.get("sample_started_at_utc_by_metric", {}).get(metric, result.get("sample_started_at_utc"))
+                    for result in sample_results
+                ]
+                guard.require(all(isinstance(value, str) and value for value in timestamps), f"{metric}: sample UTC start missing")
+                preparation_sequences = [
+                    result.get("preparation_operation_ids_by_metric", {}).get(metric, result.get("preparation_operation_ids", []))
+                    for result in sample_results
+                ]
+                guard.require(len(preparation_sequences) == len(samples) and all(isinstance(sequence, list) and sequence and all(isinstance(identifier, str) and identifier for identifier in sequence) for sequence in preparation_sequences), f"{metric}: exact per-sample preparation sequence missing")
+                record = {
+                    "schema_version": "taskflow-t1-benchmark/v2",
+                    "experiment_id": "E06",
+                    "fixture_id": "w3-isolated-native-mobile-stack",
+                    "source_revision": self.source_revision,
+                    "timestamp": min(timestamps),
+                    "hardware": {"cpu": cpu, "cores": int(cores), "ram_gib": int(ram) / (1024 ** 3)},
+                    "os": {"name": "macOS", "version": profile["macos_version"], "build": profile["macos_build"], "arch": profile["architecture"]},
+                    "toolchain": [{"name": "Xcode", "version": f"{profile['xcode_version']} ({profile['xcode_build']})"}],
+                    "state": "warm",
+                    "preparation_command": "python3 experiments/e06-macos-feasibility/phase-b/execution/scripts/runner.py --execute --manifest experiments/e06-macos-feasibility/phase-b/execution-approval/execution-manifest.approved.json --binding experiments/e06-macos-feasibility/phase-b/execution-approval/implementation-binding.approved.json",
+                    "sample_preparation_operation_ids": preparation_sequences,
+                    "cache_dimensions": {"workspace": "recreated", "derived_data": "namespace-private", "simulator": mechanism or "not-applicable"},
+                    "samples": samples,
+                    "sample_count": len(samples),
+                    "median": median,
+                    "p95": p95,
+                    "reservation_count": 1,
+                    "lease_count": 1 if mechanism else 0,
+                    "raw_result_location": "../raw",
+                }
+                records.append(record)
+                target = REPOSITORY / path_value
+                target.parent.mkdir(parents=True, exist_ok=True)
+                encoded = json.dumps(record, indent=2, sort_keys=True) + "\n"
+                target.write_text(encoded, encoding="utf-8")
+                guard.require(target.read_text(encoding="utf-8") == encoded, f"benchmark reproduction mismatch: {path_value}")
+                generated.append(path_value)
+            hard_ok = all(result.get("status") in {"passed", "started"} for result in self.results.values()) and all(result.get("contamination_count", 0) == 0 and result.get("identity_or_lease_collision_count", 0) == 0 and result.get("orphan_count", 0) == 0 for result in self.results.values()) and all(result.get("status") == "passed" for result in final_cleanup)
+            highest_clean = max((result["concurrency"] for result in self.results.values() if result.get("status") == "passed" and isinstance(result.get("concurrency"), int)), default=0)
+            latency_ok = all(record["p95"] < (3.0 if "warm-workspace-ready" in path else 15.0) for path, record in zip(record_paths, records) if "warm-workspace-ready" in path or "simulator-ready-to-install" in path)
+            recommendation = "stop-or-narrow" if not hard_ok or not latency_ok else ("serialized-macos-capacity" if highest_clean < 2 else "trusted-native-host")
+            decision = {"format_version": "taskflow-e06-decision-recommendation/v1-experimental", "precedence": parameters["decision_precedence"], "hard_gates_passed": hard_ok, "latency_gates_passed": latency_ok, "highest_clean_concurrency": highest_clean, "recommendation": recommendation, "adr_edit_performed": False}
+            summary = {"format_version": "taskflow-e06-summary/v1-experimental", "record_count": len(records), "record_sha256": [hashlib.sha256((REPOSITORY / path).read_bytes()).hexdigest() for path in record_paths], "decision": decision}
+            for path_value, value in zip(output_paths[-2:], [summary, decision]):
+                target = REPOSITORY / path_value
+                encoded = json.dumps(value, indent=2, sort_keys=True) + "\n"
+                target.write_text(encoded, encoding="utf-8")
+                guard.require(target.read_text(encoding="utf-8") == encoded, f"summary reproduction mismatch: {path_value}")
+                generated.append(path_value)
+            return {"status": "passed", "generated_evidence_paths": generated, "record_count": len(records), "recommendation": recommendation, "adr_edit_performed": False}
         if action == "finalize-sanitized-evidence-and-checksums":
             guard.require(self.ledger is not None, "expanded ledger unavailable for evidence finalization")
             current_index = next(index for index, item in enumerate(self.ledger["operations"]) if item["id"] == operation["id"])
             expected = [item["id"] for item in self.ledger["operations"][:current_index]]
             missing = [identifier for identifier in expected if identifier not in self.results]
             guard.require(not missing, f"evidence results incomplete before finalization: {missing[:3]}")
+            generated_prior = [path for result in self.results.values() for path in result.get("generated_evidence_paths", [])]
             final_record = {
                 "status": "passed",
-                "evidence_file_count": current_index + 1,
+                "evidence_file_count": current_index + 1 + len(generated_prior),
                 "checksum_manifest": (self.evidence_root / "checksums.json").relative_to(REPOSITORY).as_posix(),
                 "id": operation["id"],
                 "kind": operation["kind"],
@@ -478,7 +711,10 @@ class NativeBackend:
                 guard.require("/Users/" not in text.replace("/Users/<redacted>", ""), f"unsanitized user path in evidence: {path}")
                 entries.append({"path": path.relative_to(self.evidence_root).as_posix(), "sha256": hashlib.sha256(data).hexdigest()})
             expected_paths = {Path(item["evidence"]).relative_to(self.manifest["evidence_root"]).as_posix() for item in self.ledger["operations"][:current_index + 1]}
-            guard.require(len(entries) == current_index + 1 and {item["path"] for item in entries} == expected_paths, "evidence file completeness mismatch")
+            for result in self.results.values():
+                for generated_path in result.get("generated_evidence_paths", []):
+                    expected_paths.add(Path(generated_path).relative_to(self.manifest["evidence_root"]).as_posix())
+            guard.require({item["path"] for item in entries} == expected_paths, "evidence file completeness mismatch")
             manifest_path = self.evidence_root / "checksums.json"
             manifest_path.write_text(json.dumps({"format_version": "taskflow-e06-evidence-checksums/v1-experimental", "entries": entries}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
             persisted = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -495,6 +731,7 @@ class NativeBackend:
         raise RunnerError(f"typed effect has no fail-closed handler: {action}")
 
     def run(self, operation: dict[str, Any]) -> None:
+        effect_started = self.monotonic_ns() if operation["kind"] == "effect" else None
         try:
             record = self._run_command(operation) if operation["kind"] in {"command", "child-command"} else self._run_effect(operation)
         except (guard.GuardError, RunnerError, subprocess.TimeoutExpired, OSError) as error:
@@ -521,6 +758,11 @@ class NativeBackend:
             self.results[operation["id"]] = failed
             self._write_record(operation, failed)
             raise
+        if effect_started is not None:
+            effect_ended = self.monotonic_ns()
+            record.setdefault("started_monotonic_ns", effect_started)
+            record.setdefault("ended_monotonic_ns", effect_ended)
+            record.setdefault("duration_ns", effect_ended - effect_started)
         record.update({"id": operation["id"], "kind": operation["kind"], "targets": operation["targets"]})
         self.results[operation["id"]] = record
         if operation.get("action") != "finalize-sanitized-evidence-and-checksums":
@@ -590,7 +832,8 @@ def main() -> int:
         return 0
     guard.require(args.manifest is not None and args.binding is not None, "--execute requires --manifest and --binding")
     manifest = guard.validate_execution_binding(args.manifest, args.binding, ledger)
-    backend = NativeBackend(manifest, ledger)
+    binding = guard.load_object(args.binding)
+    backend = NativeBackend(manifest, ledger, source_revision=binding["implementation_commit"])
     run_ledger(ledger, backend)
     return 0
 

@@ -42,6 +42,21 @@
     "approval_window_must_be_current": true,
     "current_host_and_coresimulator_attestation_required": true
   },
+  "component_binding": {
+    "aggregate_algorithm": "sha256-canonical-json-path-and-byte-digest-inventory-v1",
+    "recomputed_at_native_entry": true,
+    "named_components": [
+      "execution files",
+      "fixture files",
+      "expanded ledger",
+      "sandbox policy",
+      "reset policy",
+      "execution manifest schema",
+      "Phase-B frozen artifacts",
+      "Phase-B protocol file and declared digest",
+      "Phase-B scope hashes"
+    ]
+  },
   "child_environment": {
     "ambient_environment_inherited": false,
     "fixed_path": "/usr/bin:/bin:/usr/sbin:/sbin",

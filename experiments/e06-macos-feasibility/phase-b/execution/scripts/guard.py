@@ -28,6 +28,32 @@ APPROVED_BINDING = APPROVAL / "implementation-binding.approved.json"
 APPROVED_HOST_ATTESTATION = APPROVAL / "host-attestation.approved.json"
 APPROVED_CORESIMULATOR_ATTESTATION = APPROVAL / "coresimulator-attestation.approved.json"
 EXECUTION_MANIFEST_SCHEMA = PHASE_B.parent / "execution-manifest.schema.json"
+EXECUTION_INVENTORY_PATHS = (
+    "experiments/e06-macos-feasibility/phase-b/execution/README.md",
+    "experiments/e06-macos-feasibility/phase-b/execution/Taskfile.yml",
+    "experiments/e06-macos-feasibility/phase-b/execution/contract.json",
+    "experiments/e06-macos-feasibility/phase-b/execution/expanded-ledger.json",
+    "experiments/e06-macos-feasibility/phase-b/execution/schedule-spec.json",
+    "experiments/e06-macos-feasibility/phase-b/execution/scripts/guard.py",
+    "experiments/e06-macos-feasibility/phase-b/execution/scripts/runner.py",
+    "experiments/e06-macos-feasibility/phase-b/execution/scripts/schedule.py",
+    "experiments/e06-macos-feasibility/phase-b/execution/scripts/verify_execution.py",
+    "experiments/e06-macos-feasibility/phase-b/execution/tests/test_execution.py",
+)
+FIXTURE_INVENTORY_PATHS = (
+    "experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp/E06SmokeApp.xcodeproj/project.pbxproj",
+    "experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp/E06SmokeApp.xcodeproj/xcshareddata/xcschemes/E06SmokeApp.xcscheme",
+    "experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp/E06SmokeApp/AppDelegate.swift",
+)
+COMPONENT_PATHS = {
+    "expanded_ledger_sha256": "experiments/e06-macos-feasibility/phase-b/execution/expanded-ledger.json",
+    "sandbox_policy_sha256": "experiments/e06-macos-feasibility/phase-b/sandbox-policy.json",
+    "reset_policy_sha256": "experiments/e06-macos-feasibility/phase-b/reset-policy.json",
+    "execution_manifest_schema_sha256": "experiments/e06-macos-feasibility/execution-manifest.schema.json",
+    "phase_b_frozen_artifacts_sha256": "experiments/e06-macos-feasibility/phase-b/frozen-artifacts.json",
+    "phase_b_protocol_file_sha256": "experiments/e06-macos-feasibility/phase-b/protocol.sha256",
+    "phase_b_scope_hashes_sha256": "experiments/e06-macos-feasibility/phase-b/scope-hashes.json",
+}
 ALLOWED_EFFECTS = {
     "assert-profile-mismatch-rejected-before-mutation",
     "assert-root-absence-before-native",
@@ -52,6 +78,14 @@ ALLOWED_EFFECTS = {
     "finalize-sanitized-evidence-and-checksums",
     "assert-no-owned-devices-or-record-exact-orphans",
     "assert-owned-root-absent-and-no-unrecorded-orphans",
+    "attest-live-profile",
+    "verify-build-output-manifest",
+    "verify-installed-bundle-identity",
+    "attest-reset-reusable-state",
+    "emit-benchmark-v2-and-decision",
+    "seed-reset-contamination-markers",
+    "probe-reset-residue",
+    "record-cleanup-timing-and-residue",
 }
 
 
@@ -80,6 +114,32 @@ def sha256(path: Path) -> str:
 def canonical_sha256(value: Any) -> str:
     encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def inventory_sha256(paths: tuple[str, ...], repository: Path = REPOSITORY) -> str:
+    """Hash a fixed, ordered path-to-content inventory; paths and bytes are bound."""
+    require(tuple(sorted(paths)) == paths and len(set(paths)) == len(paths), "inventory path set is not canonical")
+    files = []
+    for relative in paths:
+        path = repository / relative
+        require(path.is_file() and not path.is_symlink(), f"bound component missing or unsafe: {relative}")
+        files.append({"path": relative, "sha256": sha256(path)})
+    return canonical_sha256({"format_version": "taskflow-e06-file-inventory/v1-experimental", "files": files})
+
+
+def implementation_component_hashes(repository: Path = REPOSITORY) -> dict[str, str]:
+    values = {
+        "execution_files_sha256": inventory_sha256(EXECUTION_INVENTORY_PATHS, repository),
+        "fixture_files_sha256": inventory_sha256(FIXTURE_INVENTORY_PATHS, repository),
+    }
+    for field, relative in COMPONENT_PATHS.items():
+        path = repository / relative
+        require(path.is_file() and not path.is_symlink(), f"bound component missing or unsafe: {relative}")
+        values[field] = sha256(path)
+    protocol = (repository / COMPONENT_PATHS["phase_b_protocol_file_sha256"]).read_text(encoding="utf-8").split()
+    require(len(protocol) >= 1 and re.fullmatch(r"[0-9a-f]{64}", protocol[0]) is not None, "Phase-B protocol digest missing")
+    values["phase_b_protocol_digest"] = protocol[0]
+    return values
 
 
 def under_root(value: str, allow_root: bool = False) -> bool:
@@ -112,7 +172,7 @@ def validate_command(operation: dict[str, Any]) -> None:
     argv = argv[3:]
     require(argv, f"{operation['id']}: wrapped command missing")
     executable = argv[0]
-    require(executable in {"/bin/mkdir", "/bin/rm", "/bin/df", "/bin/sleep", "/usr/bin/ditto", "/usr/bin/xcodebuild", "/usr/bin/xcrun", "/usr/bin/sw_vers", "/usr/bin/uname", "/usr/bin/vm_stat", "/usr/bin/swift"}, f"{operation['id']}: executable forbidden")
+    require(executable in {"/bin/mkdir", "/bin/rm", "/bin/df", "/bin/sleep", "/usr/bin/ditto", "/usr/bin/xcodebuild", "/usr/bin/xcrun", "/usr/bin/sw_vers", "/usr/bin/uname", "/usr/bin/vm_stat", "/usr/bin/swift", "/usr/sbin/sysctl"}, f"{operation['id']}: executable forbidden")
     require(not any("*" in item or "?" in item for item in argv), f"{operation['id']}: glob forbidden")
     if executable == "/bin/mkdir":
         require(argv[1] == "-p" and all(under_root(item) for item in argv[2:]), f"{operation['id']}: unsafe mkdir")
@@ -130,12 +190,17 @@ def validate_command(operation: dict[str, Any]) -> None:
             require(under_root(derived) and under_root(project), f"{operation['id']}: xcode path outside root")
             require("-allowProvisioningUpdates" not in argv, f"{operation['id']}: provisioning/network forbidden")
     elif executable == "/usr/bin/xcrun":
+        if len(argv) == 4 and argv[1] in {"--sdk"} and argv[2] in {"iphoneos", "iphonesimulator"} and argv[3] in {"--show-sdk-version", "--show-sdk-build-version"}:
+            require(operation["mutates"] is False, f"{operation['id']}: SDK query marked mutating")
+            return
         require(len(argv) >= 6 and argv[1:4] == ["simctl", "--set", DEVICE_SET], f"{operation['id']}: default or mismatched device set")
         action = argv[4]
-        require(action in {"create", "clone", "boot", "bootstatus", "install", "launch", "shutdown", "erase", "delete", "list"}, f"{operation['id']}: simctl action forbidden")
-        if action not in {"list"}:
+        require(action in {"create", "clone", "boot", "bootstatus", "install", "launch", "shutdown", "erase", "delete", "list", "listapps", "get_app_container"}, f"{operation['id']}: simctl action forbidden")
+        if action not in {"list", "listapps", "get_app_container"}:
             names = [item for item in argv[5:] if item.startswith("taskflow-e06-")]
             require(names and all(item.startswith(PREFIX) for item in names), f"{operation['id']}: simulator ownership prefix missing")
+        if action == "listapps":
+            require(len(argv) == 6 and argv[5].startswith(PREFIX) and operation["mutates"] is False, f"{operation['id']}: unsafe installation-service probe")
     elif executable == "/usr/bin/sw_vers":
         require(argv in [["/usr/bin/sw_vers", "-productVersion"], ["/usr/bin/sw_vers", "-buildVersion"]], f"{operation['id']}: unexpected sw_vers query")
     elif executable == "/usr/bin/uname":
@@ -149,6 +214,8 @@ def validate_command(operation: dict[str, Any]) -> None:
     elif executable == "/usr/bin/swift":
         require(argv == ["/usr/bin/swift", "-e", "import Foundation; print(ProcessInfo.processInfo.thermalState.rawValue)"], f"{operation['id']}: unexpected thermal query")
         require(operation["mutates"] is True and operation["targets"] == [f"{ROOT}/controller/cache"], f"{operation['id']}: thermal compiler cache boundary missing")
+    elif executable == "/usr/sbin/sysctl":
+        require(argv in [["/usr/sbin/sysctl", "-n", "machdep.cpu.brand_string"], ["/usr/sbin/sysctl", "-n", "hw.physicalcpu"], ["/usr/sbin/sysctl", "-n", "hw.memsize"]] and operation["mutates"] is False, f"{operation['id']}: unexpected hardware query")
 
 
 def validate_ledger(ledger: dict[str, Any]) -> None:
@@ -158,6 +225,10 @@ def validate_ledger(ledger: dict[str, Any]) -> None:
     require(isinstance(operations, list) and operations, "ledger operations missing")
     require(ledger.get("operation_count") == len(operations), "ledger operation count drifted")
     require(ledger.get("execution_count") == 0, "ledger contains execution evidence")
+    all_ids = [item.get("id") for item in operations]
+    require(all(isinstance(item, str) and item for item in all_ids) and len(set(all_ids)) == len(all_ids), "operation id missing or duplicated")
+    positions = {identifier: index for index, identifier in enumerate(all_ids)}
+    all_operations = {item["id"]: item for item in operations}
     seen: dict[str, dict[str, Any]] = {}
     child_handles: dict[str, str] = {}
     for operation in operations:
@@ -165,7 +236,51 @@ def validate_ledger(ledger: dict[str, Any]) -> None:
         require(isinstance(identifier, str) and identifier and identifier not in seen, "operation id missing or duplicated")
         require(operation.get("kind") in {"command", "child-command", "effect"}, f"{identifier}: invalid kind")
         require(isinstance(operation.get("mutates"), bool), f"{identifier}: mutation flag missing")
+        namespace = operation.get("namespace")
+        require(namespace == "controller" or namespace in NAMESPACE_NAMES or (isinstance(namespace, list) and namespace and namespace == sorted(set(namespace)) and all(item in NAMESPACE_NAMES for item in namespace)), f"{identifier}: namespace declaration invalid")
+        require(isinstance(operation.get("repetition"), int) and operation["repetition"] >= 0, f"{identifier}: repetition declaration invalid")
         require(operation.get("timeout_seconds") == 900, f"{identifier}: timeout drifted")
+        cleanup_action = operation.get("cleanup_action")
+        require(isinstance(cleanup_action, dict) and set(cleanup_action) == {"on_success", "on_failure"}, f"{identifier}: cleanup action missing")
+        success = cleanup_action["on_success"]
+        failure = cleanup_action["on_failure"]
+        require(isinstance(success, dict) and isinstance(failure, dict), f"{identifier}: cleanup disposition invalid")
+        operation_argv = operation.get("argv", [])[3:]
+        is_device_delete = len(operation_argv) > 5 and operation_argv[:4] == ["/usr/bin/xcrun", "simctl", "--set", DEVICE_SET] and operation_argv[4] == "delete"
+        is_path_remove = len(operation_argv) == 4 and operation_argv[:3] == ["/bin/rm", "-rf", "--"] and identifier != "cleanup.remove-owned-root"
+        is_evidence_mutation = operation["mutates"] and operation.get("targets") and all(safe_evidence(target) for target in operation["targets"])
+        if is_evidence_mutation:
+            require(success == {"disposition": "none", "reason": "approved-evidence-retained"} and failure.get("disposition") == "retain-orphan" and failure.get("reason") == "partial-evidence-retained", f"{identifier}: evidence retention disposition drifted")
+        elif is_device_delete or is_path_remove:
+            expected_reason = "terminal-owned-device-removal" if is_device_delete else "terminal-owned-path-removal"
+            require(success == {"disposition": "none", "reason": expected_reason} and failure.get("disposition") == "retain-orphan", f"{identifier}: resource cleanup disposition drifted")
+        elif operation["mutates"] and identifier != "cleanup.remove-owned-root":
+            require(success.get("disposition") == "later-operations", f"{identifier}: mutating success has no later cleanup")
+            cleanup_ids = success.get("operation_ids")
+            require(isinstance(cleanup_ids, list) and cleanup_ids, f"{identifier}: cleanup references missing")
+            for cleanup_id in cleanup_ids:
+                require(cleanup_id in positions and positions[cleanup_id] > positions[identifier], f"{identifier}: cleanup reference is missing or not later: {cleanup_id}")
+                cleanup_operation = all_operations[cleanup_id]
+                require(cleanup_operation.get("mutates") is True, f"{identifier}: cleanup reference is not mutating: {cleanup_id}")
+                require(all(isinstance(target, str) and (under_root(target, allow_root=True) or target.startswith(PREFIX)) for target in cleanup_operation.get("targets", [])), f"{identifier}: cleanup reference is outside owned state: {cleanup_id}")
+                argv = cleanup_operation.get("argv", [])[3:]
+                semantic_cleanup = (len(argv) > 5 and argv[:4] == ["/usr/bin/xcrun", "simctl", "--set", DEVICE_SET] and argv[4] == "delete") or (len(argv) == 4 and argv[:3] == ["/bin/rm", "-rf", "--"])
+                require(semantic_cleanup, f"{identifier}: cleanup reference is not a cleanup-class operation: {cleanup_id}")
+                retained = operation.get("parameters", {}).get("retained_owned_targets", operation["targets"])
+                cleanup_targets = cleanup_operation.get("targets", [])
+                covered = any(
+                    target in cleanup_targets
+                    or any(under_root(target, allow_root=True) and under_root(cleanup_target, allow_root=True) and (target == cleanup_target or target.startswith(cleanup_target.rstrip("/") + "/")) for cleanup_target in cleanup_targets)
+                    for target in retained
+                    if target.startswith(PREFIX) or target.startswith(ROOT)
+                )
+                require(covered, f"{identifier}: cleanup reference does not cover an owned target: {cleanup_id}")
+            require(failure.get("disposition") == "retain-orphan" and failure.get("reason") == "fail-closed-no-scope-widening" and isinstance(failure.get("targets"), list), f"{identifier}: failure cleanup may widen scope")
+        elif identifier == "cleanup.remove-owned-root":
+            require(success == {"disposition": "none", "reason": "terminal-owned-root-removal"} and failure.get("disposition") == "retain-orphan", f"{identifier}: terminal cleanup disposition drifted")
+        else:
+            require(success == {"disposition": "none", "reason": "read-only-no-new-state"}, f"{identifier}: read-only success disposition drifted")
+            require((failure == {"disposition": "none", "reason": "read-only-no-owned-state"}) or (failure.get("disposition") == "retain-orphan" and failure.get("reason") == "fail-closed-no-scope-widening" and isinstance(failure.get("targets"), list) and failure["targets"]), f"{identifier}: read-only failure disposition drifted")
         if operation["kind"] in {"command", "child-command"}:
             require(operation.get("expected_result") in {"success", "failure"}, f"{identifier}: unexpected command-result policy")
             if operation["kind"] == "child-command":
@@ -215,6 +330,13 @@ def validate_ledger(ledger: dict[str, Any]) -> None:
                 require(isinstance(parameters["retained_owned_targets"], list) and parameters["retained_owned_targets"] and all(isinstance(item, str) for item in parameters["retained_owned_targets"]), f"{identifier}: retained owned targets missing")
                 for target in parameters["retained_owned_targets"]:
                     validate_target(target)
+            if operation.get("action") == "attest-reset-reusable-state":
+                reset_ids = parameters.get("reset_operation_ids")
+                require(isinstance(reset_ids, list) and reset_ids and identifier not in reset_ids and all(item in seen for item in reset_ids), f"{identifier}: reset measurement self-reference or missing source")
+                require(parameters.get("expected_device_state") in {"Shutdown", "absent"}, f"{identifier}: reset state missing")
+            if operation.get("action") == "emit-benchmark-v2-and-decision":
+                cleanup_ids = parameters.get("final_cleanup_operation_ids")
+                require(isinstance(cleanup_ids, list) and cleanup_ids == ["cleanup.assert-no-owned-devices-or-record-orphans", "cleanup.remove-owned-root", "cleanup.verify-absence"] and all(item in seen for item in cleanup_ids), f"{identifier}: final cleanup binding missing")
         seen[identifier] = operation
 
 
@@ -308,15 +430,17 @@ def validate_execution_binding(manifest_path: Path, binding_path: Path, ledger: 
     manifest = load_object(manifest_path)
     binding = load_object(binding_path)
     require(binding.get("format_version") == "taskflow-e06-implementation-binding/v1-experimental", "binding format drifted")
-    require(set(binding) == {"format_version", "implementation_commit", "implementation_tree", "manifest_sha256", "expanded_ledger_sha256", "execution_files_sha256", "host_attestation_sha256", "coresimulator_attestation_sha256", "approved_by", "approved_at", "exclusive_window_start", "exclusive_window_end"}, "binding fields drifted")
+    component_fields = set(implementation_component_hashes())
+    require(set(binding) == {"format_version", "implementation_commit", "implementation_tree", "manifest_sha256", *component_fields, "host_attestation_sha256", "coresimulator_attestation_sha256", "approved_by", "approved_at", "exclusive_window_start", "exclusive_window_end"}, "binding fields drifted")
     require(binding["implementation_commit"] == git_value("rev-parse", "HEAD"), "binding commit is not HEAD")
     require(binding["implementation_tree"] == git_value("rev-parse", "HEAD^{tree}"), "binding tree is not HEAD tree")
     require(binding["manifest_sha256"] == sha256(manifest_path), "binding manifest digest drifted")
-    require(binding["expanded_ledger_sha256"] == sha256(EXECUTION / "expanded-ledger.json"), "binding ledger digest drifted")
-    require(re.fullmatch(r"[0-9a-f]{64}", binding.get("execution_files_sha256", "")) is not None, "execution files digest missing")
+    actual_components = implementation_component_hashes()
+    for field, actual in actual_components.items():
+        require(binding.get(field) == actual, f"binding component digest drifted: {field}")
     require(manifest["profile"]["runner_digest"] == binding["execution_files_sha256"], "manifest runner digest is not the approved execution files digest")
-    require(manifest["profile"]["sandbox_policy_digest"] == "6a8defba7731fc5a3e560be9cd80e815930b77bab61e07b2b94f2f95ffda07c3", "sandbox policy digest drifted")
-    require(manifest["profile"]["reset_policy_digest"] == "978219e5255d47a79df6a8161a8df0ec73066fb3b9852923d2ee3e69cc43907c", "reset policy digest drifted")
+    require(manifest["profile"]["sandbox_policy_digest"] == binding["sandbox_policy_sha256"], "sandbox policy digest drifted")
+    require(manifest["profile"]["reset_policy_digest"] == binding["reset_policy_sha256"], "reset policy digest drifted")
     require(APPROVED_HOST_ATTESTATION.is_file() and binding.get("host_attestation_sha256") == sha256(APPROVED_HOST_ATTESTATION), "host attestation absent or digest drifted")
     require(APPROVED_CORESIMULATOR_ATTESTATION.is_file() and binding.get("coresimulator_attestation_sha256") == sha256(APPROVED_CORESIMULATOR_ATTESTATION), "CoreSimulator attestation absent or digest drifted")
     require(binding["approved_by"] == manifest["approval"]["approved_by"] and binding["approved_at"] == manifest["approval"]["approved_at"], "binding approval identity/time drifted")
