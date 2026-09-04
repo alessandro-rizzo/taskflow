@@ -1,0 +1,28 @@
+{
+  "format_version": "taskflow-e06-cleanup-ledger/v1-experimental",
+  "status": "non-executing-proposal",
+  "manifest_id": "taskflow-e06-native-a",
+  "precedes_root_removal": [
+    "shutdown-device-a",
+    "shutdown-device-b",
+    "shutdown-golden",
+    "delete-device-a",
+    "delete-device-b",
+    "delete-golden"
+  ],
+  "commands": [
+    {
+      "id": "remove-owned-root",
+      "argv": ["/bin/rm", "-rf", "--", "/private/tmp/taskflow-e06-native-a"],
+      "mutates": true,
+      "targets": ["/private/tmp/taskflow-e06-native-a"]
+    }
+  ],
+  "guards": [
+    "Run only after every custom-set shutdown/delete action reaches a terminal recorded result.",
+    "Resolve the target byte-for-byte to /private/tmp/taskflow-e06-native-a and reject symlinks or a missing ownership record.",
+    "Do not widen, glob, substitute, or derive the target from ambient environment variables.",
+    "On any guard or cleanup failure, retain the exact path as an orphan and stop."
+  ],
+  "execution_count": 0
+}

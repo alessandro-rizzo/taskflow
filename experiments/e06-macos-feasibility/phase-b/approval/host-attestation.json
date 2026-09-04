@@ -1,0 +1,26 @@
+{
+  "format_version": "taskflow-e06-safe-host-attestation/v1-experimental",
+  "collected_at": "2026-09-04T17:17:21Z",
+  "collection_boundary": "read-only commands explicitly excluding xcodebuild, xcrun, simctl, CoreSimulator, providers, network, lifecycle, signals, and cleanup",
+  "commands": [
+    {"argv": ["/usr/bin/sw_vers", "-productVersion"], "value": "26.5.2"},
+    {"argv": ["/usr/bin/sw_vers", "-buildVersion"], "value": "25F84"},
+    {"argv": ["/usr/bin/uname", "-m"], "value": "arm64"}
+  ],
+  "matches_accepted_profile": {
+    "macos_version": true,
+    "macos_build": true,
+    "architecture": true
+  },
+  "not_refreshed": [
+    "host resource identity",
+    "free RAM and disk at execution-window start",
+    "thermal pressure at execution-window start",
+    "Xcode version and build",
+    "iOS and simulator SDK identifiers and builds",
+    "CoreSimulator runtime, device type, custom-set access, and absence of the proposed mutable root",
+    "exclusive-window ownership"
+  ],
+  "execution_attestation_complete": false,
+  "execution_count": 0
+}

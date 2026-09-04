@@ -1,0 +1,112 @@
+{
+  "format_version": "taskflow-e06-execution-approval-packet/v1-experimental",
+  "status": "blocked-not-ready-for-execution",
+  "implementation": {
+    "commit": "6decbbd1323fd9a69137129db234028d80b1151d",
+    "tree": "e80c5fb834523430890acbb91b2462fa082fae32",
+    "phase_b_protocol_digest": "12170d8effa3ce838c49c3180bd662ae879ea2a66ffe990ef5d793119af6f1bd",
+    "execution_manifest_schema_sha256": "396ad8f5ebad541c2144f0db1e5578e11a4c2872f37e72766231911d1c801ea2",
+    "command_ledger_sha256": "ce8592f5be1075361f51ae3bc60b55cdd0ad7254deb65fbb2a4a9124fa082db0",
+    "cleanup_ledger_sha256": "db43ac71bb1088c8e4e122bd2e365e8687c715499031322a3345ad8bd7a649c1",
+    "safe_host_attestation_sha256": "aa8e950be30b0f7925b89e0d4ede72941578cedd86a791a369ee305825f2f0e6"
+  },
+  "manifest": {
+    "format_version": "taskflow-e06-execution-manifest/v1-experimental",
+    "manifest_id": "taskflow-e06-native-a",
+    "phase_b_ticket": "TF-003.14",
+    "candidate_id": "trusted-native-host",
+    "operator": {"id": "@codex-tf-003-14"},
+    "approval": {
+      "approved_by": null,
+      "approved_at": null,
+      "exact_mutation_scope": [
+        "Create and remove only /private/tmp/taskflow-e06-native-a and descendants created by this manifest.",
+        "Copy the committed E06SmokeApp fixture into only the two manifest workspace roots.",
+        "Run xcodebuild only for the committed fixture with each explicit manifest DerivedData root and signing disabled.",
+        "Create, boot, inspect, install into, launch, shut down, erase, clone, and delete only taskflow-e06-native-a-* simulators in /private/tmp/taskflow-e06-native-a/CoreSimulator.",
+        "Retain an exact orphan record and stop if any guard, native command, signal boundary, or cleanup action cannot complete without widening scope."
+      ],
+      "plan_approval_is_not_execution_approval": true
+    },
+    "host": {
+      "resource_id": "taskflow-e06-local-mac17-7",
+      "inventory_snapshot_sha256": "9e021a326cba6e3b3b92c6cfa9f274c531d5f9cf13b95a4f314f2afc95d80630",
+      "exclusive_window_start": null,
+      "exclusive_window_end": null
+    },
+    "profile": {
+      "expected_profile_digest": "ecca75a43cf785793fe187316998d55f31653815a8562b1d6c05ddf138d4b570",
+      "base_image_digest": null,
+      "runner_digest": "512690fb200d2dfae5eaaa68e8ee8df7c9be130182e1bf32412cfd1a3c73fada",
+      "sandbox_policy_digest": "6a8defba7731fc5a3e560be9cd80e815930b77bab61e07b2b94f2f95ffda07c3",
+      "reset_policy_digest": "978219e5255d47a79df6a8161a8df0ec73066fb3b9852923d2ee3e69cc43907c"
+    },
+    "paths": {
+      "mutable_root": "/private/tmp/taskflow-e06-native-a",
+      "workspace_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/workspace",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/workspace"
+      ],
+      "derived_data_roots": [
+        "/private/tmp/taskflow-e06-native-a/namespace-a/DerivedData",
+        "/private/tmp/taskflow-e06-native-a/namespace-b/DerivedData"
+      ],
+      "custom_device_set_root": "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+      "default_simulator_set_forbidden": true
+    },
+    "resources": {
+      "concurrency_levels": [1, 2, 3, 4],
+      "min_free_ram_gib": 16,
+      "min_free_disk_gib": 200,
+      "thermal_stop_signal": "serious",
+      "per_command_timeout_seconds": 900
+    },
+    "commands_from": {
+      "path": "experiments/e06-macos-feasibility/phase-b/command-ledger.json",
+      "sha256": "ce8592f5be1075361f51ae3bc60b55cdd0ad7254deb65fbb2a4a9124fa082db0",
+      "count": 30
+    },
+    "cleanup_from": {
+      "path": "experiments/e06-macos-feasibility/phase-b/approval/cleanup-ledger.json",
+      "sha256": "db43ac71bb1088c8e4e122bd2e365e8687c715499031322a3345ad8bd7a649c1",
+      "additional_command_count": 1
+    },
+    "cleanup_allowlist": {
+      "paths": [
+        "/private/tmp/taskflow-e06-native-a",
+        "/private/tmp/taskflow-e06-native-a/CoreSimulator",
+        "/private/tmp/taskflow-e06-native-a/namespace-a",
+        "/private/tmp/taskflow-e06-native-a/namespace-b"
+      ],
+      "vm_names": [],
+      "simulator_name_prefix": "taskflow-e06-native-a-",
+      "immutable_base_delete_forbidden": true,
+      "broad_process_kill_forbidden": true
+    },
+    "evidence_root": "experiments/e06-macos-feasibility/evidence/taskflow-e06-native-a"
+  },
+  "schema_check": {
+    "resolved_fields": "pass after exact command and cleanup ledger expansion",
+    "final_manifest": "blocked until every unresolved field is supplied and a fresh execution-window attestation passes"
+  },
+  "unresolved": [
+    "manifest.approval.approved_by",
+    "manifest.approval.approved_at",
+    "manifest.host.exclusive_window_start",
+    "manifest.host.exclusive_window_end",
+    "current CoreSimulator runtime, device type, custom-set accessibility, and mutable-root absence attestation",
+    "current free RAM, free disk, thermal pressure, and exclusive-window ownership attestation",
+    "an execution-capable runner and exact expanded measurement/fault sample schedule"
+  ],
+  "explicitly_not_requested": [
+    "default CoreSimulator device-set access",
+    "access to any existing or currently booted simulator",
+    "user workspace, HOME, TMPDIR, DerivedData, or result-root access",
+    "VM or immutable-image lifecycle",
+    "provider authentication or access",
+    "network access, installation, or download",
+    "broad process signals or cleanup",
+    "execution from the current description-only runner"
+  ],
+  "execution_count": 0
+}
