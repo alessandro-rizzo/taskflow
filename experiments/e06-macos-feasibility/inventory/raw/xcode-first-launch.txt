@@ -1,0 +1,4 @@
+observed_at=2026-09-04T14:46:25Z
+command=xcodebuild -checkFirstLaunchStatus
+exit_code=0
+interpretation=Xcode reports required first-launch work complete; this is not a legal-license audit or simulator-service readiness proof.

@@ -1,0 +1,14 @@
+observed_at=2026-09-04T14:46:25Z
+command=xcodebuild -showsdks
+stderr_note=Xcode could not start an FSEvents stream or resolve DARWIN_USER_CACHE_DIR inside the managed sandbox; SDK stdout remained available.
+
+DriverKit 25.5: driverkit25.5
+iOS 26.5: iphoneos26.5
+iOS Simulator 26.5: iphonesimulator26.5
+macOS 26.5: macosx26.5
+tvOS 26.5: appletvos26.5
+tvOS Simulator 26.5: appletvsimulator26.5
+visionOS 26.5: xros26.5
+visionOS Simulator 26.5: xrsimulator26.5
+watchOS 26.5: watchos26.5
+watchOS Simulator 26.5: watchsimulator26.5

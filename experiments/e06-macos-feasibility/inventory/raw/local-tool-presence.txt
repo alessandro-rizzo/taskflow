@@ -1,0 +1,36 @@
+observed_at=2026-09-04T14:46:41Z
+collection=command lookup and version output only; no daemon/provider/image query
+
+present:
+  limactl=/opt/homebrew/bin/limactl version=2.1.1
+  colima=/opt/homebrew/bin/colima version=0.10.1
+  docker=/opt/homebrew/bin/docker version=29.4.1
+  cp=/bin/cp
+  ditto=/usr/bin/ditto
+  diskutil=/usr/sbin/diskutil live_query=blocked
+  hdiutil=/usr/bin/hdiutil
+  tmutil=/usr/bin/tmutil
+  mount_apfs=/sbin/mount_apfs
+  xcrun=/usr/bin/xcrun
+  xcodebuild=/usr/bin/xcodebuild
+  Virtualization.framework=present
+  Hypervisor.framework=present
+
+absent:
+  tart
+  orchard
+  orchardctl
+  vfkit
+  utmctl
+  prlctl
+  VBoxManage
+  ipsw
+
+storage:
+  /System/Volumes/Data size=1.8TiB used=403GiB available=1.4TiB capacity=22%
+
+blocked_unknown:
+  sysctl hardware and hypervisor values
+  diskutil filesystem detail
+  DevToolsSecurity debugger rights
+  process inventory

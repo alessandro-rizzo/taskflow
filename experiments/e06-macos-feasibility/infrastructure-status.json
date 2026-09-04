@@ -1,0 +1,55 @@
+{
+  "format_version": "taskflow-e06-infrastructure-status/v1-experimental",
+  "observed_at": "2026-09-04T14:46:24Z",
+  "status": "external-blocker",
+  "reservation": null,
+  "current_host": {
+    "inventory": "inventory/host-profile.json",
+    "classification": "representative-capability-visible-but-shared-and-unreserved",
+    "exclusive": false,
+    "approved_mutation_window": false,
+    "default_simulator_set_allowed": false
+  },
+  "blockers": [
+    {
+      "id": "shared-native-host",
+      "evidence": "The default device set contains a recently booted iPhone 17; no exclusive measurement window is reserved.",
+      "blocks": ["trusted-native-host", "all simulator lifecycle candidates"]
+    },
+    {
+      "id": "managed-coresimulator-denial",
+      "evidence": "Read-only simctl queries cannot initialize CoreSimulatorService in the managed environment.",
+      "blocks": ["live simulator availability attestation", "all simulator measurements"]
+    },
+    {
+      "id": "missing-macos-vm-controller",
+      "evidence": "Tart, Orchard, vfkit, UTM, Parallels, and VirtualBox CLIs are absent.",
+      "blocks": ["warm-immutable-vm-restore", "warm-vm-apfs-workspaces", "vm-per-namespace"]
+    },
+    {
+      "id": "missing-immutable-image",
+      "evidence": "No approved digest-pinned macOS/Xcode VM image or restore image was supplied or discovered.",
+      "blocks": ["warm-immutable-vm-restore", "warm-vm-apfs-workspaces", "vm-per-namespace"]
+    },
+    {
+      "id": "missing-external-runner",
+      "evidence": "No provider endpoint, credential mediator, profile, quota, or reservation was supplied.",
+      "blocks": ["coarse-external-runner"]
+    }
+  ],
+  "next_safe_actions": [
+    {
+      "id": "native-host-option",
+      "action": "Approve a fresh execution manifest for an exclusive window using only a new /private/tmp/taskflow-e06-* root and custom simulator device set; authorize CoreSimulator access without touching the default set."
+    },
+    {
+      "id": "vm-option",
+      "action": "Provide or approve a dedicated Apple-silicon host, pinned Tart or Orchard version, locally/provider-present digest-pinned macOS/Xcode image, and read-only capacity manifest before any clone or start."
+    },
+    {
+      "id": "external-runner-option",
+      "action": "Provide an approved provider/credential mediator and obtain a read-only image, capability, quota, reset, cleanup, and orphan manifest before reservation."
+    }
+  ],
+  "approval_boundary": "Approval of TF-003.13 implementation does not authorize TF-003.14 external or destructive operations."
+}

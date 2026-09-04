@@ -1,0 +1,53 @@
+{
+  "format_version": "taskflow-e06-host-inventory/v1-experimental",
+  "observed_at": "2026-09-04T14:46:24Z",
+  "source_revision": "21a55f3ea9eac0016d55b7827e80c01c237c9020",
+  "collection_mode": "non-mutating-local-read-only",
+  "hardware": {
+    "model_name": "MacBook Pro",
+    "model_identifier": "Mac17,7",
+    "model_number": "Z1MN000JLB/A",
+    "chip": "Apple M5 Max",
+    "architecture": "arm64",
+    "core_count": 18,
+    "core_description": "6 Super and 12 Performance",
+    "memory_gib": 64,
+    "system_firmware_version": "18000.121.3",
+    "os_loader_version": "18000.121.3"
+  },
+  "operating_system": {
+    "name": "macOS",
+    "version": "26.5.2",
+    "build": "25F84",
+    "kernel": "Darwin 25.5.0"
+  },
+  "virtualization_capability": {
+    "apple_virtualization_framework_present": true,
+    "apple_hypervisor_framework_present": true,
+    "hardware_virtualization_sysctl": "unknown-managed-sandbox-denied",
+    "macos_guest_exercised": false
+  },
+  "storage": {
+    "mount": "/System/Volumes/Data",
+    "reported_size": "1.8 TiB",
+    "reported_used": "403 GiB",
+    "reported_available": "1.4 TiB",
+    "reported_capacity_percent": 22,
+    "filesystem_detail": "unknown-diskmanagement-framework-unavailable"
+  },
+  "privacy": {
+    "host_serial_recorded": false,
+    "hardware_uuid_recorded": false,
+    "user_identity_recorded": false,
+    "device_udids_recorded": false
+  },
+  "reservation": {
+    "exclusive": false,
+    "approved_mutation_window": false,
+    "status": "unreserved"
+  },
+  "raw_sources": [
+    "inventory/raw/system-profiler.txt",
+    "inventory/raw/local-tool-presence.txt"
+  ]
+}

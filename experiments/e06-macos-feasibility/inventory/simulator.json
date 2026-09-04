@@ -1,0 +1,57 @@
+{
+  "format_version": "taskflow-e06-simulator-inventory/v1-experimental",
+  "observed_at": "2026-09-04T14:46:24Z",
+  "collection_mode": "sanitized-plist-read-only",
+  "live_simctl_query": {
+    "attempted": true,
+    "status": "blocked",
+    "reason": "CoreSimulatorService connection invalid in managed sandbox",
+    "retained_collector_uses_simctl": false
+  },
+  "runtime_images": [
+    {
+      "platform": "iOS Simulator",
+      "version": "26.5",
+      "build": "23F77",
+      "bundle_identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "architectures": ["arm64"],
+      "signature": "verified",
+      "write_policy": "read-only",
+      "source_kind": "system-mobile-asset"
+    }
+  ],
+  "default_device_set": {
+    "allowed_for_e06": false,
+    "device_count": 11,
+    "runtime_identifiers": ["com.apple.CoreSimulator.SimRuntime.iOS-26-5"],
+    "state_counts": {"1": 10, "3": 1},
+    "recent_active_device": {
+      "name": "iPhone 17",
+      "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "state": 3,
+      "last_booted_at": "2026-09-04T14:44:18Z"
+    },
+    "device_udids_recorded": false
+  },
+  "phase_b_policy": {
+    "custom_device_set_required": true,
+    "custom_device_set_root_pattern": "/private/tmp/taskflow-e06-<manifest-id>/CoreSimulator",
+    "existing_devices_forbidden": true,
+    "simulator_candidates": ["clone-from-golden", "erase-reset", "fresh-create-boot"]
+  },
+  "identity_fields": [
+    "runtime bundle identifier",
+    "runtime version and build",
+    "runtime architecture",
+    "device type",
+    "reset policy digest"
+  ],
+  "ephemeral_session_fields": [
+    "device UDID",
+    "custom device set root",
+    "namespace ID",
+    "lease ID"
+  ],
+  "raw_source": "inventory/raw/simulator-plists.txt"
+}

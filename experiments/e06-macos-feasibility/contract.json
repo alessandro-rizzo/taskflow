@@ -1,0 +1,140 @@
+{
+  "format_version": "taskflow-e06-phase-a-contract/v1-experimental",
+  "experiment_id": "E06",
+  "task_id": "TF-003.13",
+  "status": "phase-a-inventory-frozen",
+  "baseline_revision": "21a55f3ea9eac0016d55b7827e80c01c237c9020",
+  "question": "Can Taskflow make native mobile work reproducible and fast enough through an explicit macOS worker, disposable workspace sandbox, and simulator session lifecycle?",
+  "risks": [
+    "R4",
+    "R8",
+    "R9"
+  ],
+  "canonical_requirements": {
+    "specified_by_phase_a": [
+      "EXEC-3",
+      "EXEC-4",
+      "EXEC-5",
+      "REP-2"
+    ],
+    "predeclared_for_phase_b": [
+      "AGENT-4",
+      "AGENT-5"
+    ],
+    "not_claimed": [
+      "EXEC-1",
+      "EXEC-2",
+      "REP-1",
+      "REP-3",
+      "REP-4",
+      "REP-5",
+      "REP-6"
+    ],
+    "stale_ticket_references": [
+      "MAC-1",
+      "MAC-2",
+      "MAC-3",
+      "MAC-4",
+      "MAC-5"
+    ],
+    "stale_reference_policy": "Retain only as ticket provenance; do not create aliases or use as product requirements."
+  },
+  "phase_boundary": {
+    "phase_a_allows": [
+      "sanitized read-only inventory snapshot",
+      "candidate availability matrix",
+      "setup reset and cleanup procedures",
+      "profile identity and lifecycle shape",
+      "frozen measurement and fault protocol",
+      "fixture digest bindings",
+      "external blocker and next safe action",
+      "execution manifest schema",
+      "contract verifier and mutation tests"
+    ],
+    "phase_a_forbids": [
+      "VM or simulator lifecycle mutation",
+      "tool or image installation or download",
+      "provider or external runner authentication",
+      "benchmark execution",
+      "contamination or concurrency execution",
+      "failure injection",
+      "Phase B raw evidence",
+      "selected E06 decision branch"
+    ],
+    "phase_b_owner": "TF-003.14",
+    "phase_b_preconditions": [
+      "accepted committed Phase A contract",
+      "fresh execution manifest validating against execution-manifest.schema.json",
+      "explicit user approval for every external or destructive command",
+      "representative capacity reserved without touching shared default simulator state"
+    ]
+  },
+  "fixture_bindings": {
+    "path": "experiments/e06-macos-feasibility/fixture-bindings.json"
+  },
+  "inventory": {
+    "collector": "scripts/collect_inventory.py",
+    "snapshot_files": [
+      "inventory/host-profile.json",
+      "inventory/tooling.json",
+      "inventory/simulator.json"
+    ],
+    "raw_directory": "inventory/raw",
+    "read_only": true,
+    "network_allowed": false,
+    "forbidden_commands": [
+      "simctl",
+      "tart",
+      "orchard",
+      "diskutil",
+      "DevToolsSecurity",
+      "ps",
+      "sysctl"
+    ]
+  },
+  "profile_identity": {
+    "format_version": "taskflow-e06-profile/v1-experimental",
+    "hash": "sha256 of canonical JSON",
+    "semantic_fields": [
+      "mechanism_id",
+      "mechanism_version",
+      "base_image_digest",
+      "macos_version",
+      "macos_build",
+      "architecture",
+      "xcode_version",
+      "xcode_build",
+      "sdk_identifiers_and_builds",
+      "simulator_runtime_identifier_build_and_architectures",
+      "runner_digest",
+      "sandbox_policy_digest",
+      "reset_policy_digest"
+    ],
+    "ephemeral_non_profile_fields": [
+      "host_instance_id",
+      "vm_machine_identifier",
+      "workspace_path",
+      "simulator_udid",
+      "reservation_id",
+      "namespace_id",
+      "lease_id"
+    ],
+    "attestation_rule": "Attest semantic fields before build, install, or test; reject mismatch without rewriting the planned profile digest."
+  },
+  "lifecycle_shape": {
+    "worker": "Reusable native host or macOS VM capacity attesting one immutable profile.",
+    "sandbox": "Disposable experiment-prefixed workspace and DerivedData roots materialized from immutable inputs.",
+    "session": "Namespace-owned custom simulator device and lease with explicit reset, expiry, and cleanup.",
+    "sharing_rule": "Only immutable image/source inputs may be shared; writable workspace, DerivedData, simulator state, credentials, and leases are namespace-private."
+  },
+  "artifacts": {
+    "candidate_matrix": "candidate-matrix.json",
+    "candidate_procedures": "candidate-procedures.md",
+    "measurement_plan": "measurement-plan.json",
+    "infrastructure_status": "infrastructure-status.json",
+    "execution_manifest_schema": "execution-manifest.schema.json",
+    "frozen_artifacts": "frozen-artifacts.json",
+    "frozen_artifacts_digest": "protocol.sha256"
+  },
+  "verification_command": "mise exec -- task --dir experiments/e06-macos-feasibility check:phase-a"
+}

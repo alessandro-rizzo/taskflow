@@ -1,0 +1,95 @@
+{
+  "format_version": "taskflow-e06-tooling-inventory/v1-experimental",
+  "observed_at": "2026-09-04T14:46:24Z",
+  "collection_mode": "non-mutating-local-read-only",
+  "xcode": {
+    "developer_directory": "/Applications/Xcode.app/Contents/Developer",
+    "version": "26.6",
+    "build": "17F113",
+    "bundle_version": "24959",
+    "first_launch_status_exit": 0,
+    "first_launch_status": "ready",
+    "sdks": [
+      {"platform": "DriverKit", "version": "25.5", "identifier": "driverkit25.5"},
+      {"platform": "iOS", "version": "26.5", "identifier": "iphoneos26.5", "build": "23F81a"},
+      {"platform": "iOS Simulator", "version": "26.5", "identifier": "iphonesimulator26.5", "build": "23F81a"},
+      {"platform": "macOS", "version": "26.5", "identifier": "macosx26.5", "build": "25F70"},
+      {"platform": "tvOS", "version": "26.5", "identifier": "appletvos26.5", "build": "23L470"},
+      {"platform": "tvOS Simulator", "version": "26.5", "identifier": "appletvsimulator26.5", "build": "23L470"},
+      {"platform": "visionOS", "version": "26.5", "identifier": "xros26.5", "build": "23O469"},
+      {"platform": "visionOS Simulator", "version": "26.5", "identifier": "xrsimulator26.5", "build": "23O469"},
+      {"platform": "watchOS", "version": "26.5", "identifier": "watchos26.5", "build": "23T570"},
+      {"platform": "watchOS Simulator", "version": "26.5", "identifier": "watchsimulator26.5", "build": "23T570"}
+    ]
+  },
+  "macos_vm_tools": {
+    "present": [],
+    "absent": [
+      "tart",
+      "orchard",
+      "orchardctl",
+      "vfkit",
+      "utmctl",
+      "prlctl",
+      "VBoxManage",
+      "ipsw"
+    ],
+    "macos_restore_image_present": false,
+    "macos_vm_image_present": false
+  },
+  "installed_non_candidates": [
+    {"name": "limactl", "path": "/opt/homebrew/bin/limactl", "version": "2.1.1"},
+    {"name": "colima", "path": "/opt/homebrew/bin/colima", "version": "0.10.1"},
+    {"name": "docker", "path": "/opt/homebrew/bin/docker", "version": "29.4.1"}
+  ],
+  "native_filesystem_and_developer_tools": [
+    {"name": "cp", "path": "/bin/cp"},
+    {"name": "ditto", "path": "/usr/bin/ditto"},
+    {"name": "diskutil", "path": "/usr/sbin/diskutil", "live_query": "blocked"},
+    {"name": "hdiutil", "path": "/usr/bin/hdiutil"},
+    {"name": "tmutil", "path": "/usr/bin/tmutil"},
+    {"name": "mount_apfs", "path": "/sbin/mount_apfs"},
+    {"name": "xcrun", "path": "/usr/bin/xcrun"},
+    {"name": "xcodebuild", "path": "/usr/bin/xcodebuild"}
+  ],
+  "automation_constraints": [
+    {
+      "id": "coresimulator-managed-access",
+      "status": "blocked",
+      "evidence": "CoreSimulatorService initialization and simulator log access are denied in the managed environment."
+    },
+    {
+      "id": "xcode-first-launch",
+      "status": "ready",
+      "evidence": "xcodebuild -checkFirstLaunchStatus exited zero."
+    },
+    {
+      "id": "virtualization-entitlement",
+      "status": "required-not-exercised",
+      "evidence": "Apple documents com.apple.security.virtualization as required to load a macOS restore image."
+    },
+    {
+      "id": "apple-branded-host",
+      "status": "present-legal-interpretation-not-performed",
+      "evidence": "The inventoried host is Apple-branded; the Xcode agreement scope is linked, not interpreted by this experiment."
+    },
+    {
+      "id": "orchard-local-network",
+      "status": "not-applicable-tool-absent",
+      "evidence": "Current Orchard documentation describes privileged helper or host preference/reboot options on macOS 15+; none was invoked."
+    }
+  ],
+  "primary_sources": [
+    "https://developer.apple.com/documentation/virtualization/installing-macos-on-a-virtual-machine",
+    "https://developer.apple.com/documentation/virtualization/vzmacosrestoreimage",
+    "https://github.com/cirruslabs/tart",
+    "https://github.com/openai/orchard",
+    "https://www.apple.com/legal/sla/docs/xcode.pdf"
+  ],
+  "raw_sources": [
+    "inventory/raw/xcodebuild-version.txt",
+    "inventory/raw/xcodebuild-sdks.txt",
+    "inventory/raw/xcode-first-launch.txt",
+    "inventory/raw/local-tool-presence.txt"
+  ]
+}

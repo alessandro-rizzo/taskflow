@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "taskflow-e06-execution-manifest/v1-experimental",
+  "title": "E06 separately approved Phase B execution manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "mutablePath": {
+      "type": "string",
+      "pattern": "^/private/tmp/taskflow-e06-[A-Za-z0-9._/-]+$",
+      "not": {"pattern": "(^|/)\\.\\.(/|$)"}
+    },
+    "evidencePath": {
+      "type": "string",
+      "pattern": "^experiments/e06-macos-feasibility/evidence/[A-Za-z0-9._/-]+$",
+      "not": {"pattern": "(^|/)\\.\\.(/|$)"}
+    }
+  },
+  "required": [
+    "format_version",
+    "manifest_id",
+    "phase_b_ticket",
+    "candidate_id",
+    "operator",
+    "approval",
+    "host",
+    "profile",
+    "paths",
+    "resources",
+    "commands",
+    "cleanup_allowlist",
+    "evidence_root"
+  ],
+  "properties": {
+    "format_version": {"const": "taskflow-e06-execution-manifest/v1-experimental"},
+    "manifest_id": {"type": "string", "pattern": "^taskflow-e06-[a-z0-9-]+$"},
+    "phase_b_ticket": {"const": "TF-003.14"},
+    "candidate_id": {
+      "enum": [
+        "warm-immutable-vm-restore",
+        "warm-vm-apfs-workspaces",
+        "vm-per-namespace",
+        "trusted-native-host",
+        "coarse-external-runner"
+      ]
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {"id": {"type": "string", "minLength": 1}}
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approved_by", "approved_at", "exact_mutation_scope", "plan_approval_is_not_execution_approval"],
+      "properties": {
+        "approved_by": {"type": "string", "minLength": 1},
+        "approved_at": {"type": "string", "format": "date-time"},
+        "exact_mutation_scope": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "plan_approval_is_not_execution_approval": {"const": true}
+      }
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resource_id", "inventory_snapshot_sha256", "exclusive_window_start", "exclusive_window_end"],
+      "properties": {
+        "resource_id": {"type": "string", "minLength": 1},
+        "inventory_snapshot_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "exclusive_window_start": {"type": "string", "format": "date-time"},
+        "exclusive_window_end": {"type": "string", "format": "date-time"}
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_profile_digest", "base_image_digest", "runner_digest", "sandbox_policy_digest", "reset_policy_digest"],
+      "properties": {
+        "expected_profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "base_image_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "runner_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sandbox_policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "reset_policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutable_root", "workspace_roots", "derived_data_roots", "custom_device_set_root", "default_simulator_set_forbidden"],
+      "properties": {
+        "mutable_root": {"$ref": "#/$defs/mutablePath"},
+        "workspace_roots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/mutablePath"}},
+        "derived_data_roots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/mutablePath"}},
+        "custom_device_set_root": {"allOf": [{"$ref": "#/$defs/mutablePath"}, {"pattern": "/CoreSimulator$"}]},
+        "default_simulator_set_forbidden": {"const": true}
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concurrency_levels", "min_free_ram_gib", "min_free_disk_gib", "thermal_stop_signal", "per_command_timeout_seconds"],
+      "properties": {
+        "concurrency_levels": {"type": "array", "minItems": 2, "maxItems": 4, "uniqueItems": true, "items": {"type": "integer", "minimum": 1, "maximum": 4}, "contains": {"const": 2}},
+        "min_free_ram_gib": {"type": "number", "exclusiveMinimum": 0},
+        "min_free_disk_gib": {"type": "number", "exclusiveMinimum": 0},
+        "thermal_stop_signal": {"enum": ["nominal-to-fair-transition", "serious", "critical"]},
+        "per_command_timeout_seconds": {"type": "integer", "minimum": 1}
+      }
+    },
+    "commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "argv", "mutates", "targets"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "argv": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "mutates": {"type": "boolean"},
+          "targets": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "cleanup_allowlist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paths", "vm_names", "simulator_name_prefix", "immutable_base_delete_forbidden", "broad_process_kill_forbidden"],
+      "properties": {
+        "paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/mutablePath"}},
+        "vm_names": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^taskflow-e06-[a-z0-9-]+$"}},
+        "simulator_name_prefix": {"type": "string", "pattern": "^taskflow-e06-[a-z0-9-]+$"},
+        "immutable_base_delete_forbidden": {"const": true},
+        "broad_process_kill_forbidden": {"const": true}
+      }
+    },
+    "evidence_root": {"$ref": "#/$defs/evidencePath"}
+  }
+}

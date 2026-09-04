@@ -1,0 +1,28 @@
+observed_at=2026-09-04T14:47:00Z
+collection=read and sanitize installed CoreSimulator image/device plist metadata; no simctl lifecycle command
+sanitization=device UDIDs,host user path,opaque userInfoData omitted
+
+runtime:
+  bundle_identifier=com.apple.CoreSimulator.SimRuntime.iOS-26-5
+  version=26.5
+  build=23F77
+  architectures=arm64
+  signature=verified
+  write_policy=read-only
+  source_kind=system-mobile-asset
+
+default_device_set:
+  device_count=11
+  runtime=com.apple.CoreSimulator.SimRuntime.iOS-26-5
+  state_1_count=10
+  state_3_count=1
+  recent_active_name=iPhone 17
+  recent_active_type=com.apple.CoreSimulator.SimDeviceType.iPhone-17
+  recent_active_state=3
+  recent_active_last_booted_at=2026-09-04T14:44:18Z
+  e06_allowed=false
+
+live_query:
+  status=blocked
+  reason=CoreSimulatorService connection invalid and simulator log path denied in managed sandbox
+  retained_collector_uses_simctl=false

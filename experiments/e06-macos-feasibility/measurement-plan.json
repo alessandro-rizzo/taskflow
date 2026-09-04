@@ -1,0 +1,207 @@
+{
+  "format_version": "taskflow-e06-measurement-plan/v1-experimental",
+  "experiment_id": "E06",
+  "phase_b_ticket": "TF-003.14",
+  "fixture": {
+    "id": "w3-isolated-native-mobile-stack",
+    "version": "t1-w3-fixture-v1-experimental",
+    "scope": "macOS artifact, workspace, simulator, lease, cleanup, and contamination subset only",
+    "explicitly_excluded": [
+      "Linux service implementation",
+      "cross-target endpoint routing",
+      "runtime endpoint authorization",
+      "production provider or protocol"
+    ]
+  },
+  "benchmark_harness": {
+    "id": "t1-benchmark-harness",
+    "schema_version": "taskflow-t1-benchmark/v2",
+    "invocation_rule": "Invoke the fixture CLI; do not import its Go package.",
+    "required_metadata": [
+      "source revision",
+      "hardware CPU cores and RAM",
+      "OS version build and architecture",
+      "mechanism Xcode SDK runtime and runner versions",
+      "primary state and secondary cache dimensions",
+      "per-sample preparation command",
+      "reservation and lease counts",
+      "raw result location"
+    ]
+  },
+  "execution_order": {
+    "default": "serial candidate-complete sample sets",
+    "parallel_exception": "Only the named bounded-concurrency probe may overlap namespaces.",
+    "candidate_order": "Freeze one deterministic order in the approved execution manifest before any result is observed.",
+    "rerun_rule": "Retain failed samples with cause. Rerun only after recording a contract-compatible operational correction; threshold misses are not rerun away."
+  },
+  "timing_metrics": [
+    {
+      "id": "cold-vm-boot",
+      "applicable_candidates": ["warm-immutable-vm-restore", "warm-vm-apfs-workspaces", "vm-per-namespace"],
+      "sample_count": 15,
+      "state": "cold",
+      "threshold": null,
+      "start": "After a new manifest VM clone exists and before its first start command.",
+      "end": "Guest runner responds and full profile attestation succeeds.",
+      "preparation": "Create a new experiment VM clone from the unchanged local immutable base for every sample.",
+      "raw_path": "evidence/benchmarks/<candidate>/cold-vm-boot"
+    },
+    {
+      "id": "warm-workspace-ready",
+      "applicable_candidates": ["warm-immutable-vm-restore", "warm-vm-apfs-workspaces", "vm-per-namespace", "trusted-native-host", "coarse-external-runner"],
+      "sample_count": 30,
+      "state": "warm",
+      "threshold": {"operator": "strictly-less-than", "p95_seconds": 3.0},
+      "start": "Submit acquisition for already-warm attested capacity; queueing is measured separately and excluded.",
+      "end": "A unique empty workspace with namespace HOME TMPDIR DerivedData result roots and reset-policy attestation is ready to execute.",
+      "preparation": "Return capacity to its declared clean warm state and remove only the prior experiment sandbox before every sample.",
+      "raw_path": "evidence/benchmarks/<candidate>/warm-workspace-ready"
+    },
+    {
+      "id": "simulator-ready-to-install",
+      "applicable_candidates": ["clone-from-golden", "erase-reset", "fresh-create-boot"],
+      "sample_count": 30,
+      "state": "warm",
+      "threshold": {"operator": "strictly-less-than", "p95_seconds": 15.0},
+      "start": "Acquire a simulator lease after workspace readiness using only the custom device set.",
+      "end": "The pinned device/runtime is booted, bootstatus reports ready, identity attestation passes, and installation service is reachable.",
+      "preparation": "Apply the candidate reset procedure within the custom device set before every sample.",
+      "raw_path": "evidence/benchmarks/<worker-candidate>/<simulator-candidate>/simulator-ready-to-install"
+    },
+    {
+      "id": "xcode-build",
+      "applicable_candidates": ["all-viable-worker-candidates"],
+      "sample_count": 15,
+      "state": "warm",
+      "threshold": null,
+      "start": "Begin pinned xcodebuild invocation after workspace and profile attestation.",
+      "end": "Declared IOSApp output and build log are closed and output manifest verification succeeds.",
+      "preparation": "Recreate namespace workspace; declare DerivedData and source/tool cache state explicitly before every sample.",
+      "raw_path": "evidence/benchmarks/<candidate>/xcode-build"
+    },
+    {
+      "id": "simulator-install",
+      "applicable_candidates": ["all-viable-simulator-candidates"],
+      "sample_count": 15,
+      "state": "warm",
+      "threshold": null,
+      "start": "Begin installation of the verified IOSApp into the attested leased simulator.",
+      "end": "Installation command succeeds and the installed bundle identity matches the artifact manifest.",
+      "preparation": "Prepare the candidate-specific clean ready simulator before every sample.",
+      "raw_path": "evidence/benchmarks/<candidate>/simulator-install"
+    },
+    {
+      "id": "mobile-test",
+      "applicable_candidates": ["all-viable-worker-and-simulator-pairs"],
+      "sample_count": 15,
+      "state": "warm",
+      "threshold": null,
+      "start": "Launch the installed deterministic E06 mobile test after artifact simulator and lease attestation.",
+      "end": "Structured test report and diagnostics are closed and collected.",
+      "preparation": "Install the same verified build into a clean candidate-prepared simulator before every sample.",
+      "raw_path": "evidence/benchmarks/<worker-candidate>/<simulator-candidate>/mobile-test"
+    },
+    {
+      "id": "candidate-reset",
+      "applicable_candidates": ["all-viable-worker-and-simulator-pairs"],
+      "sample_count": 15,
+      "state": "warm",
+      "threshold": null,
+      "start": "Issue bounded reset after diagnostics are closed.",
+      "end": "All namespace mutable state is absent and the resource passes clean-state attestation for reuse.",
+      "preparation": "Seed only experiment-owned contamination markers before every sample.",
+      "raw_path": "evidence/benchmarks/<worker-candidate>/<simulator-candidate>/candidate-reset"
+    },
+    {
+      "id": "candidate-cleanup",
+      "applicable_candidates": ["all-viable-worker-and-simulator-pairs"],
+      "sample_count": 15,
+      "state": "warm",
+      "threshold": null,
+      "start": "Begin cleanup with the exact manifest allowlist after the session reaches terminal state.",
+      "end": "Every manifest-owned mutable resource is absent or recorded as a precise orphan; immutable base digest remains unchanged.",
+      "preparation": "Create one complete experiment-owned candidate lifecycle before every sample.",
+      "raw_path": "evidence/benchmarks/<worker-candidate>/<simulator-candidate>/candidate-cleanup"
+    },
+    {
+      "id": "image-import-update",
+      "applicable_candidates": ["warm-immutable-vm-restore", "warm-vm-apfs-workspaces", "vm-per-namespace", "coarse-external-runner"],
+      "sample_count": 15,
+      "state": "warm",
+      "threshold": null,
+      "start": "Begin local import or provider-side clone of an already approved locally/provider-present digest; network transfer is excluded.",
+      "end": "The new immutable digest is available and validates without changing the prior base.",
+      "preparation": "Remove only the prior experiment import while retaining both approved source digests before every sample.",
+      "raw_path": "evidence/benchmarks/<candidate>/image-import-update"
+    }
+  ],
+  "one_shot_distribution_observation": {
+    "sample_count": 1,
+    "purpose": "Record bytes, duration, source, authentication mode, and rollback for one separately approved image distribution/update without pretending one observation is a distribution.",
+    "threshold": null,
+    "network_requires_separate_approval": true,
+    "raw_path": "evidence/raw/image-distribution-update.json"
+  },
+  "correctness_probes": [
+    {
+      "id": "alternating-namespace-contamination",
+      "repetitions": 20,
+      "pattern": "ten A-to-B and ten B-to-A handoffs in deterministic alternation",
+      "pass": "Zero prior-namespace workspace, HOME, TMPDIR, DerivedData, installed-app data, preferences, keychain canary names, or lease identifiers are observable; no canary values are persisted."
+    },
+    {
+      "id": "two-namespace-isolation",
+      "repetitions": 10,
+      "concurrency": 2,
+      "pass": "Zero worker-instance, writable-path, simulator, device-set, reservation, namespace, or lease collision and zero cross-namespace writable observation."
+    },
+    {
+      "id": "bounded-maximum-safe-concurrency",
+      "repetitions_per_level": 5,
+      "levels": "Exact ascending integer list starts at 1, includes 2, is capped at 4, and is frozen in the approved execution manifest.",
+      "stop_conditions": [
+        "any isolation or identity violation",
+        "any failed cleanup or orphan",
+        "free RAM below the manifest minimum",
+        "host thermal-pressure signal reaches the manifest stop level",
+        "disk free space below the manifest minimum",
+        "interactive host safety stop requested"
+      ],
+      "reporting": "Report the highest clean tested level and first failing or safety-stopped level. Below two selects the serialized classification; do not extrapolate beyond the cap."
+    },
+    {
+      "id": "immutable-base-integrity",
+      "repetitions": "before and after every candidate sample set",
+      "pass": "Base image or template digest is byte-identical; mutable clones are never promoted implicitly."
+    },
+    {
+      "id": "image-update-rollback",
+      "repetitions": 1,
+      "pass": "New digest is admitted only after attestation; mismatch returns to the prior digest without deleting it and leaves no unowned clone."
+    }
+  ],
+  "failure_recovery_probes": [
+    {"id": "vm-loss", "repetitions": 5, "scope": "experiment clone only", "pass": "Loss is recorded; clone is not reused; a clean compatible clone can retry without base mutation."},
+    {"id": "simulator-loss", "repetitions": 5, "scope": "experiment custom-set device only", "pass": "Lease becomes lost; no report is produced from the lost session; a clean session can retry."},
+    {"id": "cancellation", "repetitions": 5, "scope": "active experiment namespace", "pass": "Cleanup is durable and completes within the W3 30-second deadline or records exact orphans."},
+    {"id": "caller-loss", "repetitions": 5, "scope": "experiment client process only", "pass": "Resources are reclaimed no later than lease TTL plus 30 seconds or recorded as exact orphans."}
+  ],
+  "hard_gates": {
+    "profile_mismatch_rejections_min": 1,
+    "cross_namespace_contamination_count_max": 0,
+    "identity_or_lease_collision_count_max": 0,
+    "unauthorized_cleanup_target_count_max": 0,
+    "immutable_base_digest_change_count_max": 0,
+    "unrecorded_orphan_count_max": 0,
+    "threshold_relaxation_after_results": false
+  },
+  "decision_branches": [
+    {"id": "warm-vm-cloned-workspace", "select_when": "A VM candidate passes all hard gates and both warm p95 budgets with reusable worker and disposable workspace/session separation."},
+    {"id": "vm-per-namespace", "select_when": "VM isolation/recovery passes but safe reuse inside one VM fails or per-node/session overhead requires namespace lifetime."},
+    {"id": "trusted-native-host", "select_when": "Only the trusted native candidate passes latency and reset gates; report its lower attained reproducibility honestly."},
+    {"id": "coarse-external-runner", "select_when": "Local VM/native candidates cannot meet correctness or operations gates but an external target provides a reproducible coarse lifecycle."},
+    {"id": "serialized-macos-capacity", "select_when": "At least one candidate is credible at concurrency one but no candidate safely reaches two."},
+    {"id": "stop-or-narrow", "select_when": "No exercised candidate provides a bounded credible native-mobile path, or immutable/reset/cleanup hard gates fail."
+    }
+  ]
+}

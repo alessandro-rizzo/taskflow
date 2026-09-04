@@ -1,0 +1,31 @@
+{
+  "format_version": "taskflow-e06-fixture-bindings/v1-experimental",
+  "source_revision": "21a55f3ea9eac0016d55b7827e80c01c237c9020",
+  "bindings": [
+    {
+      "fixture_id": "w3-isolated-native-mobile-stack",
+      "version": "t1-w3-fixture-v1-experimental",
+      "purpose": "Branch-neutral W3 namespace, macOS artifact, simulator lease, cleanup, contamination, and profile-mismatch specification.",
+      "files": [
+        {"path": "fixtures/w3/examples/namespace-a.json", "sha256": "b86378913dcc9f7e80c8a47cf387f68a5a6130d88592fa02be72229e85a3583e"},
+        {"path": "fixtures/w3/examples/namespace-b.json", "sha256": "22db508434c6997cc8ec4bd9b0dee4bc0a01181380ca196e0abb875c865ab682"},
+        {"path": "fixtures/w3/examples/scenario-caller-loss.json", "sha256": "88fbb5623f79bfcf572759bfe6f16a5371a423f24b098969a0194923b33800cc"},
+        {"path": "fixtures/w3/examples/scenario-cancellation.json", "sha256": "5e043f9f043748f22bc5a0f5a220b883fe7fcec7912400286723fb2442ac4b01"},
+        {"path": "fixtures/w3/examples/scenario-dirty-warm-infrastructure.json", "sha256": "e319dc7d35df836f6b792901de028226872161be051db503f6c97ebde7dde87b"},
+        {"path": "fixtures/w3/examples/scenario-port-collision.json", "sha256": "fd8da59e371f2eb3f38342f23bccfd728f348b99703cffaf7e7516cac8124560"},
+        {"path": "fixtures/w3/examples/scenario-simulator-profile-mismatch.json", "sha256": "09898335565236d4f3856cfa03deaf826a9e8e3e9e61bc48e33635ec2d70f40a"},
+        {"path": "fixtures/w3/examples/scenario-unauthorized-routing.json", "sha256": "a4f79da3f856f34e1c06039c00ba7126b006e9bde4e7b708895ed4771de968b3"},
+        {"path": "fixtures/w3/spec.md", "sha256": "3604c22837c2c377309c4d08b1eeeef862fc150b195b545bed981745fd1768a4"}
+      ]
+    },
+    {
+      "fixture_id": "t1-benchmark-harness",
+      "version": "taskflow-t1-benchmark/v2",
+      "purpose": "Required comparable timing record and validator; Phase B invokes the harness CLI without importing it.",
+      "files": [
+        {"path": "fixtures/t1-benchmark-harness/record.go", "sha256": "b0bb479abc9d2095d3f8f3067001125312c0be98d5ed67f3b295b72a13f0a659"},
+        {"path": "fixtures/t1-benchmark-harness/validate.go", "sha256": "07dedcd217927500b6a9758aeaf8c6ebf9b780e4ab66b8577ced793ef57d071a"}
+      ]
+    }
+  ]
+}

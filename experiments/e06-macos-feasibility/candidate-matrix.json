@@ -1,0 +1,175 @@
+{
+  "format_version": "taskflow-e06-candidate-matrix/v1-experimental",
+  "snapshot_timestamp": "2026-09-04T14:46:24Z",
+  "status_values": [
+    "conditional-unreserved",
+    "blocked-external"
+  ],
+  "candidate_common_rules": {
+    "execution_owner": "TF-003.14",
+    "fresh_approved_manifest_required": true,
+    "default_simulator_set_forbidden": true,
+    "existing_vm_or_device_forbidden": true,
+    "immutable_base_deletion_forbidden": true,
+    "command_presence_is_execution_evidence": false,
+    "exact_prefix": "taskflow-e06-",
+    "mutable_root_prefix": "/private/tmp/taskflow-e06-"
+  },
+  "worker_candidates": [
+    {
+      "id": "warm-immutable-vm-restore",
+      "roadmap_candidate": "warm Tart/Orchard-style VM restored from an immutable image",
+      "status": "blocked-external",
+      "availability_evidence": [
+        "Apple Virtualization.framework exists on the inventoried Apple-silicon host.",
+        "Tart and Orchard CLIs are absent.",
+        "No approved or digest-pinned macOS/Xcode base image is present.",
+        "No dedicated VM capacity or mutation window is reserved."
+      ],
+      "required_prerequisites": [
+        "dedicated Apple-silicon host or exclusive approved window",
+        "pinned Tart or Orchard version",
+        "locally present base image identified by immutable digest",
+        "guest macOS/Xcode/SDK/runtime and runner attestation",
+        "headless automation and network policy reviewed",
+        "fresh approved execution manifest"
+      ],
+      "capacity_assumption": "Unknown until VM CPU/RAM, host headroom, and simulator slots are frozen in the execution manifest.",
+      "procedure": "PROC:warm-immutable-vm-restore",
+      "profile_identity_required": true,
+      "rejection_reason": "Cannot be executed or credited on the current inventory without installation, image acquisition, and reserved capacity."
+    },
+    {
+      "id": "warm-vm-apfs-workspaces",
+      "roadmap_candidate": "one warm clean VM with APFS-cloned workspaces",
+      "status": "blocked-external",
+      "availability_evidence": [
+        "E04 previously exercised APFS clone semantics on the native host, but no macOS guest exists here.",
+        "No guest filesystem, pinned VM image, or VM controller is present.",
+        "No evidence establishes safe concurrent sandboxes inside one VM."
+      ],
+      "required_prerequisites": [
+        "all warm-immutable-vm-restore prerequisites",
+        "APFS guest volume with clonefile support exercised",
+        "immutable guest source base and per-namespace writable roots",
+        "per-namespace HOME TMPDIR DerivedData and tool-cache policy",
+        "fresh approved execution manifest"
+      ],
+      "capacity_assumption": "One VM may host more than one sandbox only if the bounded concurrency and contamination probes remain clean.",
+      "procedure": "PROC:warm-vm-apfs-workspaces",
+      "profile_identity_required": true,
+      "rejection_reason": "No guest or isolation evidence is available; native APFS evidence cannot be projected into a hypothetical VM."
+    },
+    {
+      "id": "vm-per-namespace",
+      "roadmap_candidate": "one VM per run or per namespace",
+      "status": "blocked-external",
+      "availability_evidence": [
+        "Virtualization.framework exists but no VM management CLI or base image is present.",
+        "Host disk capacity is visible, but safe VM CPU/RAM concurrency is not measured."
+      ],
+      "required_prerequisites": [
+        "all warm-immutable-vm-restore prerequisites",
+        "one immutable clone per namespace",
+        "unique VM machine identifier and namespace lease",
+        "bounded host CPU RAM disk and thermal envelope",
+        "fresh approved execution manifest"
+      ],
+      "capacity_assumption": "At least two namespace VMs are required for a concurrent W3 claim; otherwise this candidate is classified serialized.",
+      "procedure": "PROC:vm-per-namespace",
+      "profile_identity_required": true,
+      "rejection_reason": "Requires absent VM tooling/image and an unapproved high-resource mutation."
+    },
+    {
+      "id": "trusted-native-host",
+      "roadmap_candidate": "trusted native host execution with strict workspace/session reset",
+      "status": "conditional-unreserved",
+      "availability_evidence": [
+        "Mac17,7 Apple M5 Max host with 64 GiB memory is present.",
+        "Xcode 26.6 build 17F113 and iOS 26.5 SDK/runtime assets are present.",
+        "Xcode first-launch status returned success.",
+        "The shared default simulator set has a recently booted device and is forbidden.",
+        "CoreSimulatorService access is blocked in the managed session."
+      ],
+      "required_prerequisites": [
+        "exclusive approved measurement window",
+        "custom simulator device set under the manifest root",
+        "experiment-owned workspace HOME TMPDIR DerivedData and result roots",
+        "pinned Xcode path and normalized profile attestation",
+        "memory disk and thermal stop limits",
+        "fresh approved execution manifest"
+      ],
+      "capacity_assumption": "No concurrency is assumed. Levels are sealed before measurement and a result below two is classified serialized.",
+      "procedure": "PROC:trusted-native-host",
+      "profile_identity_required": true,
+      "rejection_reason": null
+    },
+    {
+      "id": "coarse-external-runner",
+      "roadmap_candidate": "external macOS runner as a coarse target",
+      "status": "blocked-external",
+      "availability_evidence": [
+        "No external runner endpoint, credential, machine profile, quota, or reservation was supplied.",
+        "This inventory performed no provider login or network probe."
+      ],
+      "required_prerequisites": [
+        "approved provider and credential mediation",
+        "read-only capacity and image manifest",
+        "pinned host image and Xcode profile",
+        "documented reset cleanup and orphan API",
+        "fresh approved execution manifest"
+      ],
+      "capacity_assumption": "Unknown until provider quota and exclusivity are evidenced.",
+      "procedure": "PROC:coarse-external-runner",
+      "profile_identity_required": true,
+      "rejection_reason": "No provider resource or safe read-only manifest exists."
+    }
+  ],
+  "simulator_candidates": [
+    {
+      "id": "clone-from-golden",
+      "status": "conditional-unreserved",
+      "required_prerequisites": [
+        "custom device set",
+        "experiment-created powered-off golden device",
+        "golden state manifest and digest",
+        "fresh approved execution manifest"
+      ],
+      "procedure": "PROC:simulator-clone-from-golden"
+    },
+    {
+      "id": "erase-reset",
+      "status": "conditional-unreserved",
+      "required_prerequisites": [
+        "custom device set",
+        "experiment-created device",
+        "reset-state probes",
+        "fresh approved execution manifest"
+      ],
+      "procedure": "PROC:simulator-erase-reset"
+    },
+    {
+      "id": "fresh-create-boot",
+      "status": "conditional-unreserved",
+      "required_prerequisites": [
+        "custom device set",
+        "pinned runtime and device type",
+        "fresh approved execution manifest"
+      ],
+      "procedure": "PROC:simulator-fresh-create-boot"
+    }
+  ],
+  "installed_non_candidates": [
+    {"tool": "limactl", "version": "2.1.1", "reason": "Linux VM tooling does not establish a native macOS guest."},
+    {"tool": "colima", "version": "0.10.1", "reason": "Linux container VM tooling does not establish a native macOS guest."},
+    {"tool": "docker", "version": "29.4.1", "reason": "CLI presence does not establish a reachable daemon or macOS execution substrate."}
+  ],
+  "phase_b_decision_branches": [
+    "warm-vm-cloned-workspace",
+    "vm-per-namespace",
+    "trusted-native-host",
+    "coarse-external-runner",
+    "serialized-macos-capacity",
+    "stop-or-narrow"
+  ]
+}

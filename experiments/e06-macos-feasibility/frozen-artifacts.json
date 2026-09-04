@@ -1,0 +1,27 @@
+{
+  "format_version": "taskflow-e06-frozen-artifacts/v1-experimental",
+  "hash_algorithm": "sha256",
+  "artifacts": [
+    {"path": "README.md", "sha256": "9b348a37a9102f9b91b52e5213969113912182a8f7fdcfa28d9385102c5470ad"},
+    {"path": "Taskfile.yml", "sha256": "20a11e730ae6e3a581bfb17dd8e815bb7e0e2adcfe96920d25d22fdc432871bc"},
+    {"path": "candidate-matrix.json", "sha256": "43422a12603f0f9480d7c701e09d0e31772998ab80aa22f94363e56609762fbe"},
+    {"path": "candidate-procedures.md", "sha256": "748430d435274cefa933c57c14928462710091da0243a0fbe02966064850fb27"},
+    {"path": "contract.json", "sha256": "e504372b6887b94fba46a341bfa7faf8bcb9a032bd503ca3fe20da93c66a74df"},
+    {"path": "execution-manifest.schema.json", "sha256": "396ad8f5ebad541c2144f0db1e5578e11a4c2872f37e72766231911d1c801ea2"},
+    {"path": "fixture-bindings.json", "sha256": "e9c8ba20f6a9737d8379b5527d41ad00e5780b76ec97332fc40db783d91707ab"},
+    {"path": "infrastructure-status.json", "sha256": "24ddab121ac55261339d9a133f7e3ce08a7b8125b3189decc6b5e9c3c200cc36"},
+    {"path": "inventory/host-profile.json", "sha256": "9e021a326cba6e3b3b92c6cfa9f274c531d5f9cf13b95a4f314f2afc95d80630"},
+    {"path": "inventory/raw/local-tool-presence.txt", "sha256": "4008c85412b120ba3fc7a66db0c618cdcd5d7e5896cec7d4bd50d44a733a4e9f"},
+    {"path": "inventory/raw/simulator-plists.txt", "sha256": "2ec1f77a118dcc175b10a430b1ab2f56ed693bdfeed168ba1fb38ca73a6df2de"},
+    {"path": "inventory/raw/system-profiler.txt", "sha256": "68d3ef9ea52b82795789e1766434723b14111bf8989b06e38cdda1f1cbc68704"},
+    {"path": "inventory/raw/xcode-first-launch.txt", "sha256": "8741709ab89096cb13d9a451f156f5936c80249bba1d2752cefdde4404346869"},
+    {"path": "inventory/raw/xcodebuild-sdks.txt", "sha256": "17e13912078bf963a8e8de4327de735a678ce200efa50800185c1615ef096b4d"},
+    {"path": "inventory/raw/xcodebuild-version.txt", "sha256": "f3bc1a0a53975ac1a3ce9c72e7853f5c7b679c3f55f3a251b2e2e20d55f2abdc"},
+    {"path": "inventory/simulator.json", "sha256": "01fd35cf252e60fd72fea8d077be3bf60623aadb7921449d3b58a0875079dc96"},
+    {"path": "inventory/tooling.json", "sha256": "e363d3d453bcd2ee785aff623923d3c1113b8f4662700abdf2ab131b04462bbf"},
+    {"path": "measurement-plan.json", "sha256": "50fd5713f014a85b671ee1a89e58604b7518e9df2fad31cb49401c5112a9001f"},
+    {"path": "scripts/collect_inventory.py", "sha256": "1f0556d69308cae5b514e652e24455c07662eeb3592e9da8862bb48227d19428"},
+    {"path": "scripts/verify_contract.py", "sha256": "9564859c0bdcda29a9ab718bcf4a865bf403be5f24d0052a704fdd7a00bdac27"},
+    {"path": "tests/test_verify_contract.py", "sha256": "c5db9328bae9bd238533fa0c40776822b5c98dbd529aad25155420ff27cd08b5"}
+  ]
+}
