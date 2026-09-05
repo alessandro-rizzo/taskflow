@@ -1,0 +1,119 @@
+{
+  "format_version": "taskflow-e06-vm-pins/v1-experimental",
+  "observed_date": "2026-09-04",
+  "evidence_kind": "public-registry-metadata-only-no-disk-download",
+  "controller": {
+    "name": "Tart",
+    "version": "2.36.0",
+    "release_url": "https://github.com/openai/tart/releases/tag/2.36.0",
+    "url": "https://github.com/openai/tart/releases/download/2.36.0/tart.tar.gz",
+    "size_bytes": 22905967,
+    "sha256": "c72a8ab8d78a6498a1e42688b1a1ec6c512ce46ca35a3a3be130c3de1440c7e8",
+    "installed": false
+  },
+  "image": {
+    "repository": "cirruslabs/macos-tahoe-xcode",
+    "tag": "26.5",
+    "manifest_sha256": "61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+    "annotations": {
+      "org.cirruslabs.tart.uncompressed-disk-size": "140000000000",
+      "org.cirruslabs.tart.upload-time": "2026-05-26T04:25:04Z"
+    },
+    "oci_config": {
+      "digest": "sha256:3a6cb4eb6201aa00136781f9d350858ca23054fdda419893193af3e3a044b3a8",
+      "mediaType": "application/vnd.oci.image.config.v1+json",
+      "size": 100
+    },
+    "tart_config_digest": "sha256:cf4ace9e40323ec8d0c4b233a3e54bcce28b62a4211f94d7349350a3e726dc03",
+    "tart_config_sha256": "cf4ace9e40323ec8d0c4b233a3e54bcce28b62a4211f94d7349350a3e726dc03",
+    "tart_config_sanitized": {
+      "display": {
+        "width": 1024,
+        "height": 768
+      },
+      "os": "darwin",
+      "arch": "arm64",
+      "memorySizeMin": 4294967296,
+      "hardwareModel": "YnBsaXN0MDDTAQIDBAQFXxAZRGF0YVJlcHJlc2VudGF0aW9uVmVyc2lvbl8QD1BsYXRmb3JtVmVyc2lvbl8QEk1pbmltdW1TdXBwb3J0ZWRPUxACowYHBxANEAAIDys9UlRYWgAAAAAAAAEBAAAAAAAAAAgAAAAAAAAAAAAAAAAAAABc",
+      "version": 1,
+      "cpuCount": 4,
+      "cpuCountMin": 2,
+      "memorySize": 8589934592,
+      "diskFormat": "raw"
+    },
+    "layer_count": 263,
+    "compressed_layer_bytes": 68828940474,
+    "unique_compressed_layer_bytes": 68528981834,
+    "reference": "ghcr.io/cirruslabs/macos-tahoe-xcode@sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+    "acquisition_proposed": true,
+    "profile_approved": false,
+    "disk_downloaded": false
+  },
+  "alternatives": [
+    {
+      "repository": "cirruslabs/macos-tahoe-xcode",
+      "tag": "26.6",
+      "http_status": 404,
+      "listed_in_tags": false,
+      "disposition": "unavailable-at-inspection"
+    },
+    {
+      "repository": "cirruslabs/macos-runner",
+      "tag": "tahoe",
+      "manifest_sha256": "98acf50794306bc293f2e30e40115f1452772e4e17eb257968b7c98f39ebf231",
+      "annotations": {
+        "org.cirruslabs.tart.uncompressed-disk-size": "520000000000",
+        "org.cirruslabs.tart.upload-time": "2026-08-29T00:33:41Z"
+      },
+      "oci_config": {
+        "digest": "sha256:3a6cb4eb6201aa00136781f9d350858ca23054fdda419893193af3e3a044b3a8",
+        "mediaType": "application/vnd.oci.image.config.v1+json",
+        "size": 100
+      },
+      "tart_config_digest": "sha256:ff769fe70aeb3c1aaea798d2106696ad04a043fe24602bbf5e8073d08c0c7b62",
+      "tart_config_sha256": "ff769fe70aeb3c1aaea798d2106696ad04a043fe24602bbf5e8073d08c0c7b62",
+      "tart_config_sanitized": {
+        "hardwareModel": "YnBsaXN0MDDTAQIDBAQFXxAZRGF0YVJlcHJlc2VudGF0aW9uVmVyc2lvbl8QD1BsYXRmb3JtVmVyc2lvbl8QEk1pbmltdW1TdXBwb3J0ZWRPUxACowYHBxANEAAIDys9UlRYWgAAAAAAAAEBAAAAAAAAAAgAAAAAAAAAAAAAAAAAAABc",
+        "cpuCountMin": 2,
+        "os": "darwin",
+        "display": {
+          "width": 1024,
+          "height": 768
+        },
+        "arch": "arm64",
+        "memorySize": 8589934592,
+        "version": 1,
+        "cpuCount": 4,
+        "memorySizeMin": 4294967296,
+        "diskFormat": "raw"
+      },
+      "layer_count": 971,
+      "compressed_layer_bytes": 189701428526,
+      "unique_compressed_layer_bytes": 187927760046,
+      "disposition": "not-selected-larger-multi-Xcode-image"
+    }
+  ],
+  "guest_profile": {
+    "expected_xcode_version": "26.5",
+    "expected_architecture": "arm64",
+    "developer_directory_proposal": "/Applications/Xcode_26.5.app/Contents/Developer",
+    "macos_version": null,
+    "macos_build": null,
+    "xcode_build": null,
+    "sdk_version": null,
+    "sdk_build": null,
+    "simulator_runtime_version": null,
+    "simulator_runtime_build": null,
+    "attested": false,
+    "native_profile_equivalent": false
+  },
+  "sources": [
+    "https://api.github.com/repos/cirruslabs/tart/releases/latest",
+    "https://ghcr.io/v2/cirruslabs/macos-tahoe-xcode/tags/list",
+    "https://ghcr.io/v2/cirruslabs/macos-tahoe-xcode/manifests/26.5",
+    "https://raw.githubusercontent.com/openai/tart/2.36.0/Sources/tart/Commands/Run.swift",
+    "https://raw.githubusercontent.com/openai/tart/2.36.0/Sources/tart/Commands/Clone.swift",
+    "https://raw.githubusercontent.com/openai/tart/2.36.0/Sources/tart/Config.swift",
+    "https://raw.githubusercontent.com/cirruslabs/macos-image-templates/26.5/templates/xcode.pkr.hcl"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "observed-not-approved",
+  "source_receipt_sha256": "c3fc4aa96dd488208036c9237b8d6fd8e652b08b058d266e6379f398833f3028",
+  "observed_at": "2026-09-05T07:14:18Z",
+  "macos_version": "26.4",
+  "macos_build": "25E246",
+  "architecture": "arm64",
+  "xcode_version": "26.5",
+  "xcode_build": "17F42",
+  "developer_directory": "/Applications/Xcode_26.5.app/Contents/Developer",
+  "iphoneos_version": "26.5",
+  "iphoneos_build": null,
+  "iphonesimulator_version": "26.5",
+  "iphonesimulator_build": null,
+  "runtime_identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+  "runtime_build": "23F77",
+  "runtime_architecture": "arm64",
+  "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+  "cpu_count": 6,
+  "memory_bytes": 17179869184,
+  "sip": "disabled",
+  "console_user": "admin"
+}

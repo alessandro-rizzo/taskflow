@@ -1,0 +1,102 @@
+{
+  "format_version": "taskflow-e06-vm-contract/v1-experimental",
+  "experiment_id": "E06",
+  "task_id": "TF-003.14",
+  "status": "acquisition-proposal-awaiting-approval",
+  "execution_count": 0,
+  "candidate_order": [
+    "warm-vm-apfs-workspaces",
+    "warm-immutable-vm-restore",
+    "vm-per-namespace"
+  ],
+  "anchor_commit": "e794e615f5147e08c2ef16cb59937d11f1e3161e",
+  "inputs": {
+    "measurement-plan.json": "50fd5713f014a85b671ee1a89e58604b7518e9df2fad31cb49401c5112a9001f",
+    "execution-manifest.schema.json": "396ad8f5ebad541c2144f0db1e5578e11a4c2872f37e72766231911d1c801ea2",
+    "phase-b/execution/contract.json": "04801dc0837e2a970c4ca28c2dbe402ece7a030ada0613a6bc73927dfbbd3c69"
+  },
+  "storage": {
+    "host_root": "/private/tmp/taskflow-e06-vm-a",
+    "tart_home": "/private/tmp/taskflow-e06-vm-a/tart",
+    "controller_directory": "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0",
+    "guest_root": "/private/tmp/taskflow-e06-vm-a",
+    "evidence_root": "experiments/e06-macos-feasibility/evidence/taskflow-e06-vm-a",
+    "host_and_guest_are_distinct_filesystems": true,
+    "immutable_base_vm_name": "taskflow-e06-vm-a-base",
+    "preflight_vm_name": "taskflow-e06-vm-a-preflight"
+  },
+  "resources": {
+    "initial_vm_cpu": 6,
+    "initial_vm_memory_mib": 16384,
+    "initial_vm_count": 1,
+    "host_min_free_ram_gib": 16,
+    "host_min_free_disk_gib": 200,
+    "thermal_stop": "serious",
+    "concurrency_levels": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "concurrency_repetitions": 5,
+    "namespace_count_is_not_vm_count": true
+  },
+  "policies": {
+    "acquisition_network": "HTTPS to GitHub release/CDN and GHCR public pull/CDN endpoints only; anonymous public registry token stays in memory",
+    "controller_install": "standalone application bundle; retain signature and embedded provisioning profile; no Homebrew install",
+    "automatic_pruning": false,
+    "host_root_must_be_absent": true,
+    "archive_links": "relative in-bundle symbolic links only; reject hard links, special files, absolute paths, traversal, symlink cycles and links escaping the bundle",
+    "preflight_network": "Tart --net-host; host-only networking still permits access to the host and other VMs on that segment",
+    "shares": [],
+    "clipboard": false,
+    "audio": false,
+    "image_trust": "third-party CI image; templates disable guest SIP and include default automation credentials; verify live; no personal secrets or untrusted workload",
+    "host_privilege_changes": false,
+    "preflight_cpu_ram_changes_apply_to_clone_only": true,
+    "simulator_in_guest_only": true,
+    "host_CoreSimulator_forbidden": true,
+    "vm_and_image_delete_requires_separate_approval": true,
+    "retained_acquisition": "tool archive, extracted bundle, pinned OCI base and receipts; no automatic cleanup",
+    "measurement_network": "must be separately attested and approved before guest workload execution; host-only is not a no-host-access guarantee",
+    "simulated_records_are_measurements": false
+  },
+  "stages": [
+    {
+      "id": "acquire",
+      "status": "proposal",
+      "outcome": "verified controller and pinned OCI image on disk; zero VM boot"
+    },
+    {
+      "id": "guest-preflight",
+      "status": "pending-acquisition",
+      "outcome": "one isolated VM with live version, runtime, SIP, login, network and free-space facts; no benchmark"
+    },
+    {
+      "id": "implementation",
+      "status": "pending-guest-attestation",
+      "outcome": "exact executable guest/host ledger, negative tests, reviewed diff and commit"
+    },
+    {
+      "id": "smoke",
+      "status": "pending-exact-execution-approval",
+      "outcome": "one complete build/install/test/reset/cleanup plus host residue and base integrity"
+    },
+    {
+      "id": "matrix",
+      "status": "pending-smoke-acceptance",
+      "outcome": "all frozen timing, contamination, concurrency, VM loss, simulator loss, cancellation, caller loss and image update probes"
+    }
+  ],
+  "limitations": [
+    "Xcode 26.6 tag unavailable; acquisition of 26.5 needs explicit approval of the alternative guest profile.",
+    "OCI configuration proves architecture and disk layout, not Xcode/SDK/runtime identity or image safety.",
+    "The 140 GB guest disk may need separately approved expansion after free-space attestation; host disk space does not imply guest free space.",
+    "Tart --net-host uses host services and host network state; boot-side effects and ownership must be included in the VM preflight approval.",
+    "SIP-disabled guest results cannot be extrapolated to SIP-enabled production guests.",
+    "Do not equate APFS disk clones with suspended-memory restore; each admitted mechanism requires separate evidence.",
+    "Do not silently cap the four-namespace ramp to fit VM capacity; report unsupported or safety-stopped levels explicitly.",
+    "No executable VM measurement backend exists at the acquisition checkpoint; the native runner cannot be pointed at this VM.",
+    "No Gate 1 branch decision or raw measurement has been produced."
+  ]
+}

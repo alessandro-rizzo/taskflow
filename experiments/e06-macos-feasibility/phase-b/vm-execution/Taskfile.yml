@@ -1,0 +1,15 @@
+version: '3'
+
+tasks:
+  check:
+    desc: Check E06 acquisition and VM smoke recording without live execution
+    cmds:
+      - PYTHONDONTWRITEBYTECODE=1 python3 contract.py verify
+      - PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py'
+      - PYTHONDONTWRITEBYTECODE=1 python3 contract.py record-plan
+      - PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s smoke/tests -p 'test_*.py'
+      - PYTHONDONTWRITEBYTECODE=1 python3 smoke/runner.py record-plan
+  describe:
+    desc: Print the complete acquisition proposal and frozen measurement requirements
+    cmds:
+      - PYTHONDONTWRITEBYTECODE=1 python3 contract.py describe

@@ -1,0 +1,302 @@
+{
+  "stage": "acquire",
+  "execution_supported": false,
+  "controller_environment": {
+    "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "CFFIXED_USER_HOME": "/private/tmp/taskflow-e06-vm-a",
+    "TART_HOME": "/private/tmp/taskflow-e06-vm-a/tart",
+    "TART_NO_AUTO_PRUNE": "1",
+    "TMPDIR": "/private/tmp/taskflow-e06-vm-a/tmp"
+  },
+  "inherit_environment": false,
+  "environment_applies_to": "all commands; TMPDIR after acquire-03",
+  "receipt_write_root": "/private/tmp/taskflow-e06-vm-a/receipts",
+  "operations": [
+    {
+      "id": "acquire-01",
+      "kind": "check",
+      "arguments": [
+        "explicit acquisition approval binds pins, contract and ledger digests",
+        "approval accepts Xcode 26.5 as a candidate guest profile; not a native-profile match",
+        "host root absent and no symlink parents",
+        "host free disk >= 600 GiB",
+        "400 GiB maximum task allocation including archive, image and import; retain >= 200 GiB free"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-01.json"
+    },
+    {
+      "id": "acquire-02",
+      "kind": "command",
+      "arguments": [
+        "/bin/mkdir",
+        "-m",
+        "700",
+        "/private/tmp/taskflow-e06-vm-a"
+      ],
+      "targets": [
+        "/private/tmp/taskflow-e06-vm-a"
+      ],
+      "mutates": true,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-01"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-02.json"
+    },
+    {
+      "id": "acquire-03",
+      "kind": "command",
+      "arguments": [
+        "/bin/mkdir",
+        "-p",
+        "/private/tmp/taskflow-e06-vm-a/downloads",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0",
+        "/private/tmp/taskflow-e06-vm-a/tart",
+        "/private/tmp/taskflow-e06-vm-a/tmp",
+        "/private/tmp/taskflow-e06-vm-a/receipts"
+      ],
+      "targets": [
+        "/private/tmp/taskflow-e06-vm-a/downloads",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0",
+        "/private/tmp/taskflow-e06-vm-a/tart",
+        "/private/tmp/taskflow-e06-vm-a/tmp",
+        "/private/tmp/taskflow-e06-vm-a/receipts"
+      ],
+      "mutates": true,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-02"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-03.json"
+    },
+    {
+      "id": "acquire-04",
+      "kind": "command",
+      "arguments": [
+        "/usr/bin/curl",
+        "--disable",
+        "--fail",
+        "--location",
+        "--proto",
+        "=https",
+        "--proto-redir",
+        "=https",
+        "--connect-timeout",
+        "30",
+        "--max-time",
+        "900",
+        "--output",
+        "/private/tmp/taskflow-e06-vm-a/downloads/tart-2.36.0.tar.gz",
+        "https://github.com/openai/tart/releases/download/2.36.0/tart.tar.gz"
+      ],
+      "targets": [
+        "/private/tmp/taskflow-e06-vm-a/downloads/tart-2.36.0.tar.gz"
+      ],
+      "mutates": true,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-03"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-04.json"
+    },
+    {
+      "id": "acquire-05",
+      "kind": "check",
+      "arguments": [
+        "archive bytes == 22905967",
+        "archive SHA-256 == c72a8ab8d78a6498a1e42688b1a1ec6c512ce46ca35a3a3be130c3de1440c7e8"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-04"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-05.json"
+    },
+    {
+      "id": "acquire-06",
+      "kind": "check",
+      "arguments": [
+        "inspect tar member paths and link graph before extraction",
+        "allow only tart.app descendants and one regular top-level LICENSE file",
+        "allow only files, directories and relative in-bundle symlinks",
+        "reject traversal, absolute paths, hard links, special files, symlink escapes and cycles"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-05"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-06.json"
+    },
+    {
+      "id": "acquire-07",
+      "kind": "command",
+      "arguments": [
+        "/usr/bin/tar",
+        "-xzf",
+        "/private/tmp/taskflow-e06-vm-a/downloads/tart-2.36.0.tar.gz",
+        "-C",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0"
+      ],
+      "targets": [
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/LICENSE"
+      ],
+      "mutates": true,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-06"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-07.json"
+    },
+    {
+      "id": "acquire-08",
+      "kind": "command",
+      "arguments": [
+        "/usr/bin/codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-07"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-08.json"
+    },
+    {
+      "id": "acquire-09",
+      "kind": "command",
+      "arguments": [
+        "/usr/bin/codesign",
+        "--display",
+        "--verbose=4",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-08"
+      ],
+      "acceptance": "record signed identity; retain embedded provisioning profile",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-09.json"
+    },
+    {
+      "id": "acquire-10",
+      "kind": "command",
+      "arguments": [
+        "/usr/sbin/spctl",
+        "--assess",
+        "--type",
+        "execute",
+        "--verbose=2",
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-09"
+      ],
+      "acceptance": "Gatekeeper accepts; never bypass quarantine or alter policy",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-10.json"
+    },
+    {
+      "id": "acquire-11",
+      "kind": "tart-command",
+      "arguments": [
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app/Contents/MacOS/tart",
+        "--version"
+      ],
+      "targets": [
+        "/private/tmp/taskflow-e06-vm-a/tart",
+        "/private/tmp/taskflow-e06-vm-a/tmp"
+      ],
+      "mutates": true,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-10"
+      ],
+      "acceptance": "version is 2.36.0",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-11.json"
+    },
+    {
+      "id": "acquire-12",
+      "kind": "tart-command",
+      "arguments": [
+        "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app/Contents/MacOS/tart",
+        "pull",
+        "ghcr.io/cirruslabs/macos-tahoe-xcode@sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6"
+      ],
+      "targets": [
+        "/private/tmp/taskflow-e06-vm-a/tart",
+        "/private/tmp/taskflow-e06-vm-a/tmp"
+      ],
+      "mutates": true,
+      "timeout_seconds": 14400,
+      "requires": [
+        "acquire-11"
+      ],
+      "acceptance": "OCI manifest and all layers verify; keep >= 200 GiB host free and <= 400 GiB task allocation",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-12.json"
+    },
+    {
+      "id": "acquire-13",
+      "kind": "check",
+      "arguments": [
+        "record imported config/NVRAM/disk hashes and allocated bytes",
+        "compare imported OCI manifest against pinned SHA-256",
+        "record actual acquisition bytes and duration separately from warm measurement",
+        "verify zero running experiment VMs; stop before guest preflight"
+      ],
+      "targets": [],
+      "mutates": false,
+      "timeout_seconds": 900,
+      "requires": [
+        "acquire-12"
+      ],
+      "acceptance": "exit zero",
+      "cleanup": "retain; separate removal approval required",
+      "receipt": "/private/tmp/taskflow-e06-vm-a/receipts/acquire-13.json"
+    }
+  ],
+  "incidental_host_effects": [
+    "macOS signature/Gatekeeper cache and security checks",
+    "Tart internal GC and transient files only in the new TART_HOME/tmp",
+    "HTTPS public-registry token and release/CDN transfers"
+  ],
+  "failure_rule": "Stop and retain exact paths/partial import. No automatic deletion, retry with changed pins, or scope expansion."
+}
