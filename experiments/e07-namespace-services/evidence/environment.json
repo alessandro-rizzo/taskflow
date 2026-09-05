@@ -1,0 +1,26 @@
+{
+  "captured_at": "2026-09-04T17:50:38Z",
+  "hardware": {
+    "cores": 18,
+    "cpu": "Apple M5 Max",
+    "ram_gib": 64
+  },
+  "network_scope": "OS-assigned 127.0.0.1 and Unix-domain listeners only",
+  "os": {
+    "arch": "arm64",
+    "build": "25F84",
+    "name": "darwin",
+    "version": "26.5.2"
+  },
+  "provider": "experiment-local fake-macos relay; no external provider",
+  "toolchain": [
+    {
+      "name": "python",
+      "version": "3.9.6"
+    },
+    {
+      "name": "go",
+      "version": "go1.25.12 darwin/arm64"
+    }
+  ]
+}

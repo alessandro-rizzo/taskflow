@@ -1,0 +1,26 @@
+{
+  "files": [
+    "evidence/authorization-matrix.json",
+    "evidence/benchmarks/endpoint-resolution/record.json",
+    "evidence/benchmarks/endpoint-resolution/samples.txt",
+    "evidence/benchmarks/fake-macos-relay/record.json",
+    "evidence/benchmarks/fake-macos-relay/samples.txt",
+    "evidence/cleanup-summary.json",
+    "evidence/environment.json",
+    "evidence/execution.json",
+    "evidence/implementation-manifest.json",
+    "evidence/limitations.md",
+    "evidence/namespace-leak-collision-report.json",
+    "evidence/process-listener-inventory.json",
+    "evidence/raw/authorization.jsonl",
+    "evidence/raw/caller-loss-cleanup.jsonl",
+    "evidence/raw/cleanup-restarts.jsonl",
+    "evidence/raw/paired-namespaces.jsonl",
+    "evidence/raw/readiness.jsonl",
+    "evidence/raw/reuse.jsonl",
+    "evidence/raw/routing-overhead.jsonl",
+    "evidence/readiness-summary.json",
+    "evidence/recommendation.md",
+    "evidence/scorecard.json"
+  ]
+}

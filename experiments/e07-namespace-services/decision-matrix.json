@@ -1,0 +1,72 @@
+{
+  "format_version": "taskflow-e07-decision-matrix/v1-experimental",
+  "experiment_id": "E07",
+  "status": "predeclared-no-selection",
+  "selected_branch": null,
+  "precedence": [
+    {
+      "order": 1,
+      "id": "stop-narrow-safety",
+      "select_when": "Any hard isolation, authorization, readiness, cleanup, durable-restart, or immutable-versus-mutable reuse gate fails.",
+      "requires": [
+        "isolation",
+        "authorization",
+        "readiness",
+        "caller_loss_cleanup",
+        "reuse"
+      ],
+      "decision": "Stop or narrow the service lifecycle claim before production work."
+    },
+    {
+      "order": 2,
+      "id": "typed-endpoint-manager",
+      "select_when": "Every hard gate passes and one manager-owned transport-neutral routing mechanism serves both target classes without project-visible provider data or a provider route capability.",
+      "requires": [
+        "all-hard-gates-pass",
+        "provider-specific-project-field-count-zero",
+        "provider-route-capability-required-false",
+        "routing-overhead-pass"
+      ],
+      "decision": "Recommend experimental Service, Endpoint, and Stack concepts after the daemon foundation; no API stabilizes here."
+    },
+    {
+      "order": 3,
+      "id": "explicit-provider-routing",
+      "select_when": "Typed handles, authorization, lifecycle, and every hard gate pass, but fake-macOS connectivity requires one declared provider route capability hidden behind the target adapter.",
+      "requires": [
+        "all-hard-gates-pass",
+        "provider-specific-project-field-count-zero",
+        "provider-route-capability-required-true",
+        "routing-overhead-pass"
+      ],
+      "decision": "Retain typed endpoints and make cross-target routing an explicit typed provider capability."
+    },
+    {
+      "order": 4,
+      "id": "compose-style-integration",
+      "select_when": "Native lifecycle is rejected and a separately approved, actually reachable Compose candidate passes the identical isolation, authorization, readiness, cleanup, reuse, and overhead gates.",
+      "requires": [
+        "native-lifecycle-rejected",
+        "compose-separate-approval-recorded",
+        "compose-runtime-actually-exercised",
+        "all-hard-gates-pass"
+      ],
+      "decision": "Place Compose-style lifecycle behind one typed service leaf before attempting native lifecycle ownership."
+    },
+    {
+      "order": 5,
+      "id": "stop-narrow-no-credible-candidate",
+      "select_when": "No earlier branch is eligible, including when Compose is unavailable or unapproved.",
+      "requires": [],
+      "decision": "Narrow Taskflow to typed references to externally managed services or stop the full-stack claim."
+    }
+  ],
+  "candidate_credit_rules": {
+    "command_presence_is_execution_evidence": false,
+    "static_compose_file_is_execution_evidence": false,
+    "unapproved_shared_runtime_is_eligible": false,
+    "threshold_changes_after_evidence_are_allowed": false,
+    "project_visible_provider_option_count_max": 0
+  },
+  "adr_path": "docs/decisions/0011-e07-namespace-services.md"
+}

@@ -1,0 +1,8 @@
+{
+  "fault_drain_max_seconds": 0.2592119160000017,
+  "fixed_sleep_count": 0,
+  "p95_seconds": 0.08404929199999955,
+  "route_before_committed_ready_transition_count": 0,
+  "route_before_successful_health_probe_count": 0,
+  "sample_count": 30
+}

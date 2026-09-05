@@ -1,0 +1,70 @@
+{
+  "contract_digest": "e2d77765a3b82cfad07996658536845563c65c3f6f0c8966bb606c97d700b3df",
+  "format_version": "taskflow-e07-scorecard/v1-experimental",
+  "hard_gate_pass": true,
+  "metrics": {
+    "authorization": {
+      "connection_detail_disclosure_count": 0,
+      "foreign-consumer": 20,
+      "forged-handle": 20,
+      "missing-capability": 20,
+      "provider-mismatch": 20,
+      "provider_connection_before_authorization_count": 0,
+      "route_credential_byte_disclosure_count": 0,
+      "stale-handle": 20,
+      "unauthorized_success_count": 0,
+      "wrong-endpoint-type": 20
+    },
+    "cleanup": {
+      "event_duplicates": 0,
+      "event_loss": 0,
+      "expiry_lateness_max_seconds": 0.11008137500000004,
+      "lease": 0,
+      "listener": 0,
+      "max_seconds": 0.06520116599999426,
+      "mutable_path": 0,
+      "p95_seconds": 0.063476584,
+      "process": 0,
+      "restart_cases": 8,
+      "route": 0,
+      "stage_reorder": 0,
+      "trial_count": 20
+    },
+    "isolation": {
+      "allocated_port": 0,
+      "cross_namespace_endpoint_success_count": 0,
+      "database_path": 0,
+      "endpoint_id": 0,
+      "lease_id": 0,
+      "mutable_object_identity": 0,
+      "peer_marker_read_count": 0,
+      "peer_marker_write_count": 0,
+      "project_visible_forbidden_field_count": 0,
+      "route_capability_id": 0,
+      "service_name": 0,
+      "writable_root": 0
+    },
+    "readiness": {
+      "fault_drain_max_seconds": 0.26027704199999846,
+      "p95_seconds": 0.0851545420000015,
+      "sample_count": 30
+    },
+    "reuse": {
+      "immutable_api_artifact_distinct_digest_count": 1,
+      "immutable_api_artifact_publication_count": 1,
+      "namespace_sequence_count": 3,
+      "prior_namespace_marker_visible_count": 0,
+      "shared_mutable_database_count": 0,
+      "shared_route_count": 0,
+      "shared_route_credential_count": 0,
+      "shared_service_process_count": 0
+    },
+    "routing": {
+      "endpoint_resolution_p95_seconds": 0.0073468329999997195,
+      "fake_macos_paired_p95_delta_seconds": 0.0010082090000054222,
+      "sample_count": 30
+    }
+  },
+  "provider_route_capability_required": true,
+  "selected_branch": "explicit-provider-routing"
+}
