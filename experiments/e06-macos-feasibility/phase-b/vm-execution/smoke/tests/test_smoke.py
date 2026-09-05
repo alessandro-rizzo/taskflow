@@ -195,6 +195,16 @@ class SmokeTests(unittest.TestCase):
             self.assertNotIn('--dir', argv)
             self.assertNotIn('--net-bridged', argv)
 
+    def test_second_attempt_uses_pty_launch_and_preserves_first_evidence(self):
+        self.assertEqual(m.RUN, m.ROOT + '/smoke-run-002')
+        self.assertEqual(m.VM, 'taskflow-e06-vm-a-smoke-002')
+        self.assertIn(m.ROOT + '/smoke-run', m.cleanup_plan()['preserve'])
+        launches = [op for op in guest.ledger()['operations'] if op['id'].endswith('-launch')]
+        self.assertEqual(len(launches), 3)
+        for operation in launches:
+            self.assertIn('--console-pty', operation['argv'])
+            self.assertNotIn('--console', operation['argv'])
+
     def test_path_prefix_traversal_and_symlink(self):
         for value in (m.GUEST+'-evil/x', m.GUEST+'/../x', m.GUEST+'/a//x', m.GUEST+'/*', '/Users/a'):
             with self.assertRaises(m.Rejected): m.canonical_path(value, m.GUEST)

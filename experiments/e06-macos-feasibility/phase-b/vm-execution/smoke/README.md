@@ -31,7 +31,7 @@ deferred cleanup ledger. `record-plan` reports zero execution/benchmark samples.
 
 ## Implemented cycle
 
-Only a fresh `taskflow-e06-vm-a-smoke` clone of the pinned local base is admitted;
+Only a fresh `taskflow-e06-vm-a-smoke-002` clone of the pinned local base is admitted;
 never reuse the preflight clone or boot the base. Admission checks capacity,
 stopped state, binary/base hashes, helper root/setuid permissions and DHCP state.
 The available-memory estimate is free + inactive + speculative pages, not
@@ -50,7 +50,8 @@ and complete file hashes, rechecking before each install. Create one device in
 the custom guest set and validate its returned UUID against name/type/runtime/
 state. Never select `booted` or a default-set device.
 
-Three launches prove initial empty canaries, persistence, then empty canaries
+Three launches use Simulator's PTY console attachment to prove initial empty
+canaries, persistence, then empty canaries
 after shutdown/erase/reboot/reinstall. Missing, duplicate, malformed or wrong-
 namespace reports fail. Remove the owned device/workspace and check absence;
 stop/delete only the smoke clone and check base hashes. This is not p95,
@@ -84,7 +85,7 @@ Commands have ceilings of 900 seconds or less. A 30-minute watchdog starts
 before cloning; host health is rechecked during long VM commands. Each output
 stream is capped at 8 MiB; overflow fails rather than accepting truncation.
 Complete bounded streams, operation results and monotonic durations go under
-exclusive mode-0700 `/private/tmp/taskflow-e06-vm-a/smoke-run`. Normal retained
+exclusive mode-0700 `/private/tmp/taskflow-e06-vm-a/smoke-run-002`. Normal retained
 text redacts user-directory names. Overflow/crash spools are private diagnostics
 requiring review before export. No evidence goes to a provider.
 
@@ -99,6 +100,14 @@ orphan. If a clone command may still be in flight, that ambiguity is explicit.
 It never kills unrelated PIDs/deletes the base. An existing run directory blocks
 automatic retry; inspect receipts/in-flight owned commands before recovery.
 These recovery paths are fake-tested, not proven on a live VM.
+
+The first approved attempt is retained unchanged at
+`/private/tmp/taskflow-e06-vm-a/smoke-run`. It reached the initial application
+launch, but Xcode 26.5 `simctl launch --console` returned only the bundle/PID
+line, so the strict result parser failed and exact cleanup removed that attempt's
+clone. The second fixed ledger uses Apple's documented `--console-pty` standard-
+stream attachment mode. It has a distinct evidence root and clone name and
+cannot overwrite or reinterpret the failed attempt.
 
 ## Network and eventual cleanup
 

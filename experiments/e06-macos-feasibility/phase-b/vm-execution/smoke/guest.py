@@ -146,7 +146,7 @@ def ledger():
             add(label + '-install', 'guest-command', guest_argv(sim('install', '{device}', APP), prepared=True), 900)
             add(label + '-container', 'guest-command', guest_argv(sim('get_app_container', '{device}', m.BUNDLE, 'app'), prepared=True))
             add(label + '-container-verify', 'verify-container')
-        add(label + '-launch', 'guest-command', guest_argv(sim('launch', '--console', '--terminate-running-process',
+        add(label + '-launch', 'guest-command', guest_argv(sim('launch', '--console-pty', '--terminate-running-process',
                                                         '{device}', m.BUNDLE, '--taskflow-namespace', m.NS), prepared=True), 900)
         add(label + '-report', 'verify-report', previous=previous)
     add('sim-shutdown', 'guest-command', guest_argv(sim('shutdown', '{device}'), prepared=True))

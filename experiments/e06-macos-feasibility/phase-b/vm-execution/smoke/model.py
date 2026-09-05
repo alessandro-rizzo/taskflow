@@ -10,9 +10,9 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[4]
 FIXTURE = REPO / 'experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp'
 ROOT = '/private/tmp/taskflow-e06-vm-a'
-RUN = ROOT + '/smoke-run'
+RUN = ROOT + '/smoke-run-002'
 GUEST = ROOT + '/smoke'
-VM = 'taskflow-e06-vm-a-smoke'
+VM = 'taskflow-e06-vm-a-smoke-002'
 VM_DIR = ROOT + '/tart/vms/' + VM
 SET = GUEST + '/CoreSimulator'
 NS = 'taskflow-e06-vm-a-smoke-namespace-a'
@@ -187,7 +187,7 @@ def cleanup_plan():
             'vm_names': [VM, 'taskflow-e06-vm-a-preflight'], 'base_directory': BASE,
             'helper_files': [SOFTNET, str(Path(SOFTNET).parent / 'LICENSE'),
                              str(Path(SOFTNET).parent / 'README.md'), ROOT + '/downloads/softnet-0.23.0.tar.gz'],
-            'preserve': [ROOT + '/receipts', RUN],
+            'preserve': [ROOT + '/receipts', ROOT + '/smoke-run', RUN],
             'dhcp': {'preferences_id': 'com.apple.InternetSharing.default.plist', 'key': 'bootpd',
                      'original': None, 'expected': {'DHCPLeaseTimeSecs': 600, 'dhcp_ignore_client_identifier': True},
                      'action': 'lock; compare exact key; remove only key; commit/apply; unlock; read back',
