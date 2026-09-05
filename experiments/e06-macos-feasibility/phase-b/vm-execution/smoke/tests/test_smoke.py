@@ -429,8 +429,11 @@ class SmokeTests(unittest.TestCase):
                          {'stdout':'/Users/<redacted>/log.txt'})
 
     def test_existing_run_directory_is_not_overwritten(self):
-        with tempfile.TemporaryDirectory() as d, patch.object(m,'RUN',d):
-            with self.assertRaises(m.Rejected): backend.LiveBackend().create_run()
+        with tempfile.TemporaryDirectory(dir='/private/tmp') as d, patch.object(m,'ROOT',d), \
+             patch.object(m,'RUN',d+'/run'):
+            Path(m.RUN).mkdir()
+            with self.assertRaisesRegex(m.Rejected, 'existing evidence/run lock; never overwrite'):
+                backend.LiveBackend().create_run()
 
     def test_watchdog_requires_time_for_entire_bounded_run(self):
         b=backend.LiveBackend(expires_at=0)
