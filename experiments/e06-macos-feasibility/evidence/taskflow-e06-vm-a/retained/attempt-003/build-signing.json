@@ -1,0 +1,36 @@
+{
+  "build_exit_code": 0,
+  "build_log_excerpt": [
+    "ProcessProductPackaging \"\" /tmp/taskflow-e06-vm-a/smoke/DerivedData/Build/Intermediates.noindex/E06SmokeApp.build/Debug-iphonesimulator/E06SmokeApp.build/E06SmokeApp.app-Simulated.xcent (in target 'E06SmokeApp' from project 'E06SmokeApp')",
+    "\"application-identifier\" = \"FAKETEAMID.dev.taskflow.e06.smoke\";",
+    "CodeSign /tmp/taskflow-e06-vm-a/smoke/DerivedData/Build/Products/Debug-iphonesimulator/E06SmokeApp.app (in target 'E06SmokeApp' from project 'E06SmokeApp')",
+    "/usr/bin/codesign --force --sign - --timestamp\\=none --generate-entitlement-der /tmp/taskflow-e06-vm-a/smoke/DerivedData/Build/Products/Debug-iphonesimulator/E06SmokeApp.app"
+  ],
+  "interpretation": "Xcode generated an intermediate application identifier, but the logged codesign command did not attach an entitlements file.",
+  "signing_inspection": {
+    "argv": [
+      "/private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app/Contents/MacOS/tart",
+      "exec",
+      "taskflow-e06-vm-a-smoke-003",
+      "/usr/bin/env",
+      "-i",
+      "PATH=/usr/bin:/bin:/usr/sbin:/sbin",
+      "LANG=C",
+      "LC_ALL=C",
+      "DEVELOPER_DIR=/Applications/Xcode_26.5.app/Contents/Developer",
+      "CFFIXED_USER_HOME=/private/tmp/taskflow-e06-vm-a/smoke/home",
+      "TMPDIR=/private/tmp/taskflow-e06-vm-a/smoke/tmp",
+      "CLANG_MODULE_CACHE_PATH=/private/tmp/taskflow-e06-vm-a/smoke/cache/clang",
+      "SWIFT_MODULE_CACHE_PATH=/private/tmp/taskflow-e06-vm-a/smoke/cache/swift",
+      "/bin/sh",
+      "/private/tmp/taskflow-e06-vm-a/smoke/driver.sh",
+      "signing"
+    ],
+    "duration_ns": 1020059250,
+    "exit_code": 0,
+    "stderr": "",
+    "stderr_file": "0029.stderr",
+    "stdout": "",
+    "stdout_file": "0029.stdout"
+  }
+}

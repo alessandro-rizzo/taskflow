@@ -1,0 +1,85 @@
+{
+  "base_posthash": {
+    "all_match_preflight": true,
+    "config_sha256": "cf4ace9e40323ec8d0c4b233a3e54bcce28b62a4211f94d7349350a3e726dc03",
+    "disk_sha256": "39457bd2f67d82eafebca964ca7d6e5ce01e72de64b2ade50d4c96636d07f692",
+    "manifest_sha256": "61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+    "nvram_sha256": "954c8f723cdd1e34567167ebe972f57308833a2cb588535ddefd644d54271f66",
+    "verified_after_shutdown": true
+  },
+  "benchmark_samples": 0,
+  "cleanup": "Retain stopped image/clone/helper for continuing experiment; delete exact owned artifacts and restore DHCP at experiment completion, preserving small receipts.",
+  "dhcp": {
+    "current_bootpd": {
+      "DHCPLeaseTimeSecs": 600,
+      "dhcp_ignore_client_identifier": true
+    },
+    "original_bootpd_present": false,
+    "preferences_id": "com.apple.InternetSharing.default.plist",
+    "restore_state": "pending end-of-experiment cleanup; remove only exact matching experiment-created bootpd entry using SCPreferences/scutil and preserve unrelated entries"
+  },
+  "evidence": "preflight-guest-inventory.json",
+  "final_state": {
+    "base": "stopped",
+    "clone": "stopped",
+    "owned_running_vms": 0,
+    "run_exit_code": 0,
+    "stop_exit_code": 0
+  },
+  "guest_boots": 1,
+  "helper": {
+    "group": 0,
+    "mode": "104755",
+    "owner": 0,
+    "path": "/private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/softnet",
+    "unsigned_risk_explicitly_accepted": true
+  },
+  "host_available_disk_kib": 1399343072,
+  "host_thermal_state": 0,
+  "limitations": [
+    "No simulator was created or booted; no build/test/reset/benchmark was run.",
+    "Guest SDK build IDs were not returned by the approved -showsdks inventory; remain unknown.",
+    "Routing/listener inventory is not proof of packet-level isolation or absence of host access.",
+    "Guest SIP is disabled; native host profile is unchanged and not equivalent.",
+    "First sandboxed launch aborted with code 134 and sandboxed guest readiness failed; approved outside-sandbox launch/readiness succeeded.",
+    "Read-only date probe corrected to /bin/date after /usr/bin/date was absent.",
+    "This is a compatibility inventory, not a full E06 feasibility decision."
+  ],
+  "network": {
+    "audio": false,
+    "clipboard": false,
+    "egress_isolation_proven": false,
+    "guest_ipv4_default_route": false,
+    "guest_ipv6_utun_default_routes_present": true,
+    "guest_listeners_include_ports": [
+      22,
+      88,
+      5900
+    ],
+    "mode": "Tart --net-host via Softnet 0.23.0",
+    "shares": []
+  },
+  "phase": "single-vm-preflight",
+  "profile": {
+    "architecture": "arm64",
+    "cpu_count": 6,
+    "developer_directory": "/Applications/Xcode_26.5.app/Contents/Developer",
+    "guest_available_disk_kib": 51830548,
+    "guest_console_user": "admin",
+    "guest_sip": "disabled",
+    "ios_sdk_build": null,
+    "ios_sdk_version": "26.5",
+    "ios_simulator_runtime_available": true,
+    "ios_simulator_runtime_build": "23F77",
+    "ios_simulator_runtime_version": "26.5",
+    "macos_build": "25E246",
+    "macos_version": "26.4",
+    "memory_bytes": 17179869184,
+    "native_profile_equivalent": false,
+    "xcode_build": "17F42",
+    "xcode_version": "26.5"
+  },
+  "recorded_at_utc": "2026-09-05T07:14:18Z",
+  "status": "guest-inventory-complete-with-limitations",
+  "task_id": "TF-003.14"
+}

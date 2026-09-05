@@ -1,0 +1,13 @@
+{
+  "cleanup": "After owned VMs stop, compare current bootpd dictionary with Softnet's expected values. Remove only the experiment-created bootpd key and apply preferences if it still exactly matches; preserve unrelated keys and stop for review on concurrent changes. Helper and image deletion remain authorised at experiment completion.",
+  "helper_mode_octal": "104755",
+  "helper_owner_uid": 0,
+  "helper_sha256": "5982c8cde55cd039d4aa71add54356224b8b8a040df1a8786f16327b421f701d",
+  "key": "bootpd",
+  "original_key_present": false,
+  "original_paths": [],
+  "preferences_id": "com.apple.InternetSharing.default.plist",
+  "raw_output": "  no paths.\n  No such key\n<dictionary> {\n}\n",
+  "read_method": "scutil --prefs outside sandbox: list, get bootpd, d.show, quit",
+  "task_id": "TF-003.14"
+}

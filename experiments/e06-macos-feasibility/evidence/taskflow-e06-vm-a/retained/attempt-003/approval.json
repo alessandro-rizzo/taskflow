@@ -1,0 +1,51 @@
+{
+  "approved_at": "2026-09-05T15:11:53Z",
+  "bindings": {
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/README.md": "bcf3372fcc2ce8cb221b2065baa49465faacfc89f3882a4d96c8437ed898edb7",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/backend.py": "50186e0e9b792ba51eacb18dac4962777d6ff1d6228fff46e6c159a63cdf4f4c",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/fixture/E06SmokeApp/E06SmokeApp.xcodeproj/project.pbxproj": "767e14a8a5aeab28035b4214ef3381432c1f203430a9786d486d41b567ce1e01",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/fixture/E06SmokeApp/E06SmokeApp.xcodeproj/xcshareddata/xcschemes/E06SmokeApp.xcscheme": "5c2bb049fc2869f94d9b0522772ba4c48cd6d1ba42147362d13882275bbfeec5",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/fixture/E06SmokeApp/E06SmokeApp/AppDelegate.swift": "858c65af40f1a234402545aafd2dc783e70c39c6316d502e4512861b7721de28",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/guest.py": "b1d1cbabd2fdfa2c22f8b61f7cf4943823daec5b6c6900da5f6a4cba5bde16ec",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/model.py": "36e04cb695dab8582220731e79a706beea5cde30603843453c20996a41fdea26",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/profile-observation.json": "d2d5aacd620b7605cd2bed0c1ed523168827b4f106a18e7f1a8132010147eb46",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/runner.py": "b745e934f41554975bd96057d9627c42e137eb9d74db22378ba00a2faf9044c7",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/tests/test_smoke.py": "735375f31223c9ccfb52b88b313f811f1e98ccec14b9c30eb40a03a9cb6faed5",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/watchdog.py": "986872a5361c6e15e8ab1034c7001d26aab9058d8f5357aa80dcf7a790ab7e1c"
+  },
+  "commit": "cf4394dfd4e258534d2af8a27c380bd58295f756",
+  "expires_at": "2026-09-05T16:11:53Z",
+  "identity_evidence_sha256": "9c68d825d4cbb55bca1014d50291ad60117e5eab7ace0abc0859a3359780fe2e",
+  "ledger_sha256": "e00ada1f864b975b835ae14a0e3d8f9b42d015d3cd9613f83b177d601a9a681b",
+  "not_before": "2026-09-05T15:11:53Z",
+  "operator": "Alessandro Rizzo",
+  "profile": {
+    "architecture": "arm64",
+    "console_user": "admin",
+    "cpu_count": 6,
+    "developer_directory": "/Applications/Xcode_26.5.app/Contents/Developer",
+    "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+    "iphoneos_build": "23F73",
+    "iphoneos_version": "26.5",
+    "iphonesimulator_build": "23F73",
+    "iphonesimulator_version": "26.5",
+    "macos_build": "25E246",
+    "macos_version": "26.4",
+    "memory_bytes": 17179869184,
+    "runtime_architecture": "arm64",
+    "runtime_build": "23F77",
+    "runtime_identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "sip": "disabled",
+    "xcode_build": "17F42",
+    "xcode_version": "26.5"
+  },
+  "schema": "taskflow-e06-vm-smoke-approval/v1",
+  "scopes": [
+    "smoke-only",
+    "unsigned-helper",
+    "host-only-not-hermetic",
+    "guest-sip-disabled",
+    "delete-smoke-clone"
+  ],
+  "tree": "82571dcb080f0033d327ca0b9f0b0147a048d43f"
+}

@@ -1,0 +1,48 @@
+{
+  "approved_at": "2026-09-05T14:10:20Z",
+  "bindings": {
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/README.md": "44aa6c08ab914a79074fa7b799b1b91db12040a67c484b6e81d4202765396c7b",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/backend.py": "50186e0e9b792ba51eacb18dac4962777d6ff1d6228fff46e6c159a63cdf4f4c",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/guest.py": "7490b09eb625fb77909472dfd402bb1bdf061d24874617fae5eb137a9e6ba965",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/model.py": "085cff49172eed74ee7899527dd4fb699059d7b98df817e493454783d05cb898",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/profile-observation.json": "d2d5aacd620b7605cd2bed0c1ed523168827b4f106a18e7f1a8132010147eb46",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/runner.py": "802d7dfb46446b1fa2f4856fb89dda523fd38dd96138f66502e2cb9262b76df1",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/tests/test_smoke.py": "e180e82a12b6e4caaf13f7a59eca9dd05fa1958c8b050ac4405091475deba31d",
+    "experiments/e06-macos-feasibility/phase-b/vm-execution/smoke/watchdog.py": "986872a5361c6e15e8ab1034c7001d26aab9058d8f5357aa80dcf7a790ab7e1c"
+  },
+  "commit": "f5125263d135ed4fc227c35e357d47166252a08c",
+  "expires_at": "2026-09-05T15:10:20Z",
+  "identity_evidence_sha256": "9c68d825d4cbb55bca1014d50291ad60117e5eab7ace0abc0859a3359780fe2e",
+  "ledger_sha256": "e6b1389193ee70f8b95b46a9a2575313538895300e8abbd08def751b6f9e51cd",
+  "not_before": "2026-09-05T14:10:20Z",
+  "operator": "@codex-root",
+  "profile": {
+    "architecture": "arm64",
+    "console_user": "admin",
+    "cpu_count": 6,
+    "developer_directory": "/Applications/Xcode_26.5.app/Contents/Developer",
+    "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+    "iphoneos_build": "23F73",
+    "iphoneos_version": "26.5",
+    "iphonesimulator_build": "23F73",
+    "iphonesimulator_version": "26.5",
+    "macos_build": "25E246",
+    "macos_version": "26.4",
+    "memory_bytes": 17179869184,
+    "runtime_architecture": "arm64",
+    "runtime_build": "23F77",
+    "runtime_identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "sip": "disabled",
+    "xcode_build": "17F42",
+    "xcode_version": "26.5"
+  },
+  "schema": "taskflow-e06-vm-smoke-approval/v1",
+  "scopes": [
+    "smoke-only",
+    "unsigned-helper",
+    "host-only-not-hermetic",
+    "guest-sip-disabled",
+    "delete-smoke-clone"
+  ],
+  "tree": "40f77b8835d0b4f9549ee2b40f444d59c3f1071b"
+}

@@ -1,0 +1,8 @@
+{
+  "retention": "allowlisted-sanitized-subset",
+  "source_digest_algorithm": "sha256 of sorted '<file sha256><two spaces><absolute path><newline>' records",
+  "source_directory": "/private/tmp/taskflow-e06-vm-a/smoke-run-002",
+  "source_du_kib": 744,
+  "source_file_count": 153,
+  "source_sha256": "7911622d78c44e4755597a4009039f42795733ba01b2e78bf09b766b02822f38"
+}

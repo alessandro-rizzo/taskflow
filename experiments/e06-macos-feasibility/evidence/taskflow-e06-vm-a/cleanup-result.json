@@ -1,0 +1,47 @@
+{
+  "completed_at": "2026-09-05T15:33:32Z",
+  "filesystem": {
+    "available_kib_after": 1471358164,
+    "available_kib_before": 1385517216,
+    "reclaimed_bytes": 87901130752,
+    "reclaimed_gib": 81.86430740356445
+  },
+  "format_version": "taskflow-e06-vm-cleanup-result/v1",
+  "guarded_at": "2026-09-05T15:33:19Z",
+  "host_preferences": {
+    "action": "none",
+    "bootpd_key_before_cleanup": "absent",
+    "original_bootpd_key": "absent",
+    "reason": "Softnet had already removed its experiment-created key"
+  },
+  "removed": [
+    "/private/tmp/taskflow-e06-vm-a",
+    "/private/tmp/taskflow-e06-vm-approval-retained",
+    "/private/tmp/taskflow-e06-materialized-final"
+  ],
+  "root": {
+    "allocated_kib_before": 169437896,
+    "gid": 0,
+    "mode": "0700",
+    "path": "/private/tmp/taskflow-e06-vm-a",
+    "status_after": "absent",
+    "type_before": "directory",
+    "uid": 502
+  },
+  "shared_storage_note": "APFS clone/shared blocks mean the filesystem-level reclaimed bytes are lower than the task root allocated-size reading.",
+  "vm_guard": {
+    "all_stopped": true,
+    "entries": [
+      {
+        "name": "taskflow-e06-vm-a-preflight",
+        "source": "local",
+        "state": "stopped"
+      },
+      {
+        "name": "ghcr.io/cirruslabs/macos-tahoe-xcode@sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+        "source": "OCI",
+        "state": "stopped"
+      }
+    ]
+  }
+}

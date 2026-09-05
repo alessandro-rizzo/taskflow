@@ -1,0 +1,45 @@
+{
+  "archive": {
+    "layout": "Three regular files: LICENSE, README.md, softnet; no links or traversal",
+    "path": "/private/tmp/taskflow-e06-vm-a/downloads/softnet-0.23.0.tar.gz",
+    "published_digest_matches": true,
+    "sha256": "b5daa4e5efaef3c2716f872dcda3961a35b2bddcdf03fe630ac3db0ab8156f3e",
+    "size_bytes": 4797348
+  },
+  "binary": {
+    "codesign_verify": "failed",
+    "developer_id": false,
+    "executed": false,
+    "gatekeeper": "rejected: no usable signature",
+    "inspection": "arm64 reports ad hoc linker signature; no TeamIdentifier; full verification reports code object is not signed at all",
+    "path": "/private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/softnet",
+    "root_owned": false,
+    "setuid": false,
+    "sha256": "5982c8cde55cd039d4aa71add54356224b8b8a040df1a8786f16327b421f701d"
+  },
+  "cleanup": {
+    "authorised": true,
+    "preserve_receipts": true,
+    "remove_exact_paths": [
+      "/private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/softnet",
+      "/private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/LICENSE",
+      "/private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/README.md",
+      "/private/tmp/taskflow-e06-vm-a/downloads/softnet-0.23.0.tar.gz"
+    ],
+    "when": "experiment completion"
+  },
+  "network_changes": 0,
+  "next_boundary": "Explicit user decision on vendor-checksummed but Developer-ID-unsigned root helper required; do not disable Gatekeeper, alter quarantine, re-sign, or otherwise bypass host security settings.",
+  "phase": "softnet-setup",
+  "privilege_changes": 0,
+  "release_url": "https://github.com/openai/softnet/releases/tag/0.23.0",
+  "source_review": {
+    "file": "https://raw.githubusercontent.com/openai/softnet/0.23.0/src/main.rs",
+    "host_preferences": "At network startup, writes bootpd dictionary in com.apple.InternetSharing.default.plist via SCPreferences: DHCPLeaseTimeSecs 600 and dhcp_ignore_client_identifier true. No startup occurred; before any future startup capture actual SCPreferences dictionary and prepare scoped restoration, preserving concurrent unrelated changes."
+  },
+  "status": "downloaded-not-privileged-signature-review-required",
+  "task_id": "TF-003.14",
+  "user_authority": "Install/configure required helper and remove during experiment cleanup; user said yes please.",
+  "version": "0.23.0",
+  "vm_boots": 0
+}

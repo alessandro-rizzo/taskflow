@@ -1,0 +1,104 @@
+{
+  "approval": {
+    "recorded_in_ticket": true,
+    "scope": "retained preflight VM identity queries only; no workload or simulator device lifecycle",
+    "source": "user message: go for it"
+  },
+  "base_hashes_before_and_after": {
+    "config.json": "cf4ace9e40323ec8d0c4b233a3e54bcce28b62a4211f94d7349350a3e726dc03",
+    "disk.img": "39457bd2f67d82eafebca964ca7d6e5ce01e72de64b2ade50d4c96636d07f692",
+    "manifest.json": "61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+    "nvram.bin": "954c8f723cdd1e34567167ebe972f57308833a2cb588535ddefd644d54271f66"
+  },
+  "completed_at": "2026-09-05T14:05:39Z",
+  "execution_counts": {
+    "benchmark_samples": 0,
+    "builds": 0,
+    "fixture_transfers": 0,
+    "simulator_devices_created": 0,
+    "smoke_launches": 0
+  },
+  "guest_disk": {
+    "available_1024_blocks": 51819660,
+    "minimum_required_1024_blocks": 10485760
+  },
+  "host": {
+    "available_disk_1024_blocks_after": 1392426120,
+    "available_disk_1024_blocks_before": 1393750880,
+    "controller_sha256": "e0d71385a2974229c3e97f71862020cce4911c16c3a2fb74ab5e6f540a62131e",
+    "helper_sha256": "5982c8cde55cd039d4aa71add54356224b8b8a040df1a8786f16327b421f701d",
+    "thermal_state_before": 0
+  },
+  "implementation": {
+    "commit": "f5125263d135ed4fc227c35e357d47166252a08c",
+    "ledger_sha256": "e6b1389193ee70f8b95b46a9a2575313538895300e8abbd08def751b6f9e51cd",
+    "tree": "40f77b8835d0b4f9549ee2b40f444d59c3f1071b"
+  },
+  "limitations": [
+    "Identity completion is not a smoke result or benchmark sample.",
+    "CoreSimulator list queries may start guest developer services and update guest caches.",
+    "Host-only networking is not hermetic.",
+    "The retained preflight clone is not the fresh clone required for smoke execution.",
+    "Full runtime/device-type output remains in the earlier preflight inventory; this receipt records the freshly verified selected identities."
+  ],
+  "profile": {
+    "architecture": "arm64",
+    "console_user": "admin",
+    "cpu_count": 6,
+    "developer_directory": "/Applications/Xcode_26.5.app/Contents/Developer",
+    "device_type": "com.apple.CoreSimulator.SimDeviceType.iPhone-17",
+    "iphoneos_build": "23F73",
+    "iphoneos_version": "26.5",
+    "iphonesimulator_build": "23F73",
+    "iphonesimulator_version": "26.5",
+    "macos_build": "25E246",
+    "macos_version": "26.4",
+    "memory_bytes": 17179869184,
+    "runtime_architecture": "arm64",
+    "runtime_build": "23F77",
+    "runtime_identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "sip": "disabled",
+    "xcode_build": "17F42",
+    "xcode_version": "26.5"
+  },
+  "schema": "taskflow-e06-vm-identity-completion/v1",
+  "started_at": "2026-09-05T14:00:37Z",
+  "status": "complete-not-smoke-approved",
+  "ticket": "TF-003.14",
+  "tool_checks": {
+    "checked_paths": [
+      "/bin/sh",
+      "/bin/mkdir",
+      "/bin/rm",
+      "/bin/test",
+      "/bin/date",
+      "/usr/bin/base64",
+      "/usr/bin/shasum",
+      "/usr/bin/find",
+      "/usr/bin/sort",
+      "/usr/bin/xargs",
+      "/usr/bin/xcrun",
+      "/usr/bin/xcodebuild",
+      "/usr/bin/env",
+      "/usr/libexec/PlistBuddy",
+      "/usr/bin/stat",
+      "/usr/bin/cut"
+    ],
+    "system_tools_available": true
+  },
+  "vm": {
+    "after": "stopped",
+    "before": "stopped",
+    "boot_flags": [
+      "--no-graphics",
+      "--net-host",
+      "--no-clipboard",
+      "--no-audio"
+    ],
+    "cpu_count": 6,
+    "memory_bytes": 17179869184,
+    "name": "taskflow-e06-vm-a-preflight",
+    "network": "host-only-not-hermetic",
+    "run_process_after": "absent"
+  }
+}

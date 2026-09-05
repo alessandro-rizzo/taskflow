@@ -1,0 +1,8 @@
+version: "3"
+
+tasks:
+  check:
+    desc: Verify the retained E06 VM negative-result evidence
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+      - env PYTHONDONTWRITEBYTECODE=1 python3 verify_evidence.py

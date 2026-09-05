@@ -1,0 +1,21 @@
+{
+  "binary_sha256": "5982c8cde55cd039d4aa71add54356224b8b8a040df1a8786f16327b421f701d",
+  "network_changes": 0,
+  "phase": "softnet-privilege-setup",
+  "privilege_changes": 0,
+  "requested_user_commands": [
+    "sudo chown root:wheel /private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/softnet",
+    "sudo chmod 4755 /private/tmp/taskflow-e06-vm-a/tools/softnet-0.23.0/softnet"
+  ],
+  "resume": "Verify hash/owner/mode, snapshot actual DHCP preferences, run approved bounded preflight and stop clone.",
+  "security_boundary": "Only the already-approved helper; no sudoers, Gatekeeper or quarantine changes. Task root mode 0700 restricts access. Never send the password to the assistant.",
+  "status": "awaiting-user-local-administrator-authentication",
+  "sudo_probe": {
+    "command": "sudo -n /usr/bin/true",
+    "exit_code": 1,
+    "output": "sudo: a password is required"
+  },
+  "task_id": "TF-003.14",
+  "unsigned_helper_explicitly_accepted": true,
+  "vm_boots": 0
+}

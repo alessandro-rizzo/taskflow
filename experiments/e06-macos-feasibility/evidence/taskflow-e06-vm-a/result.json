@@ -1,0 +1,68 @@
+{
+  "benchmark_samples": 0,
+  "cleanup": {
+    "experiment_root_absent": true,
+    "host_preference_action": "none-bootpd-already-absent",
+    "reclaimed_bytes": 87901130752,
+    "reclaimed_gib": 81.86430740356445
+  },
+  "candidate_dispositions": [
+    {
+      "candidate": "warm-vm-apfs-workspaces",
+      "disposition": "rejected-at-mandatory-smoke",
+      "reason": "credential-free signed fixture had no embedded Keychain entitlement"
+    },
+    {
+      "candidate": "warm-immutable-vm-restore",
+      "disposition": "rejected-before-timing",
+      "reason": "no admitted suspended-memory restore mechanism and the shared VM smoke prerequisite failed"
+    },
+    {
+      "candidate": "vm-per-namespace",
+      "disposition": "rejected-before-timing",
+      "reason": "the shared credential-free fixture prerequisite failed before VM count could affect correctness"
+    },
+    {
+      "candidate": "trusted-native-host",
+      "disposition": "rejected-within-experiment-boundary",
+      "reason": "same credential-free entitlement boundary; host also remained shared, unreserved, and unavailable to the managed CoreSimulator session"
+    },
+    {
+      "candidate": "coarse-external-runner",
+      "disposition": "unavailable-and-unexercised",
+      "reason": "no endpoint, credential mediator, profile, quota, reset-or-orphan API, or reservation"
+    }
+  ],
+  "credential_boundary": {
+    "apple_credentials_used": false,
+    "development_team_selected": false,
+    "provisioning_updates_allowed": false,
+    "result_scope": "credential-free simulator build and smoke only"
+  },
+  "decision_date": "2026-09-05",
+  "execution_boundary": "terminal-after-three-smoke-attempts",
+  "format_version": "taskflow-e06-vm-result/v1-experimental",
+  "fourth_smoke_attempt_allowed": false,
+  "full_matrix_executed": false,
+  "limitations": [
+    "No latency distribution, concurrency level, contamination handoff, reset, cancellation, caller-loss, simulator-loss, VM-loss, or image-update series was executed.",
+    "The result does not show that a properly entitled development-signed app cannot persist simulator Keychain state.",
+    "The third-party guest had SIP disabled and cannot establish a production security profile.",
+    "A credential-mediated external or native runner requires a new security and infrastructure experiment."
+  ],
+  "selected_branch": "stop-or-narrow",
+  "selection": "Do not authorize a first-class Taskflow macOS provider at Gate 1. Narrow native-mobile scope until representative signing and credential mediation are explicitly designed and measured; evaluate coarse external execution as the bounded fallback.",
+  "threshold_relaxation_after_results": false,
+  "thresholds": [
+    {
+      "metric": "warm-workspace-ready-p95",
+      "status": "not-reached",
+      "threshold": "strictly less than 3 seconds over 30 samples"
+    },
+    {
+      "metric": "simulator-ready-to-install-p95",
+      "status": "not-reached",
+      "threshold": "strictly less than 15 seconds over 30 samples per admitted mechanism"
+    }
+  ]
+}

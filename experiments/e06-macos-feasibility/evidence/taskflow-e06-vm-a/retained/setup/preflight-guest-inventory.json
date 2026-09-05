@@ -1,0 +1,272 @@
+{
+  "benchmark_evidence": false,
+  "large_output_recovery": [
+    {
+      "command": [
+        "/bin/date",
+        "-u",
+        "+%Y-%m-%dT%H:%M:%SZ"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "2026-09-05T07:13:23Z\n"
+    },
+    {
+      "command": [
+        "/usr/bin/xcrun",
+        "simctl",
+        "list",
+        "runtimes",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout_gzip_base64": "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",
+      "stdout_sha256": "b15d6595d48daf52c41c6670404b82b95fdc53d31715ddfd14d1d53d1b3b502f",
+      "summary": [
+        {
+          "buildversion": "23F77",
+          "identifier": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+          "isAvailable": true,
+          "name": "iOS 26.5",
+          "supportedArchitectures": [
+            "arm64"
+          ],
+          "version": "26.5"
+        },
+        {
+          "buildversion": "23L470",
+          "identifier": "com.apple.CoreSimulator.SimRuntime.tvOS-26-5",
+          "isAvailable": true,
+          "name": "tvOS 26.5",
+          "supportedArchitectures": [
+            "arm64"
+          ],
+          "version": "26.5"
+        },
+        {
+          "buildversion": "23T570",
+          "identifier": "com.apple.CoreSimulator.SimRuntime.watchOS-26-5",
+          "isAvailable": true,
+          "name": "watchOS 26.5",
+          "supportedArchitectures": [
+            "arm64"
+          ],
+          "version": "26.5"
+        },
+        {
+          "buildversion": "23O470",
+          "identifier": "com.apple.CoreSimulator.SimRuntime.xrOS-26-5",
+          "isAvailable": true,
+          "name": "visionOS 26.5",
+          "supportedArchitectures": [
+            "arm64"
+          ],
+          "version": "26.5"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/xcrun",
+        "simctl",
+        "list",
+        "devicetypes",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout_gzip_base64": "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",
+      "stdout_sha256": "70376c78091566520db3fa3b1b868e122223a65056b552f1db9ae50753d7dd20",
+      "summary": {
+        "count": 124,
+        "iphone17": [
+          "com.apple.CoreSimulator.SimDeviceType.iPhone-17"
+        ]
+      }
+    }
+  ],
+  "records": [
+    {
+      "command": [
+        "/usr/bin/sw_vers"
+      ],
+      "elapsed_seconds": 0.7032739999704063,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4\nBuildVersion:\t\t25E246\n"
+    },
+    {
+      "command": [
+        "/usr/bin/uname",
+        "-m"
+      ],
+      "elapsed_seconds": 0.06365720799658448,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "arm64\n"
+    },
+    {
+      "command": [
+        "/usr/bin/id"
+      ],
+      "elapsed_seconds": 0.052967416995670646,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "uid=501(admin) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts),79(_appserverusr),80(admin),81(_appserveradm),264(_webdeveloper),33(_appstore),98(_lpadmin),100(_lpoperator),204(_developer),250(_analyticsusers),395(com.apple.access_ftp),398(com.apple.access_screensharing),399(com.apple.access_ssh),400(com.apple.access_remote_ae),701(com.apple.sharepoint.group.1)\n"
+    },
+    {
+      "command": [
+        "/usr/bin/stat",
+        "-f",
+        "%Su",
+        "/dev/console"
+      ],
+      "elapsed_seconds": 0.023744374979287386,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "admin\n"
+    },
+    {
+      "command": [
+        "/usr/bin/date",
+        "-u",
+        "+%Y-%m-%dT%H:%M:%SZ"
+      ],
+      "elapsed_seconds": 0.03908458398655057,
+      "exit_code": 1,
+      "stderr": "Error: unknown (2): fork/exec /usr/bin/date: no such file or directory\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/usr/sbin/sysctl",
+        "hw.ncpu",
+        "hw.memsize"
+      ],
+      "elapsed_seconds": 0.02205183304613456,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "hw.ncpu: 6\nhw.memsize: 17179869184\n"
+    },
+    {
+      "command": [
+        "/usr/bin/vm_stat"
+      ],
+      "elapsed_seconds": 0.03597208298742771,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                              375800.\nPages active:                            303270.\nPages inactive:                          177643.\nPages speculative:                       125280.\nPages throttled:                              0.\nPages wired down:                         65635.\nPages purgeable:                           8092.\n\"Translation faults\":                   1749581.\nPages copy-on-write:                      92654.\nPages zero filled:                       561623.\nPages reactivated:                          137.\nPages purged:                                11.\nFile-backed pages:                       341482.\nAnonymous pages:                         264711.\nPages stored in compressor:                   0.\nPages occupied by compressor:                 0.\nDecompressions:                               0.\nCompressions:                                 0.\nPageins:                                 256100.\nPageouts:                                     0.\nSwapins:                                      0.\nSwapouts:                                     0.\n"
+    },
+    {
+      "command": [
+        "/bin/df",
+        "-k",
+        "/"
+      ],
+      "elapsed_seconds": 0.01862187497317791,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Filesystem     1024-blocks     Used Available Capacity iused     ifree %iused  Mounted on\n/dev/disk2s1s1   136206712 12261568  51830548    20%  458115 518305480    0%   /\n"
+    },
+    {
+      "command": [
+        "/usr/bin/csrutil",
+        "status"
+      ],
+      "elapsed_seconds": 0.020775125012733042,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "System Integrity Protection status: disabled.\n"
+    },
+    {
+      "command": [
+        "/usr/bin/xcode-select",
+        "-p"
+      ],
+      "elapsed_seconds": 0.037889083032496274,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "/Applications/Xcode_26.5.app/Contents/Developer\n"
+    },
+    {
+      "command": [
+        "/usr/bin/xcodebuild",
+        "-version"
+      ],
+      "elapsed_seconds": 0.1459438749589026,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Xcode 26.5\nBuild version 17F42\n"
+    },
+    {
+      "command": [
+        "/usr/bin/xcodebuild",
+        "-showsdks"
+      ],
+      "elapsed_seconds": 0.8372827499988489,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "DriverKit SDKs:\n\tDriverKit 25.5                \t-sdk driverkit25.5\n\niOS SDKs:\n\tiOS 26.5                      \t-sdk iphoneos26.5\n\niOS Simulator SDKs:\n\tSimulator - iOS 26.5          \t-sdk iphonesimulator26.5\n\nmacOS SDKs:\n\tmacOS 26.5                    \t-sdk macosx26.5\n\tmacOS 26.5                    \t-sdk macosx26.5\n\ntvOS SDKs:\n\ttvOS 26.5                     \t-sdk appletvos26.5\n\ntvOS Simulator SDKs:\n\tSimulator - tvOS 26.5         \t-sdk appletvsimulator26.5\n\nvisionOS SDKs:\n\tvisionOS 26.5                 \t-sdk xros26.5\n\nvisionOS Simulator SDKs:\n\tSimulator - visionOS 26.5     \t-sdk xrsimulator26.5\n\nwatchOS SDKs:\n\twatchOS 26.5                  \t-sdk watchos26.5\n\nwatchOS Simulator SDKs:\n\tSimulator - watchOS 26.5      \t-sdk watchsimulator26.5\n\n"
+    },
+    {
+      "command": [
+        "/usr/bin/xcodebuild",
+        "-checkFirstLaunchStatus"
+      ],
+      "elapsed_seconds": 0.665876708982978,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/usr/bin/xcrun",
+        "simctl",
+        "list",
+        "runtimes",
+        "--json"
+      ],
+      "elapsed_seconds": 0.22779000003356487,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "{\n  \"runtimes\" : [\n    {\n      \"isAvailable\" : true,\n      \"version\" : \"26.5\",\n      \"isInternal\" : false,\n      \"buildversion\" : \"23F77\",\n      \"supportedArchitectures\" : [\n        \"arm64\"\n      ],\n      \"supportedDeviceTypes\" : [\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 17 Pro.simdevicetype\",\n          \"name\" : \"iPhone 17 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 17 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 17 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 17e.simdevicetype\",\n          \"name\" : \"iPhone 17e\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-17e\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone Air.simdevicetype\",\n          \"name\" : \"iPhone Air\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-Air\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 17.simdevicetype\",\n          \"name\" : \"iPhone 17\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-17\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 16 Pro.simdevicetype\",\n          \"name\" : \"iPhone 16 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 16 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 16 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 16e.simdevicetype\",\n          \"name\" : \"iPhone 16e\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-16e\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 16.simdevicetype\",\n          \"name\" : \"iPhone 16\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-16\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 16 Plus.simdevicetype\",\n          \"name\" : \"iPhone 16 Plus\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-16-Plus\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 15 Pro.simdevicetype\",\n          \"name\" : \"iPhone 15 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 15 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 15 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 15.simdevicetype\",\n          \"name\" : \"iPhone 15\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-15\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 15 Plus.simdevicetype\",\n          \"name\" : \"iPhone 15 Plus\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-15-Plus\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 14 Pro.simdevicetype\",\n          \"name\" : \"iPhone 14 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-14-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 14 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 14 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-14-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 14.simdevicetype\",\n          \"name\" : \"iPhone 14\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-14\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 14 Plus.simdevicetype\",\n          \"name\" : \"iPhone 14 Plus\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-14-Plus\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone SE (3rd generation).simdevicetype\",\n          \"name\" : \"iPhone SE (3rd generation)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 13 Pro.simdevicetype\",\n          \"name\" : \"iPhone 13 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-13-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 13 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 13 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-13-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 13.simdevicetype\",\n          \"name\" : \"iPhone 13\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-13\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 13 mini.simdevicetype\",\n          \"name\" : \"iPhone 13 mini\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-13-mini\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 12 Pro.simdevicetype\",\n          \"name\" : \"iPhone 12 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 12 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 12 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-12-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 12.simdevicetype\",\n          \"name\" : \"iPhone 12\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-12\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 12 mini.simdevicetype\",\n          \"name\" : \"iPhone 12 mini\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-12-mini\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone SE (2nd generation).simdevicetype\",\n          \"name\" : \"iPhone SE (2nd generation)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-SE--2nd-generation-\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 11 Pro.simdevicetype\",\n          \"name\" : \"iPhone 11 Pro\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-11-Pro\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 11 Pro Max.simdevicetype\",\n          \"name\" : \"iPhone 11 Pro Max\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-11-Pro-Max\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPhone 11.simdevicetype\",\n          \"name\" : \"iPhone 11\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPhone-11\",\n          \"productFamily\" : \"iPhone\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 13-inch (M5) (16GB).simdevicetype\",\n          \"name\" : \"iPad Pro 13-inch (M5) (16GB)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-16GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 13-inch (M5).simdevicetype\",\n          \"name\" : \"iPad Pro 13-inch (M5)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 11-inch (M5) (16GB).simdevicetype\",\n          \"name\" : \"iPad Pro 11-inch (M5) (16GB)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M5-16GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 11-inch (M5).simdevicetype\",\n          \"name\" : \"iPad Pro 11-inch (M5)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M5-12GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 11-inch (M4) (16GB).simdevicetype\",\n          \"name\" : \"iPad Pro 11-inch (M4) (16GB)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M4-16GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 11-inch (M4).simdevicetype\",\n          \"name\" : \"iPad Pro 11-inch (M4)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-M4-8GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 13-inch (M4) (16GB).simdevicetype\",\n          \"name\" : \"iPad Pro 13-inch (M4) (16GB)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-16GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Pro 13-inch (M4).simdevicetype\",\n          \"name\" : \"iPad Pro 13-inch (M4)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M4-8GB\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Air 13-inch (M4).simdevicetype\",\n          \"name\" : \"iPad Air 13-inch (M4)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Air-13-inch-M4\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad Air 11-inch (M4).simdevicetype\",\n          \"name\" : \"iPad Air 11-inch (M4)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPad-Air-11-inch-M4\",\n          \"productFamily\" : \"iPad\"\n        },\n        {\n          \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPad (A16).simdevicetype\",\n          \"name\" : \"iPad (A16)\",\n          \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iP\u202620403 tokens truncated\u2026 \"Watch6,2\",\n      \"minRuntimeVersionString\" : \"6.0.0\",\n      \"minRuntimeVersion\" : 393216,\n      \"name\" : \"Apple Watch Series 6 (44mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 6 (40mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 4294967295,\n      \"maxRuntimeVersionString\" : \"65535.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-6-40mm\",\n      \"modelIdentifier\" : \"Watch6,1\",\n      \"minRuntimeVersionString\" : \"6.0.0\",\n      \"minRuntimeVersion\" : 393216,\n      \"name\" : \"Apple Watch Series 6 (40mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch SE (44mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 680704,\n      \"maxRuntimeVersionString\" : \"10.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-44mm\",\n      \"modelIdentifier\" : \"Watch5,12\",\n      \"minRuntimeVersionString\" : \"7.0.0\",\n      \"minRuntimeVersion\" : 458752,\n      \"name\" : \"Apple Watch SE (44mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch SE (40mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 680704,\n      \"maxRuntimeVersionString\" : \"10.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-40mm\",\n      \"modelIdentifier\" : \"Watch5,9\",\n      \"minRuntimeVersionString\" : \"7.0.0\",\n      \"minRuntimeVersion\" : 458752,\n      \"name\" : \"Apple Watch SE (40mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 5 (44mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 680704,\n      \"maxRuntimeVersionString\" : \"10.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-5-44mm\",\n      \"modelIdentifier\" : \"Watch5,4\",\n      \"minRuntimeVersionString\" : \"6.0.0\",\n      \"minRuntimeVersion\" : 393216,\n      \"name\" : \"Apple Watch Series 5 (44mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 5 (40mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 680704,\n      \"maxRuntimeVersionString\" : \"10.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-5-40mm\",\n      \"modelIdentifier\" : \"Watch5,3\",\n      \"minRuntimeVersionString\" : \"6.0.0\",\n      \"minRuntimeVersion\" : 393216,\n      \"name\" : \"Apple Watch Series 5 (40mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 4 (44mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 680704,\n      \"maxRuntimeVersionString\" : \"10.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-4-44mm\",\n      \"modelIdentifier\" : \"Watch4,4\",\n      \"minRuntimeVersionString\" : \"5.0.0\",\n      \"minRuntimeVersion\" : 327680,\n      \"name\" : \"Apple Watch Series 4 (44mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 4 (40mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 680704,\n      \"maxRuntimeVersionString\" : \"10.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-4-40mm\",\n      \"modelIdentifier\" : \"Watch4,3\",\n      \"minRuntimeVersionString\" : \"5.0.0\",\n      \"minRuntimeVersion\" : 327680,\n      \"name\" : \"Apple Watch Series 4 (40mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 3 (42mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 589823,\n      \"maxRuntimeVersionString\" : \"8.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-3-42mm\",\n      \"modelIdentifier\" : \"Watch3,4\",\n      \"minRuntimeVersionString\" : \"4.0.0\",\n      \"minRuntimeVersion\" : 262144,\n      \"name\" : \"Apple Watch Series 3 (42mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 3 (38mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 589823,\n      \"maxRuntimeVersionString\" : \"8.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-3-38mm\",\n      \"modelIdentifier\" : \"Watch3,3\",\n      \"minRuntimeVersionString\" : \"4.0.0\",\n      \"minRuntimeVersion\" : 262144,\n      \"name\" : \"Apple Watch Series 3 (38mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 2 (42mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 458751,\n      \"maxRuntimeVersionString\" : \"6.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-2-42mm\",\n      \"modelIdentifier\" : \"Watch2,4\",\n      \"minRuntimeVersionString\" : \"3.0.0\",\n      \"minRuntimeVersion\" : 196608,\n      \"name\" : \"Apple Watch Series 2 (42mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Watch\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Watch Series 2 (38mm).simdevicetype\",\n      \"maxRuntimeVersion\" : 458751,\n      \"maxRuntimeVersionString\" : \"6.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-2-38mm\",\n      \"modelIdentifier\" : \"Watch2,3\",\n      \"minRuntimeVersionString\" : \"3.0.0\",\n      \"minRuntimeVersion\" : 196608,\n      \"name\" : \"Apple Watch Series 2 (38mm)\"\n    },\n    {\n      \"productFamily\" : \"Apple Vision\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Vision Pro.simdevicetype\",\n      \"maxRuntimeVersion\" : 4294967295,\n      \"maxRuntimeVersionString\" : \"65535.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Vision-Pro-4K\",\n      \"modelIdentifier\" : \"RealityDevice14,1\",\n      \"minRuntimeVersionString\" : \"3.0.0\",\n      \"minRuntimeVersion\" : 196608,\n      \"name\" : \"Apple Vision Pro\"\n    },\n    {\n      \"productFamily\" : \"Apple Vision\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/Apple Vision Pro (at 2732x2048).simdevicetype\",\n      \"maxRuntimeVersion\" : 156416,\n      \"maxRuntimeVersionString\" : \"2.99.0\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.Apple-Vision-Pro\",\n      \"modelIdentifier\" : \"RealityDevice14,1\",\n      \"minRuntimeVersionString\" : \"1.0.0\",\n      \"minRuntimeVersion\" : 65536,\n      \"name\" : \"Apple Vision Pro (at 2732x2048)\"\n    },\n    {\n      \"productFamily\" : \"iPhone\",\n      \"bundlePath\" : \"\\/Library\\/Developer\\/CoreSimulator\\/Profiles\\/DeviceTypes\\/iPod touch (7th generation).simdevicetype\",\n      \"maxRuntimeVersion\" : 1048575,\n      \"maxRuntimeVersionString\" : \"15.255.255\",\n      \"identifier\" : \"com.apple.CoreSimulator.SimDeviceType.iPod-touch--7th-generation-\",\n      \"modelIdentifier\" : \"iPod9,1\",\n      \"minRuntimeVersionString\" : \"12.3.1\",\n      \"minRuntimeVersion\" : 787201,\n      \"name\" : \"iPod touch (7th generation)\"\n    }\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "/sbin/route",
+        "-n",
+        "get",
+        "default"
+      ],
+      "elapsed_seconds": 0.08554166700923815,
+      "exit_code": 0,
+      "stderr": "route: writing to routing socket: not in table\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/usr/sbin/netstat",
+        "-rn"
+      ],
+      "elapsed_seconds": 0.03802591696148738,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Routing tables\n\nInternet:\nDestination        Gateway            Flags               Netif Expire\n127                127.0.0.1          UCS                   lo0       \n127.0.0.1          127.0.0.1          UH                    lo0       \n169.254            link#6             UCS                   en0      !\n192.168.18         link#6             UCS                   en0      !\n192.168.18.2/32    link#6             UCS                   en0      !\n224.0.0/4          link#6             UmCS                  en0      !\n224.0.0.251        1:0:5e:0:0:fb      UHmLWI                en0       \n255.255.255.255/32 link#6             UCS                   en0      !\n\nInternet6:\nDestination                             Gateway                                 Flags               Netif Expire\ndefault                                 fe80::%utun0                            UGcIg               utun0       \ndefault                                 fe80::%utun1                            UGcIg               utun1       \ndefault                                 fe80::%utun2                            UGcIg               utun2       \ndefault                                 fe80::%utun3                            UGcIg               utun3       \n::1                                     ::1                                     UHL                   lo0       \nfe80::%lo0/64                           fe80::1%lo0                             UcI                   lo0       \nfe80::1%lo0                             link#1                                  UHLI                  lo0       \nfe80::%en0/64                           link#6                                  UCI                   en0       \nfe80::18bb:fd01:f27b:53b0%en0           32:f6:a1:76:6d:76                       UHLI                  lo0       \nfe80::%utun0/64                         fe80::7b59:efa8:a1f3:f54f%utun0         UcI                 utun0       \nfe80::7b59:efa8:a1f3:f54f%utun0         link#8                                  UHLI                  lo0       \nfe80::%utun1/64                         fe80::a3ab:d70:a5e5:aa60%utun1          UcI                 utun1       \nfe80::a3ab:d70:a5e5:aa60%utun1          link#9                                  UHLI                  lo0       \nfe80::%utun2/64                         fe80::ce81:b1c:bd2c:69e%utun2           UcI                 utun2       \nfe80::ce81:b1c:bd2c:69e%utun2           link#10                                 UHLI                  lo0       \nfe80::%utun3/64                         fe80::53cd:711f:f0f5:7c23%utun3         UcI                 utun3       \nfe80::53cd:711f:f0f5:7c23%utun3         link#11                                 UHLI                  lo0       \nff00::/8                                ::1                                     UmCI                  lo0       \nff00::/8                                link#6                                  UmCI                  en0       \nff00::/8                                fe80::7b59:efa8:a1f3:f54f%utun0         UmCI                utun0       \nff00::/8                                fe80::a3ab:d70:a5e5:aa60%utun1          UmCI                utun1       \nff00::/8                                fe80::ce81:b1c:bd2c:69e%utun2           UmCI                utun2       \nff00::/8                                fe80::53cd:711f:f0f5:7c23%utun3         UmCI                utun3       \nff01::%lo0/32                           ::1                                     UmCI                  lo0       \nff01::%en0/32                           link#6                                  UmCI                  en0       \nff01::%utun0/32                         fe80::7b59:efa8:a1f3:f54f%utun0         UmCI                utun0       \nff01::%utun1/32                         fe80::a3ab:d70:a5e5:aa60%utun1          UmCI                utun1       \nff01::%utun2/32                         fe80::ce81:b1c:bd2c:69e%utun2           UmCI                utun2       \nff01::%utun3/32                         fe80::53cd:711f:f0f5:7c23%utun3         UmCI                utun3       \nff02::%lo0/32                           ::1                                     UmCI                  lo0       \nff02::%en0/32                           link#6                                  UmCI                  en0       \nff02::%utun0/32                         fe80::7b59:efa8:a1f3:f54f%utun0         UmCI                utun0       \nff02::%utun1/32                         fe80::a3ab:d70:a5e5:aa60%utun1          UmCI                utun1       \nff02::%utun2/32                         fe80::ce81:b1c:bd2c:69e%utun2           UmCI                utun2       \nff02::%utun3/32                         fe80::53cd:711f:f0f5:7c23%utun3         UmCI                utun3       \n"
+    },
+    {
+      "command": [
+        "/usr/sbin/netstat",
+        "-an",
+        "-p",
+        "tcp"
+      ],
+      "elapsed_seconds": 0.03423066600225866,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Active Internet connections (including servers)\nProto Recv-Q Send-Q  Local Address                                 Foreign Address                               (state)    \ntcp46      0      0  *.51341                *.*                    LISTEN     \ntcp4       0      0  *.88                   *.*                    LISTEN     \ntcp6       0      0  *.88                   *.*                    LISTEN     \ntcp4       0      0  *.5900                 *.*                    LISTEN     \ntcp6       0      0  *.5900                 *.*                    LISTEN     \ntcp4       0      0  *.22                   *.*                    LISTEN     \ntcp6       0      0  *.22                   *.*                    LISTEN     \n"
+    }
+  ],
+  "task_id": "TF-003.14",
+  "transcript_limitation": "Initial display truncated the two large JSON inventory records; complete outputs were re-collected and retained as gzip/base64 with SHA-256. The time-query path was corrected from /usr/bin/date to /bin/date; the original error is retained."
+}

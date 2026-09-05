@@ -1,0 +1,8 @@
+{
+  "retention": "complete-sanitized-setup-receipts",
+  "source_digest_algorithm": "sha256 of sorted '<file sha256><two spaces><absolute path><newline>' records",
+  "source_directory": "/private/tmp/taskflow-e06-vm-a/receipts",
+  "source_du_kib": 136,
+  "source_file_count": 23,
+  "source_sha256": "0d2dabb94f8adec914d0c53e1228181f4ed694958d05e130adf02ed271cedadd"
+}

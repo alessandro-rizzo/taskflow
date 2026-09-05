@@ -1,0 +1,71 @@
+{
+  "allocation_method": "macOS stat st_blocks times 512 per file, du -sk for task root; APFS allocated bytes are not a guarantee of uniquely reclaimable blocks",
+  "approval_source": "User approved the linked acquisition proposal in this conversation with 'yes please'.",
+  "approved_contract_sha256": "26f1d0f5ca239a0766520e5647f784de0c93048d8b1bcc0a4cee6b4800238f77",
+  "approved_pins_sha256": "906e77e424362c0bcd6bcf0f878c36013eb23a698939836f5b50db06dbc67a3c",
+  "benchmark_samples": 0,
+  "cleanup": {
+    "authorisation": "cleanup-authorisation.json",
+    "clones": [],
+    "must_recheck_live_state_and_owned_paths_before_removal": true,
+    "resolved_base_directory": "/private/tmp/taskflow-e06-vm-a/tart/cache/OCIs/ghcr.io/cirruslabs/macos-tahoe-xcode/sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+    "state": "deferred until experiment completion"
+  },
+  "corrected_ledger_sha256": "b3203d108c38694a791ac351117ee4a55f95f124a6d8a52eb73f4b1f9b213cee",
+  "exit_code": 0,
+  "files": [
+    {
+      "allocated_bytes": 94208,
+      "logical_bytes": 91622,
+      "name": "manifest.json",
+      "pinned_digest_matches": true,
+      "sha256": "61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6"
+    },
+    {
+      "allocated_bytes": 4096,
+      "logical_bytes": 497,
+      "name": "config.json",
+      "pinned_digest_matches": true,
+      "sha256": "cf4ace9e40323ec8d0c4b233a3e54bcce28b62a4211f94d7349350a3e726dc03"
+    },
+    {
+      "allocated_bytes": 34619392,
+      "logical_bytes": 33579164,
+      "manifest_descriptor_matches": true,
+      "name": "nvram.bin",
+      "sha256": "954c8f723cdd1e34567167ebe972f57308833a2cb588535ddefd644d54271f66"
+    },
+    {
+      "allocated_bytes": 87231463424,
+      "hash_kind": "post-import baseline; whole-disk hash was not pre-pinned",
+      "logical_bytes": 140000000000,
+      "name": "disk.img",
+      "sha256": "39457bd2f67d82eafebca964ca7d6e5ce01e72de64b2ade50d4c96636d07f692"
+    }
+  ],
+  "format_version": "taskflow-e06-acquisition-receipt/v1-experimental",
+  "guest_attestation": "not performed",
+  "host_available_kib": 1402515404,
+  "image_directory": "/private/tmp/taskflow-e06-vm-a/tart/cache/OCIs/ghcr.io/cirruslabs/macos-tahoe-xcode/sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+  "limitations": [
+    "Approximately 56 minutes to pull/import; exact successful start timestamp absent.",
+    "Actual wire bytes were not instrumented; OCI compressed descriptor total is not measured transfer bytes.",
+    "This acquisition checkpoint is not E06 benchmark, simulator, isolation, capacity, recovery or guest compatibility evidence."
+  ],
+  "local_clones_created": 0,
+  "next_boundary": "Stop before clone, boot and guest preflight; those require separate explicit approval.",
+  "operation_id": "acquire-13",
+  "original_ledger_sha256": "5692821da5ba4103b750c15aab200f415e59125fe8d5d8798648320804670619",
+  "phase": "acquisition",
+  "recorded_at_utc": "2026-09-04T23:25:07Z",
+  "scoped_tart_list": {
+    "entry_count": 1,
+    "running": false,
+    "source": "OCI",
+    "state": "stopped"
+  },
+  "status": "passed-with-measurement-limitations",
+  "task_allocated_kib": 85320572,
+  "task_id": "TF-003.14",
+  "vm_boot_count": 0
+}

@@ -1,0 +1,9 @@
+{
+  "hashes": {
+    "config.json": "cf4ace9e40323ec8d0c4b233a3e54bcce28b62a4211f94d7349350a3e726dc03",
+    "disk.img": "39457bd2f67d82eafebca964ca7d6e5ce01e72de64b2ade50d4c96636d07f692",
+    "manifest.json": "61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+    "nvram.bin": "954c8f723cdd1e34567167ebe972f57308833a2cb588535ddefd644d54271f66"
+  },
+  "status": "passed"
+}

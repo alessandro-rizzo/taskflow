@@ -1,0 +1,31 @@
+{
+  "approval_source": "User approved the linked acquisition proposal in this conversation with 'yes please'.",
+  "approved_contract_sha256": "26f1d0f5ca239a0766520e5647f784de0c93048d8b1bcc0a4cee6b4800238f77",
+  "approved_pins_sha256": "906e77e424362c0bcd6bcf0f878c36013eb23a698939836f5b50db06dbc67a3c",
+  "benchmark_samples": 0,
+  "completed_observed_at_utc": "2026-09-04T23:20:22Z",
+  "corrected_ledger_sha256": "b3203d108c38694a791ac351117ee4a55f95f124a6d8a52eb73f4b1f9b213cee",
+  "duration": {
+    "approximate_minutes": 56,
+    "limitation": "Successful process start was not timestamped precisely; first active observation was at 22:24:37 UTC. Approximate pull/import duration only, not a benchmark sample."
+  },
+  "environment_correction": "Added CFFIXED_USER_HOME=/private/tmp/taskflow-e06-vm-a after a sandboxed pull revealed Foundation HTTP cache access outside TART_HOME. Explicit tool approval covered redirected cache and network retry. No ordinary-user Tart cache directory was present at the subsequent read-only check.",
+  "exit_code": 0,
+  "expected_compressed_layer_bytes": 68828940474,
+  "format_version": "taskflow-e06-acquisition-receipt/v1-experimental",
+  "image": "ghcr.io/cirruslabs/macos-tahoe-xcode@sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+  "imported_image_directory": "/private/tmp/taskflow-e06-vm-a/tart/cache/OCIs/ghcr.io/cirruslabs/macos-tahoe-xcode/sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+  "observed_host_available_kib": 1403569596,
+  "observed_task_allocated_kib": 85320572,
+  "operation_id": "acquire-12",
+  "original_ledger_sha256": "5692821da5ba4103b750c15aab200f415e59125fe8d5d8798648320804670619",
+  "phase": "acquisition",
+  "progress_percent": 100,
+  "recorded_at_utc": "2026-09-04T23:20:22Z",
+  "status": "passed",
+  "task_id": "TF-003.14",
+  "terminal_session_id": 65696,
+  "vm_boot_count": 0,
+  "wire_bytes": null,
+  "wire_bytes_limitation": "No wire-byte counter was instrumented. Expected compressed layer bytes are registry descriptor totals, not measured network traffic."
+}

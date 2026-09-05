@@ -1,0 +1,19 @@
+{
+  "authorised_by": "user in this conversation",
+  "instruction": "please let's make sure to delete this VM image and reclaim that space once we're done!",
+  "preserve": [
+    "small measurement evidence and receipts",
+    "unrelated VMs, images, caches and personal files"
+  ],
+  "procedure": [
+    "Resolve exact actual paths and ownership from acquisition and VM receipts.",
+    "Stop any owned running VM and check that no retained dependent clone uses the base.",
+    "Remove the owned clones and base/cache files using their exact resolved targets.",
+    "Measure task-allocated bytes and filesystem free bytes before/after; APFS shared blocks mean logical image size is not guaranteed reclaimed space.",
+    "Report removals and reclaimed space to the user."
+  ],
+  "scope": "only experiment-owned VM clones, the pinned downloaded base image, and associated large experiment image caches beneath /private/tmp/taskflow-e06-vm-a",
+  "state": "pending-experiment-completion",
+  "task_id": "TF-003.14",
+  "when": "after the E06 experiment is finished, not at the acquisition checkpoint"
+}

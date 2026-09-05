@@ -1,0 +1,23 @@
+{
+  "approval": "User: go for it",
+  "base_manifest_sha256": "61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6",
+  "benchmarks_authorised": false,
+  "cleanup": "Stop clone after bounded preflight; retain images until experiment completion.",
+  "controller_sha256": "e0d71385a2974229c3e97f71862020cce4911c16c3a2fb74ab5e6f540a62131e",
+  "host": {
+    "available_disk_kib": 1401852256,
+    "cpu_count": 18,
+    "free_memory_pages": 1658617,
+    "memory_bytes": 68719476736,
+    "page_size_bytes": 16384,
+    "task_allocated_kib": 85319036,
+    "thermal_state": 0
+  },
+  "initial_scoped_running_vms": 0,
+  "initial_target_absent": true,
+  "phase": "single-vm-preflight",
+  "proposal_sha256": "9db405f09d26a45ee1abe7faea00cc6f64f284a9dd2e144a11de9fc69bcf7c9f",
+  "status": "approved-prechecks-running",
+  "task_id": "TF-003.14",
+  "vm_name": "taskflow-e06-vm-a-preflight"
+}

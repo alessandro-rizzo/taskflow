@@ -1,0 +1,50 @@
+{
+  "authority_boundary": "Do not install Softnet, configure root ownership/setuid/passwordless sudo, or switch to NAT/bridged networking under the current approval.",
+  "base_integrity": {
+    "full_disk_post_attempt_hash": "not repeated; no guest boot occurred, metadata unchanged; this is not cryptographic post-run disk verification",
+    "full_preflight_disk_sha256": "39457bd2f67d82eafebca964ca7d6e5ce01e72de64b2ade50d4c96636d07f692",
+    "post_attempt_disk_mtime_epoch": 1788564019,
+    "post_attempt_disk_size": 140000000000,
+    "post_attempt_metadata_unchanged": true,
+    "small_hashes_match": true
+  },
+  "benchmark_samples": 0,
+  "cause": "Pinned Tart 2.36.0 --net-host invokes Softnet. softnet is absent from approved PATH and downloaded archive. The preflight proposal incorrectly excluded Softnet while selecting a mode requiring it.",
+  "cleanup": "Retain stopped base and clone until experiment completion under existing user cleanup authorisation. No deletion performed.",
+  "clone": {
+    "command": "env -i CFFIXED_USER_HOME=/private/tmp/taskflow-e06-vm-a PATH=/usr/bin:/bin:/usr/sbin:/sbin LANG=C LC_ALL=C TART_HOME=/private/tmp/taskflow-e06-vm-a/tart TART_NO_AUTO_PRUNE=1 TMPDIR=/private/tmp/taskflow-e06-vm-a/tmp /private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app/Contents/MacOS/tart clone ghcr.io/cirruslabs/macos-tahoe-xcode@sha256:61f6e857a3d65dd2f8daf9c51c7b837fa458bcc9181ae8556e645b534dab6bf6 taskflow-e06-vm-a-preflight --prune-limit 0",
+    "cpu_count": 6,
+    "directory": "/private/tmp/taskflow-e06-vm-a/tart/vms/taskflow-e06-vm-a-preflight",
+    "exit_code": 0,
+    "memory_bytes": 17179869184,
+    "name": "taskflow-e06-vm-a-preflight"
+  },
+  "final_scoped_state": {
+    "base": "stopped",
+    "clone": "stopped",
+    "running": 0
+  },
+  "guest_boots": 0,
+  "guest_commands": 0,
+  "phase": "single-vm-preflight",
+  "proposal_sha256": "9db405f09d26a45ee1abe7faea00cc6f64f284a9dd2e144a11de9fc69bcf7c9f",
+  "recorded_at_utc": "2026-09-05T06:48:40Z",
+  "run": {
+    "command": "env -i CFFIXED_USER_HOME=/private/tmp/taskflow-e06-vm-a PATH=/usr/bin:/bin:/usr/sbin:/sbin LANG=C LC_ALL=C TART_HOME=/private/tmp/taskflow-e06-vm-a/tart TART_NO_AUTO_PRUNE=1 TMPDIR=/private/tmp/taskflow-e06-vm-a/tmp /private/tmp/taskflow-e06-vm-a/tools/tart-2.36.0/tart.app/Contents/MacOS/tart run --no-graphics --net-host --no-clipboard --no-audio taskflow-e06-vm-a-preflight",
+    "exit_code": 1,
+    "output": "Error: InitializationFailed(why: \"softnet not found in PATH\")\r\n"
+  },
+  "source_evidence": [
+    "https://raw.githubusercontent.com/openai/tart/2.36.0/Sources/tart/Commands/Run.swift",
+    "https://raw.githubusercontent.com/openai/tart/2.36.0/Sources/tart/Network/Softnet.swift"
+  ],
+  "space": {
+    "after_attempt_free_kib": 1401818972,
+    "du_task_kib": 170538816,
+    "host_free_delta_kib": 33284,
+    "limitation": "du counts allocated extents for both APFS clones and can double-count shared blocks. Host free delta includes unrelated activity; it is not exact uniquely allocated or reclaimable clone storage.",
+    "preclone_free_kib": 1401852256
+  },
+  "status": "blocked-before-boot",
+  "task_id": "TF-003.14"
+}

@@ -1,0 +1,21 @@
+{
+  "approval_source": "User approved the linked acquisition proposal in this conversation with 'yes please'.",
+  "approved_contract_sha256": "26f1d0f5ca239a0766520e5647f784de0c93048d8b1bcc0a4cee6b4800238f77",
+  "approved_pins_sha256": "906e77e424362c0bcd6bcf0f878c36013eb23a698939836f5b50db06dbc67a3c",
+  "benchmark_samples": 0,
+  "binary_sha256": "e0d71385a2974229c3e97f71862020cce4911c16c3a2fb74ab5e6f540a62131e",
+  "cdhash": "8016575caf6375e74faa3fe4939ee6aaf463982f",
+  "corrected_ledger_sha256": "b3203d108c38694a791ac351117ee4a55f95f124a6d8a52eb73f4b1f9b213cee",
+  "embedded_profile_retained": true,
+  "format_version": "taskflow-e06-acquisition-receipt/v1-experimental",
+  "identifier": "com.github.cirruslabs.tart",
+  "operation_id": "acquire-09",
+  "original_ledger_sha256": "5692821da5ba4103b750c15aab200f415e59125fe8d5d8798648320804670619",
+  "phase": "acquisition",
+  "recorded_at_utc": "2026-09-04T22:25:58Z",
+  "signing_identity": "Developer ID Application: Cirrus Labs, Inc. (9M2P8L4D89)",
+  "status": "passed",
+  "task_id": "TF-003.14",
+  "team_identifier": "9M2P8L4D89",
+  "vm_boot_count": 0
+}
