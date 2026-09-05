@@ -4,6 +4,7 @@ import io
 import json
 import os
 from pathlib import Path
+import plistlib
 import signal
 import socket
 import stat
@@ -38,9 +39,22 @@ def devices(state='Booted', handle=DEVICE):
          'deviceTypeIdentifier': m.observation()['device_type']} ]}}
 
 
-def report(previous=''):
-    return 'TASKFLOW_E06_RESULT:' + json.dumps({'status': 'ok', 'namespace': m.NS,
-          'previous_default': previous, 'previous_file': previous, 'previous_keychain_name': previous})
+def report(previous='', **overrides):
+    keychain_status = 0 if previous else -25300
+    value = {'status': 'ok', 'namespace': m.NS,
+             'previous_default': previous, 'previous_file': previous,
+             'previous_keychain_name': previous,
+             'previous_keychain_status': keychain_status,
+             'delete_keychain_status': keychain_status,
+             'add_keychain_status': 0, 'verify_keychain_status': 0,
+             'verified_keychain_name': m.NS}
+    value.update(overrides)
+    return 'TASKFLOW_E06_RESULT:' + json.dumps(value)
+
+
+def entitlements(app_id='TESTTEAM.' + m.BUNDLE):
+    return plistlib.dumps({'application-identifier': app_id,
+                           'keychain-access-groups': [app_id]}).decode()
 
 
 class FakeBackend:
@@ -85,6 +99,7 @@ class FakeBackend:
             elif key != 'tools': raw = str(p[key]) + '\n'
         elif identifier == 'artifact' or identifier.endswith('-artifact'):
             raw = '\n'.join('a'*64 + '  ' + guest.APP + '/' + x for x in ('Info.plist', 'E06SmokeApp'))
+        elif identifier == 'signing': raw = entitlements()
         elif identifier == 'create': raw = DEVICE + '\n'
         elif identifier.endswith('-identity'): raw = json.dumps(devices())
         elif identifier.endswith('-container'): raw = m.SET + '/' + DEVICE + '/data/Containers/Bundle/a/E06SmokeApp.app\n'
@@ -167,9 +182,21 @@ class SmokeTests(unittest.TestCase):
 
     def test_reports_require_all_canaries_and_one_exact_result(self):
         for raw in ('', report() + '\n' + report(), report(m.NS), 'TASKFLOW_E06_RESULT:{',
-                    report().replace('"ok"', '"invalid"')):
+                    report().replace('"ok"', '"invalid"'), report(add_keychain_status=-34018),
+                    report(verify_keychain_status=-25300), report(previous_keychain_status=0),
+                    report(verified_keychain_name='')):
             with self.assertRaises((m.Rejected, ValueError)): m.app_report(raw, '')
         with self.assertRaises(m.Rejected): m.app_report(report(), m.NS)
+
+    def test_signing_requires_matching_app_identifier_and_default_group(self):
+        value = runner.signing(entitlements())
+        self.assertEqual(value['default_keychain_access_group'], 'TESTTEAM.' + m.BUNDLE)
+        for raw in ('', entitlements('TESTTEAM.other'),
+                    plistlib.dumps({'application-identifier': 'TESTTEAM.' + m.BUNDLE,
+                                    'keychain-access-groups': ['TESTTEAM.other']}).decode(),
+                    '<plist><dict></dict></plist>'):
+            with self.assertRaises((m.Rejected, ValueError, plistlib.InvalidFileException)):
+                runner.signing(raw)
 
     def test_artifact_manifest_bounds_and_completeness(self):
         for raw in ('', 'a'*64 + '  /Users/admin/app', 'truncated',
@@ -185,6 +212,20 @@ class SmokeTests(unittest.TestCase):
         self.assertNotIn('/Users/', script)
         self.assertIn('test ! -L ' + guest.APP, guest.driver())
 
+    def test_smoke_fixture_is_local_and_shared_fixture_remains_frozen(self):
+        self.assertEqual(m.FIXTURE, m.HERE / 'fixture/E06SmokeApp')
+        shared = m.REPO / 'experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp'
+        frozen = {
+            'E06SmokeApp/AppDelegate.swift':
+                '13096655127f5220e28eb7416aa721dd4a8f00c46f991e3612ea648c9993b92f',
+            'E06SmokeApp.xcodeproj/project.pbxproj':
+                'ea2b83080242c2974548cbcca4631badde396c8484002bcaf0d453f252c549e5',
+            'E06SmokeApp.xcodeproj/xcshareddata/xcschemes/E06SmokeApp.xcscheme':
+                '5c2bb049fc2869f94d9b0522772ba4c48cd6d1ba42147362d13882275bbfeec5',
+        }
+        for relative, expected in frozen.items():
+            self.assertEqual(m.sha((shared / relative).read_bytes()), expected)
+
     def test_host_commands_never_target_xcode_or_default_set(self):
         for op in guest.ledger()['operations']:
             argv = op['argv']
@@ -195,15 +236,39 @@ class SmokeTests(unittest.TestCase):
             self.assertNotIn('--dir', argv)
             self.assertNotIn('--net-bridged', argv)
 
-    def test_second_attempt_uses_pty_launch_and_preserves_first_evidence(self):
-        self.assertEqual(m.RUN, m.ROOT + '/smoke-run-002')
-        self.assertEqual(m.VM, 'taskflow-e06-vm-a-smoke-002')
+    def test_third_attempt_uses_pty_launch_and_preserves_prior_evidence(self):
+        self.assertEqual(m.RUN, m.ROOT + '/smoke-run-003')
+        self.assertEqual(m.VM, 'taskflow-e06-vm-a-smoke-003')
         self.assertIn(m.ROOT + '/smoke-run', m.cleanup_plan()['preserve'])
+        self.assertIn(m.ROOT + '/smoke-run-002', m.cleanup_plan()['preserve'])
         launches = [op for op in guest.ledger()['operations'] if op['id'].endswith('-launch')]
         self.assertEqual(len(launches), 3)
         for operation in launches:
             self.assertIn('--console-pty', operation['argv'])
             self.assertNotIn('--console', operation['argv'])
+
+    def test_build_is_credential_free_ad_hoc_and_signing_is_verified(self):
+        driver = guest.driver()
+        project = (m.FIXTURE / 'E06SmokeApp.xcodeproj/project.pbxproj').read_text()
+        for setting in ('AD_HOC_CODE_SIGNING_ALLOWED=YES', 'CODE_SIGNING_ALLOWED=YES',
+                        'CODE_SIGNING_REQUIRED=YES', 'CODE_SIGN_IDENTITY=-',
+                        'CODE_SIGN_STYLE=Manual'):
+            self.assertIn(setting, driver)
+        for setting in ('AD_HOC_CODE_SIGNING_ALLOWED = YES', 'CODE_SIGNING_ALLOWED = YES',
+                        'CODE_SIGNING_REQUIRED = YES', 'CODE_SIGN_IDENTITY = "-"',
+                        'CODE_SIGN_STYLE = Manual'):
+            self.assertIn(setting, project)
+        for forbidden in ('CODE_SIGNING_ALLOWED=NO', 'CODE_SIGNING_REQUIRED=NO',
+                          '-allowProvisioningUpdates', 'DEVELOPMENT_TEAM='):
+            self.assertNotIn(forbidden, driver)
+        for forbidden in ('CODE_SIGNING_ALLOWED = NO', 'CODE_SIGNING_REQUIRED = NO',
+                          'DEVELOPMENT_TEAM'):
+            self.assertNotIn(forbidden, project)
+        self.assertIn('/usr/bin/codesign --verify --strict', driver)
+        self.assertIn('/usr/bin/codesign --display --entitlements :-', driver)
+        ids = [op['id'] for op in guest.ledger()['operations']]
+        self.assertEqual(ids[ids.index('build') + 1:ids.index('artifact')],
+                         ['signing', 'signing-verify'])
 
     def test_path_prefix_traversal_and_symlink(self):
         for value in (m.GUEST+'-evil/x', m.GUEST+'/../x', m.GUEST+'/a//x', m.GUEST+'/*', '/Users/a'):

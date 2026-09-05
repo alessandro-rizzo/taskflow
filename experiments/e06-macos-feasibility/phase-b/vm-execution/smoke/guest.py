@@ -10,7 +10,8 @@ PROJECT = m.GUEST + '/workspace/E06SmokeApp/E06SmokeApp.xcodeproj'
 DRIVER = m.GUEST + '/driver.sh'
 TOOLS = ['/bin/sh', '/bin/mkdir', '/bin/rm', '/bin/test', '/bin/date',
          '/usr/bin/base64', '/usr/bin/shasum', '/usr/bin/find', '/usr/bin/sort', '/usr/bin/xargs',
-         '/usr/bin/xcrun', '/usr/bin/xcodebuild', '/usr/bin/env', '/usr/libexec/PlistBuddy']
+         '/usr/bin/xcrun', '/usr/bin/xcodebuild', '/usr/bin/codesign', '/usr/bin/env',
+         '/usr/libexec/PlistBuddy']
 IDENTITY = [
     ('macos_version', ['/usr/bin/sw_vers', '-productVersion']),
     ('macos_build', ['/usr/bin/sw_vers', '-buildVersion']),
@@ -58,8 +59,12 @@ def driver():
         '-configuration', 'Debug', '-sdk', 'iphonesimulator26.5',
         '-destination', 'generic/platform=iOS Simulator', '-derivedDataPath', m.GUEST + '/DerivedData',
         '-resultBundlePath', m.GUEST + '/results/build.xcresult',
-        'CODE_SIGNING_ALLOWED=NO', 'CODE_SIGNING_REQUIRED=NO',
+        'AD_HOC_CODE_SIGNING_ALLOWED=YES', 'CODE_SIGNING_ALLOWED=YES',
+        'CODE_SIGNING_REQUIRED=YES', 'CODE_SIGN_IDENTITY=-', 'CODE_SIGN_STYLE=Manual',
         '-disableAutomaticPackageResolution', 'build']) + '\n;;\n'
+    script += 'signing)\n'
+    script += quote(['/usr/bin/codesign', '--verify', '--strict', APP]) + '\n'
+    script += quote(['/usr/bin/codesign', '--display', '--entitlements', ':-', APP]) + ' 2>/dev/null\n;;\n'
     script += 'artifact)\n'
     script += 'test -d ' + q(APP) + '\n'
     script += 'test ! -L ' + q(APP) + '\n'
@@ -126,6 +131,8 @@ def ledger():
     add('transfer', 'guest-command', guest_argv(['/bin/sh', '-s'], stdin=True),
         stdin=transport())
     add('build', 'guest-command', guest_argv(['/bin/sh', DRIVER, 'build'], prepared=True), 900)
+    add('signing', 'guest-command', guest_argv(['/bin/sh', DRIVER, 'signing'], prepared=True))
+    add('signing-verify', 'verify-signing')
     add('artifact', 'guest-command', guest_argv(['/bin/sh', DRIVER, 'artifact'], prepared=True))
     add('artifact-verify', 'verify-artifact')
     add('create', 'guest-command', guest_argv(sim('create', m.VM, m.observation()['device_type'],

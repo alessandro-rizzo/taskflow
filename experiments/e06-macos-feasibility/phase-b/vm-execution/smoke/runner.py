@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import plistlib
 import re
 import subprocess
 import sys
@@ -61,6 +62,26 @@ def artifact(raw):
     return rows
 
 
+def signing(raw):
+    match = re.search(r'(<\?xml[^>]*>.*?</plist>)', raw, re.DOTALL)
+    m.require(match is not None, 'missing signing entitlements')
+    document = plistlib.loads(match.group(1).encode())
+    m.require(isinstance(document, dict), 'invalid signing entitlements')
+    app_id = document.get('application-identifier')
+    m.require(isinstance(app_id, str) and
+              (app_id == m.BUNDLE or re.fullmatch(r'[A-Za-z0-9-]{1,64}\.' +
+                                                   re.escape(m.BUNDLE), app_id)),
+              'application identifier missing/mismatched')
+    groups = document.get('keychain-access-groups', [])
+    m.require(isinstance(groups, list) and all(isinstance(x, str) for x in groups),
+              'invalid keychain access groups')
+    default_group = groups[0] if groups else app_id
+    m.require(default_group == app_id, 'unexpected default keychain access group')
+    return {'application_identifier': app_id,
+            'default_keychain_access_group': default_group,
+            'keychain_access_groups': groups}
+
+
 class RecordingBackend:
     def __init__(self):
         self.records = []
@@ -107,6 +128,8 @@ def run_smoke(backend, expected, spec):
                 value = attest(results, expected)
             elif action == 'verify-artifact':
                 value = artifact(results['artifact']['stdout'])
+            elif action == 'verify-signing':
+                value = signing(results[op['requires']]['stdout'])
             elif action == 'verify-artifact-again':
                 value = artifact(results[op['requires']]['stdout'])
                 m.require(value == results['artifact-verify'], 'artifact changed before installation')

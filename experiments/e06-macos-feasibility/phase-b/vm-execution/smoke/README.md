@@ -7,12 +7,13 @@ It never imports the native backend or changes accepted Phase-A inputs.
 ## Current boundary
 
 Preflight observed macOS 26.4/25E246, Xcode 26.5/17F42 and available iOS
-Simulator 26.5/23F77, six CPUs, 16 GiB RAM and guest SIP disabled. No fixture
-build or simulator launch has run. SDK build IDs remain null in
-`profile-observation.json`: this is historical observation, not approval.
-The source receipt hash binds the retained preflight without making repository
-checks depend on that machine. Parent acquisition files remain historical
-proposal snapshots; subsequent Softnet/preflight approvals are in task receipts.
+Simulator 26.5/23F77, six CPUs, 16 GiB RAM and guest SIP disabled. Separately
+approved identity completion resolved both SDK build identifiers to 23F73.
+`profile-observation.json` remains historical observation, not approval; the
+approval packet must bind the completed identity. Two separately approved smoke
+attempts are retained as failed evidence below. Parent acquisition files remain
+historical proposal snapshots; subsequent Softnet/preflight approvals are in
+task receipts.
 
 ## Verification
 
@@ -31,7 +32,7 @@ deferred cleanup ledger. `record-plan` reports zero execution/benchmark samples.
 
 ## Implemented cycle
 
-Only a fresh `taskflow-e06-vm-a-smoke-002` clone of the pinned local base is admitted;
+Only a fresh `taskflow-e06-vm-a-smoke-003` clone of the pinned local base is admitted;
 never reuse the preflight clone or boot the base. Admission checks capacity,
 stopped state, binary/base hashes, helper root/setuid permissions and DHCP state.
 The available-memory estimate is free + inactive + speculative pages, not
@@ -40,21 +41,26 @@ APFS can count shared extents repeatedly; the separate 200 GiB free-disk floor
 remains binding.
 
 After a bounded headless host-only boot, compare a complete guest profile before
-copying the three pinned fixture files and closed shell driver through guest-
-agent stdin. Verify paths/sizes/hashes; no shares, SSH, credentials or downloads.
+copying the three pinned smoke-local fixture files and closed shell driver
+through guest-agent stdin. Verify paths/sizes/hashes; no shares, SSH,
+credentials or downloads.
 Required macOS system tools must already exist; no guest Python is assumed.
 
-Build unsigned with explicit SDK/developer directory/destination and dedicated
-workspace/cache/DerivedData/results paths. Verify app identity, binary presence
-and complete file hashes, rechecking before each install. Create one device in
-the custom guest set and validate its returned UUID against name/type/runtime/
-state. Never select `booted` or a default-set device.
+Build with explicit SDK/developer directory/destination, credential-free manual
+ad-hoc signing, and dedicated workspace/cache/DerivedData/results paths. The
+build never enables provisioning updates or selects a development team. Verify
+the signature, effective application-identifier/default Keychain access group,
+app identity, binary presence and complete file hashes, rechecking hashes before
+each install. Create one device in the custom guest set and validate its returned
+UUID against name/type/runtime/state. Never select `booted` or a default-set
+device.
 
 Three launches use Simulator's PTY console attachment to prove initial empty
-canaries, persistence, then empty canaries
-after shutdown/erase/reboot/reinstall. Missing, duplicate, malformed or wrong-
-namespace reports fail. Remove the owned device/workspace and check absence;
-stop/delete only the smoke clone and check base hashes. This is not p95,
+canaries, persistence, then empty canaries after shutdown/erase/reboot/reinstall.
+The report includes every Keychain pre-read/delete/add/immediate-verify OSStatus;
+only the exact not-found/success transition is accepted. Missing, duplicate,
+malformed or wrong-namespace reports fail. Remove the owned device/workspace
+and check absence; stop/delete only the smoke clone and check base hashes. This is not p95,
 cross-namespace isolation, concurrency or failure-recovery benchmark evidence.
 
 ## Approval gate
@@ -85,7 +91,7 @@ Commands have ceilings of 900 seconds or less. A 30-minute watchdog starts
 before cloning; host health is rechecked during long VM commands. Each output
 stream is capped at 8 MiB; overflow fails rather than accepting truncation.
 Complete bounded streams, operation results and monotonic durations go under
-exclusive mode-0700 `/private/tmp/taskflow-e06-vm-a/smoke-run-002`. Normal retained
+exclusive mode-0700 `/private/tmp/taskflow-e06-vm-a/smoke-run-003`. Normal retained
 text redacts user-directory names. Overflow/crash spools are private diagnostics
 requiring review before export. No evidence goes to a provider.
 
@@ -101,13 +107,21 @@ It never kills unrelated PIDs/deletes the base. An existing run directory blocks
 automatic retry; inspect receipts/in-flight owned commands before recovery.
 These recovery paths are fake-tested, not proven on a live VM.
 
+The accepted shared Phase-B fixture remains byte-for-byte frozen for the retained
+native executor. Signing/status instrumentation lives only in `smoke/fixture`.
+
 The first approved attempt is retained unchanged at
 `/private/tmp/taskflow-e06-vm-a/smoke-run`. It reached the initial application
 launch, but Xcode 26.5 `simctl launch --console` returned only the bundle/PID
 line, so the strict result parser failed and exact cleanup removed that attempt's
 clone. The second fixed ledger uses Apple's documented `--console-pty` standard-
-stream attachment mode. It has a distinct evidence root and clone name and
-cannot overwrite or reinterpret the failed attempt.
+stream attachment mode. Attempt two is retained unchanged at
+`/private/tmp/taskflow-e06-vm-a/smoke-run-002`: PTY result capture worked and
+preferences/document data persisted, but the fixture's Keychain write did not.
+That fixture disabled code signing and discarded every Security OSStatus, so it
+could not prove the precise cause or reach erase/reset. Attempt three uses a
+distinct evidence root/clone, preserves both failures, verifies its effective
+signing entitlements before install, and reports every Keychain transition.
 
 ## Network and eventual cleanup
 

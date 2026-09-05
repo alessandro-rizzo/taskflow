@@ -8,11 +8,11 @@ from pathlib import Path, PurePosixPath
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[4]
-FIXTURE = REPO / 'experiments/e06-macos-feasibility/phase-b/fixture/E06SmokeApp'
+FIXTURE = HERE / 'fixture/E06SmokeApp'
 ROOT = '/private/tmp/taskflow-e06-vm-a'
-RUN = ROOT + '/smoke-run-002'
+RUN = ROOT + '/smoke-run-003'
 GUEST = ROOT + '/smoke'
-VM = 'taskflow-e06-vm-a-smoke-002'
+VM = 'taskflow-e06-vm-a-smoke-003'
 VM_DIR = ROOT + '/tart/vms/' + VM
 SET = GUEST + '/CoreSimulator'
 NS = 'taskflow-e06-vm-a-smoke-namespace-a'
@@ -31,8 +31,8 @@ BASE_HASHES = {
     'disk.img': '39457bd2f67d82eafebca964ca7d6e5ce01e72de64b2ade50d4c96636d07f692',
 }
 FIXTURE_HASHES = {
-    'E06SmokeApp/AppDelegate.swift': '13096655127f5220e28eb7416aa721dd4a8f00c46f991e3612ea648c9993b92f',
-    'E06SmokeApp.xcodeproj/project.pbxproj': 'ea2b83080242c2974548cbcca4631badde396c8484002bcaf0d453f252c549e5',
+    'E06SmokeApp/AppDelegate.swift': '858c65af40f1a234402545aafd2dc783e70c39c6316d502e4512861b7721de28',
+    'E06SmokeApp.xcodeproj/project.pbxproj': '767e14a8a5aeab28035b4214ef3381432c1f203430a9786d486d41b567ce1e01',
     'E06SmokeApp.xcodeproj/xcshareddata/xcschemes/E06SmokeApp.xcscheme': '5c2bb049fc2869f94d9b0522772ba4c48cd6d1ba42147362d13882275bbfeec5',
 }
 ENV = {
@@ -118,9 +118,19 @@ def app_report(output, previous):
              if x.startswith('TASKFLOW_E06_RESULT:')]
     require(len(lines) == 1, 'missing/duplicate app report')
     report = json.loads(lines[0])
-    require(report == {'namespace': NS, 'status': 'ok', 'previous_default': previous,
-                       'previous_file': previous, 'previous_keychain_name': previous},
-            'canary persistence/reset failed')
+    keychain_status = 0 if previous else -25300  # errSecSuccess / errSecItemNotFound
+    expected = {
+        'namespace': NS, 'status': 'ok', 'previous_default': previous,
+        'previous_file': previous, 'previous_keychain_name': previous,
+        'previous_keychain_status': keychain_status,
+        'delete_keychain_status': keychain_status,
+        'add_keychain_status': 0, 'verify_keychain_status': 0,
+        'verified_keychain_name': NS,
+    }
+    require(isinstance(report, dict) and set(report) == set(expected), 'app report fields differ')
+    require(all(type(report[key]) is type(value) for key, value in expected.items()),
+            'app report field types differ')
+    require(report == expected, 'canary or keychain transition failed')
     return report
 
 
@@ -187,7 +197,7 @@ def cleanup_plan():
             'vm_names': [VM, 'taskflow-e06-vm-a-preflight'], 'base_directory': BASE,
             'helper_files': [SOFTNET, str(Path(SOFTNET).parent / 'LICENSE'),
                              str(Path(SOFTNET).parent / 'README.md'), ROOT + '/downloads/softnet-0.23.0.tar.gz'],
-            'preserve': [ROOT + '/receipts', ROOT + '/smoke-run', RUN],
+            'preserve': [ROOT + '/receipts', ROOT + '/smoke-run', ROOT + '/smoke-run-002', RUN],
             'dhcp': {'preferences_id': 'com.apple.InternetSharing.default.plist', 'key': 'bootpd',
                      'original': None, 'expected': {'DHCPLeaseTimeSecs': 600, 'dhcp_ignore_client_identifier': True},
                      'action': 'lock; compare exact key; remove only key; commit/apply; unlock; read back',
