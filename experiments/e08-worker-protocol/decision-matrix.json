@@ -1,0 +1,42 @@
+{
+  "format_version": "taskflow-e08-decision-matrix/v1-experimental",
+  "status": "predeclared-no-selection",
+  "selected_branch": null,
+  "evaluation_rule": "Evaluate in ascending precedence and select the first matching branch. Gates are conjunctive and unweighted; unavailable representative evidence never counts as a pass.",
+  "branches": [
+    {
+      "precedence": 1,
+      "id": "stop-or-narrow",
+      "select_when": "Any integrity, stale-success, ownership, idempotency, publication atomicity, cleanup safety, or orphan-accounting hard gate fails on an exercised adapter, or no credible remote-worker path remains.",
+      "required_consequence": "Narrow or stop remote execution before production provider work; record the failed invariant and retained evidence."
+    },
+    {
+      "precedence": 2,
+      "id": "state-machine-first-transport-deferral",
+      "select_when": "Core semantics pass locally but representative approved SSH/Linux evidence is unavailable, or reconnect, framing, credential mediation, or transport behavior dominates and prevents a transport-neutral conclusion.",
+      "required_consequence": "Carry only the state and ownership semantics to Gate 1; postpone SSH, gRPC, Connect, HTTP, framing, and reconnect-token encoding choices."
+    },
+    {
+      "precedence": 3,
+      "id": "separated-worker-sandbox-session-protocols",
+      "select_when": "All hard gates pass, but the E06 macOS stub requires session lifecycle fields or transitions that leak into or distort stateless Linux execution.",
+      "required_consequence": "Retain a common typed identity/event vocabulary while separating reusable worker, disposable sandbox, and optional stateful session protocols."
+    },
+    {
+      "precedence": 4,
+      "id": "one-typed-core-with-capability-extensions",
+      "select_when": "All three adapter shapes, including a representative approved SSH/Linux worker, pass every hard gate and threshold through one core without provider option leakage or forced session semantics.",
+      "required_consequence": "Offer the proven semantic core as a Gate 1/T6 input only; keep transport, wire envelopes, adapter code, and compatibility experimental."
+    }
+  ],
+  "global_requirements": {
+    "all_fault_cases_exercised_on_applicable_adapters": true,
+    "thresholds_unchanged_after_observation": true,
+    "raw_traces_bound_to_implementation_and_contract": true,
+    "provider_option_leak_count_max": 0,
+    "macos_stub_host_mutation_count_max": 0,
+    "transport_frozen_by_e08": false,
+    "production_contract_allowed_to_stabilize": false
+  },
+  "decision_record": "docs/decisions/0012-e08-worker-protocol.md"
+}

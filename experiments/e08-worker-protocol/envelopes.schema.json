@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "taskflow-e08-envelopes/v1-experimental",
+  "title": "E08 typed semantic envelopes",
+  "description": "Experimental semantic messages. Transport framing and encoding are deliberately not selected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version", "direction", "operation_id", "run_id", "node_id",
+    "attempt_id", "expected_revision", "payload_digest", "payload"
+  ],
+  "properties": {
+    "format_version": {"const": "taskflow-e08-envelope/v1-experimental"},
+    "direction": {"enum": ["request", "response", "event"]},
+    "operation_id": {"$ref": "#/$defs/id"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "node_id": {"$ref": "#/$defs/id"},
+    "attempt_id": {"$ref": "#/$defs/id"},
+    "expected_revision": {"type": "integer", "minimum": 0},
+    "payload_digest": {"$ref": "#/$defs/digest"},
+    "payload": {
+      "oneOf": [
+        {"$ref": "#/$defs/advertiseCapabilities"},
+        {"$ref": "#/$defs/tryReserve"},
+        {"$ref": "#/$defs/acquireWorker"},
+        {"$ref": "#/$defs/attestProfile"},
+        {"$ref": "#/$defs/createSandbox"},
+        {"$ref": "#/$defs/acquireSession"},
+        {"$ref": "#/$defs/casHas"},
+        {"$ref": "#/$defs/casPutChunk"},
+        {"$ref": "#/$defs/casGetChunk"},
+        {"$ref": "#/$defs/exec"},
+        {"$ref": "#/$defs/readLogs"},
+        {"$ref": "#/$defs/cancel"},
+        {"$ref": "#/$defs/waitExit"},
+        {"$ref": "#/$defs/publishOutputs"},
+        {"$ref": "#/$defs/cleanup"},
+        {"$ref": "#/$defs/heartbeat"},
+        {"$ref": "#/$defs/reconnect"},
+        {"$ref": "#/$defs/queryOrphans"},
+        {"$ref": "#/$defs/reservationDisposition"},
+        {"$ref": "#/$defs/stateTransition"},
+        {"$ref": "#/$defs/logChunk"},
+        {"$ref": "#/$defs/operationResult"}
+      ]
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "^[A-Za-z0-9._:-]+$"},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "reasonCode": {
+      "enum": [
+        "accepted", "cache-hit", "cache-miss", "profile-mismatch",
+        "provider-unavailable", "missing-blob", "chunk-digest-mismatch",
+        "object-digest-mismatch", "manifest-tamper", "transport-disconnected",
+        "worker-lost", "cancelled", "command-exit-nonzero",
+        "revision-conflict", "stale-reconnect-token", "output-missing",
+        "output-path-escape", "output-integrity-failed",
+        "publication-conflict", "publication-io-failed", "cleanup-timeout",
+        "caller-lost", "orphan-confirmed", "orphan-unknown", "completed"
+      ]
+    },
+    "stringList": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "version", "value"],
+      "properties": {
+        "kind": {"enum": ["os", "architecture", "toolchain", "sandbox", "network", "session", "device"]},
+        "version": {"type": "string", "minLength": 1},
+        "value": {"type": "string", "minLength": 1}
+      }
+    },
+    "profileAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planned_profile_digest", "attested_profile_digest", "runner_digest", "fields"],
+      "properties": {
+        "planned_profile_digest": {"$ref": "#/$defs/digest"},
+        "attested_profile_digest": {"$ref": "#/$defs/digest"},
+        "runner_digest": {"$ref": "#/$defs/digest"},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/capability"}}
+      }
+    },
+    "advertiseCapabilities": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "snapshot_revision", "profiles", "capabilities"],
+      "properties": {
+        "kind": {"const": "AdvertiseCapabilities"},
+        "snapshot_revision": {"type": "integer", "minimum": 0},
+        "profiles": {"type": "array", "items": {"$ref": "#/$defs/digest"}, "uniqueItems": true},
+        "capabilities": {"type": "array", "items": {"$ref": "#/$defs/capability"}}
+      }
+    },
+    "tryReserve": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "profile_digest", "resources"],
+      "properties": {
+        "kind": {"const": "TryReserve"},
+        "profile_digest": {"$ref": "#/$defs/digest"},
+        "resources": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "reservationDisposition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "disposition", "reason_code"],
+      "properties": {
+        "kind": {"const": "ReservationDisposition"},
+        "disposition": {"enum": ["granted", "queued", "mismatch", "unavailable"]},
+        "reason_code": {"$ref": "#/$defs/reasonCode"},
+        "reservation_id": {"$ref": "#/$defs/id"}
+      }
+    },
+    "acquireWorker": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "reservation_id"],
+      "properties": {"kind": {"const": "AcquireWorker"}, "reservation_id": {"$ref": "#/$defs/id"}}
+    },
+    "attestProfile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "worker_id", "attestation"],
+      "properties": {
+        "kind": {"const": "AttestProfile"},
+        "worker_id": {"$ref": "#/$defs/id"},
+        "attestation": {"$ref": "#/$defs/profileAttestation"}
+      }
+    },
+    "createSandbox": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "worker_id", "sandbox_id", "sandbox_policy_digest"],
+      "properties": {
+        "kind": {"const": "CreateSandbox"},
+        "worker_id": {"$ref": "#/$defs/id"},
+        "sandbox_id": {"$ref": "#/$defs/id"},
+        "sandbox_policy_digest": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "acquireSession": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "sandbox_id", "session_kind", "namespace_id", "lease_id", "deadline_unix_ms"],
+      "properties": {
+        "kind": {"const": "AcquireSession"},
+        "sandbox_id": {"$ref": "#/$defs/id"},
+        "session_kind": {"enum": ["simulator", "device", "stateful-tool"]},
+        "namespace_id": {"$ref": "#/$defs/id"},
+        "lease_id": {"$ref": "#/$defs/id"},
+        "deadline_unix_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "casHas": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "object_digest", "size_bytes", "media_type"],
+      "properties": {
+        "kind": {"const": "CASHas"},
+        "object_digest": {"$ref": "#/$defs/digest"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "media_type": {"type": "string", "minLength": 1}
+      }
+    },
+    "casPutChunk": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "object_digest", "chunk_digest", "offset", "size_bytes", "final"],
+      "properties": {
+        "kind": {"const": "CASPutChunk"},
+        "object_digest": {"$ref": "#/$defs/digest"},
+        "chunk_digest": {"$ref": "#/$defs/digest"},
+        "offset": {"type": "integer", "minimum": 0},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "final": {"type": "boolean"}
+      }
+    },
+    "casGetChunk": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "object_digest", "offset", "max_size_bytes"],
+      "properties": {
+        "kind": {"const": "CASGetChunk"},
+        "object_digest": {"$ref": "#/$defs/digest"},
+        "offset": {"type": "integer", "minimum": 0},
+        "max_size_bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "exec": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "sandbox_id", "execution_id", "argv", "environment_names", "working_directory", "timeout_ms"],
+      "properties": {
+        "kind": {"const": "Exec"},
+        "sandbox_id": {"$ref": "#/$defs/id"},
+        "execution_id": {"$ref": "#/$defs/id"},
+        "argv": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "environment_names": {"$ref": "#/$defs/stringList"},
+        "working_directory": {"type": "string", "pattern": "^[^/].*$"},
+        "timeout_ms": {"type": "integer", "minimum": 1}
+      }
+    },
+    "readLogs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "execution_id", "after_cursor", "max_chunks"],
+      "properties": {
+        "kind": {"const": "ReadLogs"},
+        "execution_id": {"$ref": "#/$defs/id"},
+        "after_cursor": {"type": "integer", "minimum": 0},
+        "max_chunks": {"type": "integer", "minimum": 1, "maximum": 1000}
+      }
+    },
+    "cancel": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "execution_id", "reason", "cleanup_deadline_unix_ms"],
+      "properties": {
+        "kind": {"const": "Cancel"},
+        "execution_id": {"$ref": "#/$defs/id"},
+        "reason": {"enum": ["caller", "deadline", "superseded", "worker-loss"]},
+        "cleanup_deadline_unix_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "waitExit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "execution_id"],
+      "properties": {"kind": {"const": "WaitExit"}, "execution_id": {"$ref": "#/$defs/id"}}
+    },
+    "publishOutputs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "execution_id", "result_identity", "output_manifest_digest", "expected_absent"],
+      "properties": {
+        "kind": {"const": "PublishOutputs"},
+        "execution_id": {"$ref": "#/$defs/id"},
+        "result_identity": {"$ref": "#/$defs/digest"},
+        "output_manifest_digest": {"$ref": "#/$defs/digest"},
+        "expected_absent": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "ownership_kind", "ownership_id", "deadline_unix_ms"],
+      "properties": {
+        "kind": {"const": "Cleanup"},
+        "ownership_kind": {"enum": ["reservation", "sandbox", "session", "execution", "publication"]},
+        "ownership_id": {"$ref": "#/$defs/id"},
+        "deadline_unix_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "heartbeat": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "lease_id", "observed_revision", "deadline_unix_ms"],
+      "properties": {
+        "kind": {"const": "Heartbeat"},
+        "lease_id": {"$ref": "#/$defs/id"},
+        "observed_revision": {"type": "integer", "minimum": 0},
+        "deadline_unix_ms": {"type": "integer", "minimum": 0}
+      }
+    },
+    "reconnect": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "reconnect_token", "last_durable_revision", "last_acknowledged_log_cursor"],
+      "properties": {
+        "kind": {"const": "Reconnect"},
+        "reconnect_token": {"$ref": "#/$defs/id"},
+        "last_durable_revision": {"type": "integer", "minimum": 0},
+        "last_acknowledged_log_cursor": {"type": "integer", "minimum": 0}
+      }
+    },
+    "queryOrphans": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "namespace_id", "ownership_kinds"],
+      "properties": {
+        "kind": {"const": "QueryOrphans"},
+        "namespace_id": {"$ref": "#/$defs/id"},
+        "ownership_kinds": {"type": "array", "items": {"enum": ["reservation", "sandbox", "session", "execution", "publication"]}, "uniqueItems": true}
+      }
+    },
+    "stateTransition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "machine", "prior_state", "state", "revision", "event_sequence", "reason_code"],
+      "properties": {
+        "kind": {"const": "StateTransition"},
+        "machine": {"enum": ["node-attempt", "reservation", "worker-attachment", "sandbox", "session", "publication"]},
+        "prior_state": {"type": "string", "minLength": 1},
+        "state": {"type": "string", "minLength": 1},
+        "revision": {"type": "integer", "minimum": 1},
+        "event_sequence": {"type": "integer", "minimum": 1},
+        "reason_code": {"$ref": "#/$defs/reasonCode"}
+      }
+    },
+    "logChunk": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "execution_id", "cursor", "stream", "bytes_digest", "size_bytes"],
+      "properties": {
+        "kind": {"const": "LogChunk"},
+        "execution_id": {"$ref": "#/$defs/id"},
+        "cursor": {"type": "integer", "minimum": 1},
+        "stream": {"enum": ["stdout", "stderr"]},
+        "bytes_digest": {"$ref": "#/$defs/digest"},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "operationResult": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "operation", "outcome", "reason_code", "revision"],
+      "properties": {
+        "kind": {"const": "OperationResult"},
+        "operation": {"type": "string", "minLength": 1},
+        "outcome": {"enum": ["accepted", "completed", "rejected", "unavailable", "conflict"]},
+        "reason_code": {"$ref": "#/$defs/reasonCode"},
+        "revision": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

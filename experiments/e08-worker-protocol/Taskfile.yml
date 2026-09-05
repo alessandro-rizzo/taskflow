@@ -1,0 +1,13 @@
+version: "3"
+
+tasks:
+  check:phase-a:
+    desc: Verify the frozen E08 protocol contract and mutation tests
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify_contract.py
+
+  check:
+    desc: Phase A compatibility alias; no Phase B implementation exists
+    cmds:
+      - task: check:phase-a

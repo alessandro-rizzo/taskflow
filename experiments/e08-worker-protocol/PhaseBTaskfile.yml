@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  check:phase-a-snapshot:
+    desc: Verify the immutable Phase A commit and all bound repository inputs
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify_phase_b.py --phase-a-only
+
+  test:
+    desc: Run format, static, and race checks for the disposable implementation
+    cmds:
+      - test -z "$(gofmt -l .)"
+      - env GOCACHE=/private/tmp/taskflow-tf00316-phaseb-cache go vet ./...
+      - env GOCACHE=/private/tmp/taskflow-tf00316-phaseb-cache go test -race ./...
+
+  check:
+    desc: Verify the immutable contract, implementation, retained evidence, and decision
+    deps: [check:phase-a-snapshot, test]
+    cmds:
+      - env PYTHONDONTWRITEBYTECODE=1 python3 scripts/verify_phase_b.py

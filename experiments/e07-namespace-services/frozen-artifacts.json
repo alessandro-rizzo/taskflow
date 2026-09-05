@@ -1,0 +1,42 @@
+{
+  "format_version": "taskflow-e07-frozen-artifacts/v1-experimental",
+  "hash_algorithm": "sha256",
+  "artifacts": [
+    {
+      "path": "README.md",
+      "sha256": "2216c92c16000980838a55c501ef182cdbc9596b84339da12c8fa958051d4d85"
+    },
+    {
+      "path": "Taskfile.yml",
+      "sha256": "530f361037b5cf0137f12ebc117b5394fbcdb958ecaa3d5d9b598987dde7293b"
+    },
+    {
+      "path": "contract.json",
+      "sha256": "b641824c44636d198b937771b2916fea530b9b6942bd949815afc9cab98cbb50"
+    },
+    {
+      "path": "decision-matrix.json",
+      "sha256": "0340d6f97172cea0f5a6cda01753676b42eb3a690237c918d0109918c549d9e8"
+    },
+    {
+      "path": "event-schema.json",
+      "sha256": "ec95cdb934354877ffd87a1ce8e519c80d1a5a4435b497e21be8cf1085020c6e"
+    },
+    {
+      "path": "fixture-bindings.json",
+      "sha256": "835cd759e934484776c6563efe5111f6b4c30301b0d49b92966f7ac886760f07"
+    },
+    {
+      "path": "scripts/verify_contract.py",
+      "sha256": "692b4d386889c43da337617eae86d69ef2f1d21ce7b7c02aad4a224f645d81f5"
+    },
+    {
+      "path": "tests/test_verify_contract.py",
+      "sha256": "f905a8a32133f58c4e8ae9239c9d09262c5313a87d1dfb8b5109eef69c382f79"
+    },
+    {
+      "path": "thresholds.json",
+      "sha256": "aaa19ccb7ef57c411fe2f2587507b31c8f5e8800b0f7cb019ef61eeeab618a41"
+    }
+  ]
+}

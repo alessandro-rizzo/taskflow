@@ -1,0 +1,17 @@
+{
+  "caller_loss_trial_count": 20,
+  "cleanup_after_expiry_max_seconds": 0.06520116599999426,
+  "cleanup_after_expiry_p95_seconds": 0.063476584,
+  "cleanup_stage_reorder_count": 0,
+  "committed_event_duplicate_count": 0,
+  "committed_event_loss_count": 0,
+  "expiry_detection_lateness_max_seconds": 0.11008137500000004,
+  "remaining_counts": {
+    "lease": 0,
+    "listener": 0,
+    "mutable_path": 0,
+    "process": 0,
+    "route": 0
+  },
+  "restart_case_count": 8
+}

@@ -1,0 +1,131 @@
+{
+  "format_version": "taskflow-e07-phase-a-contract/v1-experimental",
+  "experiment_id": "E07",
+  "task_id": "TF-003.15",
+  "status": "phase-a-result-free-frozen",
+  "baseline_revision": "098035bf29656c3fd3b3991224a98fdded3453b7",
+  "question": "Can Taskflow reproduce full stacks per worktree without exposing ports, provider networking, authorization details, or mutable service state in normal project code?",
+  "risks": [
+    "R7"
+  ],
+  "canonical_requirements": {
+    "targeted": [
+      "AGENT-4",
+      "AGENT-5",
+      "EXEC-5"
+    ],
+    "partially_exercised": {
+      "AGENT-6": "Endpoint capability authorization only; no general target, secret, effect, or Internet-egress policy claim.",
+      "EXEC-1": "Linux-class service and fake-macOS consumer labels only; no real heterogeneous provider is exercised.",
+      "PLAN-5": "Endpoint denials and required provider route capability only; no complete plan-policy preflight is implemented."
+    },
+    "stale_ticket_references": [
+      "NS-1",
+      "NS-2",
+      "NS-3",
+      "NS-4",
+      "NS-5"
+    ],
+    "stale_reference_policy": "Retain only as ticket provenance; do not create aliases or use as product requirements."
+  },
+  "phase_boundary": {
+    "phase_a_allows": [
+      "result-free contract",
+      "fixture digest bindings",
+      "frozen workload shape",
+      "frozen numeric thresholds",
+      "frozen branch precedence",
+      "event and evidence requirements",
+      "contract verifier and mutation tests"
+    ],
+    "phase_a_forbids": [
+      "controller or reaper implementation",
+      "service process or endpoint listener",
+      "SQLite runtime state or database",
+      "container or Compose execution",
+      "external network or provider action",
+      "benchmark or evidence generation",
+      "selected E07 branch or ADR",
+      "production module, package, or prototype import"
+    ],
+    "phase_b_preconditions": [
+      "reviewed and explicitly authorized Phase A contract commit",
+      "experiment-owned temporary roots only",
+      "separate exact approval before any real Compose or shared runtime use"
+    ]
+  },
+  "workload": {
+    "fixture_id": "w3-isolated-native-mobile-stack",
+    "fixture_version": "t1-w3-fixture-v1-experimental",
+    "paired_namespace_trials": 20,
+    "barrier_synchronised": true,
+    "subsets": [
+      {
+        "namespace_fixture": "fixtures/w3/examples/namespace-a.json",
+        "service_target_class": "linux",
+        "consumer_target_class": "fake-macos",
+        "project_visible_request": {
+          "source_id": "source-ns-a",
+          "service_type": "Service[API]",
+          "endpoint_type": "Endpoint[API]",
+          "consumer_id": "ns-a-ios-e2e"
+        }
+      },
+      {
+        "namespace_fixture": "fixtures/w3/examples/namespace-b.json",
+        "service_target_class": "linux",
+        "consumer_target_class": "fake-macos",
+        "project_visible_request": {
+          "source_id": "source-ns-b",
+          "service_type": "Service[API]",
+          "endpoint_type": "Endpoint[API]",
+          "consumer_id": "ns-b-ios-e2e"
+        }
+      }
+    ],
+    "forbidden_project_fields": [
+      "port",
+      "host",
+      "route",
+      "token",
+      "credential",
+      "writable_root",
+      "database_path",
+      "process",
+      "provider_options"
+    ],
+    "allocation": {
+      "port": "controller requests OS-assigned loopback port zero",
+      "service_names_paths_ids": "derived uniquely inside the namespace owner",
+      "allowed_cross_namespace_share": "content-addressed immutable API artifact digest only"
+    }
+  },
+  "phase_b_shape": {
+    "runtime": "Python 3.9 standard library only",
+    "controller": "separate narrow experiment-local owner surviving client loss",
+    "state": "experimental SQLite WAL with synchronous FULL",
+    "service": "loopback-only child API with a namespace-private SQLite database",
+    "routing": "typed endpoint handle authorized before an opaque route is injected through a target adapter",
+    "cleanup_stages": [
+      "route.revoked",
+      "service.stopped",
+      "namespace.mutable_state.removed",
+      "lease.finalized"
+    ],
+    "forbidden_external_mechanisms": [
+      "VM",
+      "simulator",
+      "external provider",
+      "public network"
+    ]
+  },
+  "artifacts": {
+    "thresholds": "thresholds.json",
+    "decision_matrix": "decision-matrix.json",
+    "event_schema": "event-schema.json",
+    "fixture_bindings": "fixture-bindings.json",
+    "frozen_artifacts": "frozen-artifacts.json",
+    "frozen_artifacts_digest": "protocol.sha256"
+  },
+  "verification_command": "mise exec -- task --dir experiments/e07-namespace-services check:phase-a"
+}

@@ -1,0 +1,86 @@
+{
+  "files": [
+    {
+      "path": "PhaseBTaskfile.yml",
+      "sha256": "c85bab256a955eefde9cfb477b2677748e494fadd27a44617e074db7d28a849f"
+    },
+    {
+      "path": "adapters.go",
+      "sha256": "8a32096f6d20979e1f6caa32c51d1e9fc658eb5e205dccfa62216eced257e5d9"
+    },
+    {
+      "path": "approved/known_hosts",
+      "sha256": "9ead8e539fce8c0c19a00c3441a7c9152af26051722225fb1490dfc3262079d9"
+    },
+    {
+      "path": "approved/ssh-profile.json",
+      "sha256": "2d4a5b95989ceebb2600ce3ed76631e9e2a18f60add4ba0f8122466c0263bfa6"
+    },
+    {
+      "path": "cmd/e08evidence/main.go",
+      "sha256": "41306ee2b77d88b29d03dd22a309c0f5be780b6a5dfd3f41c0eb43741831e71f"
+    },
+    {
+      "path": "cmd/e08probe/main.go",
+      "sha256": "99f6cfd8d910e24457fcbe50c40d31255ebcc6cebf9e7ebed118a414d90088bb"
+    },
+    {
+      "path": "cmd/e08profile/main.go",
+      "sha256": "8f14f1fb0c47b4b575c9202955f4ec48463cd68a64c0ad03405c0b6f47bfaa12"
+    },
+    {
+      "path": "cmd/e08sshevidence/main.go",
+      "sha256": "6a033b70f6d22f688fab38d653236ab9816495f7ddd95c347a82c4d5632ece27"
+    },
+    {
+      "path": "cmd/e08sshprobe/main.go",
+      "sha256": "46e5e024515cf2dfe49eea4c2ed73350a71079ccfecb0e614bde52a8e7927c5b"
+    },
+    {
+      "path": "cmd/e08worker/main.go",
+      "sha256": "d315eaf45d9e8bd802bb25e9f53ed8098404bdaee37212576b5863be17bc6e4f"
+    },
+    {
+      "path": "core.go",
+      "sha256": "5454d4f4841e8e3d078a37792c96b3cdff2cafa80a663f7fcf4cadffd94ed197"
+    },
+    {
+      "path": "core_test.go",
+      "sha256": "7953fb4d6d560e79815df34bee4523f8044b166c22700d867f0085a98a28dabe"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "2798454ec848e96ccb37bed64e5193ad14e46b41ac85696f79eac06f14da59fe"
+    },
+    {
+      "path": "protocol.go",
+      "sha256": "0da244f5901e1d0ffe83112dd4db80afd34a8e09395812100871d9a5035e45ee"
+    },
+    {
+      "path": "scripts/finalize_ssh_evidence.py",
+      "sha256": "dcd6d5114375f6c2549cd0fc587eb7ce3745df8e6291472e9b6863d5a653623b"
+    },
+    {
+      "path": "scripts/run_experiment.py",
+      "sha256": "9e59ef32a07bc3fc38e3beabef4199d41c8eca7a8afcf82ebde0c8f1cec9d7b3"
+    },
+    {
+      "path": "scripts/verify_phase_b.py",
+      "sha256": "19b2310e90dda3f05d7c9fe8cb6e206b0849a1b0c0095746ced540ba0a68b6c0"
+    },
+    {
+      "path": "ssh-availability.json",
+      "sha256": "8fed99a6391520ab2e0ca5352d520ee3a011f5119acad509c8605d4e4d58b193"
+    },
+    {
+      "path": "ssh_transport.go",
+      "sha256": "952246a5a2e895eb19c5c1b5cd905bc55eb5b5ef46d8b6c8eb64eae262769663"
+    },
+    {
+      "path": "ssh_transport_test.go",
+      "sha256": "5eb1a585dafa88d04910db7e421121ddad59d2b5ebc780031aa5c2605bb83691"
+    }
+  ],
+  "format_version": "taskflow-e08-implementation-manifest/v1",
+  "phase_a_commit": "fe41c6428c4d7d432cdd463c82dd12c3465e1103"
+}

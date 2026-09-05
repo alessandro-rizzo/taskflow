@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "path": "PhaseBTaskfile.yml",
+      "sha256": "f8328530227cda2ea288cee16db2867724c1bc8ab9f30f26231fc2fbbc5a210d"
+    },
+    {
+      "path": "scripts/controller.py",
+      "sha256": "f20391e70a993f7d0efb694e08cbdc953096793bab4ccb6b0d001803d77e926c"
+    },
+    {
+      "path": "scripts/harness.py",
+      "sha256": "5a59bc62c1225e9d21eb8afe2f5630bfc849c4f70cadffae2c7642c2e1809322"
+    },
+    {
+      "path": "scripts/heartbeat_client.py",
+      "sha256": "f7b1f8f1950648e6bf1b1dced46ff4babf701717233f946a021f5979dd2cdf4b"
+    },
+    {
+      "path": "scripts/relay.py",
+      "sha256": "006fdd87478ff78984280a81baf4fc7904e09e40230244b7053e5936200bc205"
+    },
+    {
+      "path": "scripts/run_experiment.py",
+      "sha256": "97b93664206e737fdeb8d18ae191dc35634487c06d8ef650c664b199716cdf21"
+    },
+    {
+      "path": "scripts/service.py",
+      "sha256": "e84e20d9b64d5dcb75d4da38ca7dddcb85505b304dbd5845cca219a76ba7f8f4"
+    },
+    {
+      "path": "scripts/verify_phase_b.py",
+      "sha256": "e4467ecd26e2b5d1b1ddb5996fc41f4b121de60aeb6ab7808b10e8f535b6d851"
+    },
+    {
+      "path": "tests/test_phase_b.py",
+      "sha256": "5020a5a358bbed8446891b146b483a12b8c8df947c7b12e96982ae29c1cc97ae"
+    }
+  ]
+}

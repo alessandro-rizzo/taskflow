@@ -1,0 +1,410 @@
+{
+  "files": [
+    {
+      "path": "evidence/benchmarks/in-process/bounded-cleanup/record.json",
+      "sha256": "64e62a37b5ecb82cdc427534db5c7cf93c48113971eae4e3554ab4e2db79661e"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/bounded-cleanup/samples.txt",
+      "sha256": "c6900027bde82992e943ad7fe7bee157385f6f25aca144aaf5850419e9b0681a"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/cancellation-acknowledgement/record.json",
+      "sha256": "c41c836b6e48a5429bd12137b4a5b8158a3a30a6e031dbd342e61671a8e964b5"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/cancellation-acknowledgement/samples.txt",
+      "sha256": "1288740a14550b8b1e0de365f2a1540e4723c5c5e86de02c20d783910659449a"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/non-blocking-try-reserve/record.json",
+      "sha256": "db8a6b22b71727692fa297836bf9851d1dc988422d829e34f94133173984fe78"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/non-blocking-try-reserve/samples.txt",
+      "sha256": "d7174db68779c8809a29fc4cce2181c9cc0ad640e9715e32905c97e64fcb3931"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/ready-result-hit/record.json",
+      "sha256": "edf93a0a3589d45e257b0305115bae5f4ad9e6c9ef944e2455278c648e4e47fd"
+    },
+    {
+      "path": "evidence/benchmarks/in-process/ready-result-hit/samples.txt",
+      "sha256": "d9a46005c8ff6baa277771d1dab85c2f13deb72f7121bc892663287e57779099"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/bounded-cleanup/record.json",
+      "sha256": "537f10980138bcbf202a4b1f1b2071bb43654b1eccbf32ca181d745b2762d554"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/bounded-cleanup/samples.txt",
+      "sha256": "f945d8ac0e8c06bd6c3dcb47b991413c3325e69859fa5bd1c5695dc48de75bba"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/cancellation-acknowledgement/record.json",
+      "sha256": "c2945873151d5edf14317ba1d165eb84376e42e8a4a909918065dcdae65cfba7"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/cancellation-acknowledgement/samples.txt",
+      "sha256": "0af319904b80bb90e980c5361f905e332aac6732202370b6eb0db8c841aeace2"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/non-blocking-try-reserve/record.json",
+      "sha256": "9cdf7b1d28b48f9627cbc9ba40694e3b3fa45fc7dd4f1a7891424a9037e9b829"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/non-blocking-try-reserve/samples.txt",
+      "sha256": "0675a6f22e63b426a0cefcccf1308a61815e83b70aa87b9f5730e1c19b4adf51"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/ready-result-hit/record.json",
+      "sha256": "aaf30f83e905f7ac13430f472a400f5e6dcc2e93c7bd491631173ccc8a148bc9"
+    },
+    {
+      "path": "evidence/benchmarks/macos-e06-stub/ready-result-hit/samples.txt",
+      "sha256": "c3e1ff088b482c037fe58878937998d0385e4e14c963b6ae441a1fb59ec22fa2"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/bounded-cleanup/record.json",
+      "sha256": "1c10386b4c6cd6f4cc6250f03dbd89dc1cc85b959254be0c8bd3c08b81265767"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/bounded-cleanup/samples.txt",
+      "sha256": "14909237038048b9afce02400be9840808cdcf262e4e0b8d361b4911434e2738"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/cancellation-acknowledgement/record.json",
+      "sha256": "1acb68065d0f793a635317d8943a602753601bf050c4a5d4f0dcd642fbf60b40"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/cancellation-acknowledgement/samples.txt",
+      "sha256": "3d3b440377184d7976a5b43bc01c322bb5d6935e2dc28ddf17b09c81cceec654"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/non-blocking-try-reserve/record.json",
+      "sha256": "4669fedd4f344d108c809fb30beeaa66c8827f5c4f860461e52426adf37995fb"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/non-blocking-try-reserve/samples.txt",
+      "sha256": "59b2799e4b16a9de67e6c131fc423b8bace3baaf42b8609166268809df5ea329"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/ready-result-hit/record.json",
+      "sha256": "5e0caa8f92fee6aeae7d0bdc8c70909fdda71e67b10e7e749b6355ca60ec8c51"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/ready-result-hit/samples.txt",
+      "sha256": "5c95dc5a9f510f2487fe0ca0a7326cd96eb5078ee6abff0ad69608d8cdf51941"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/warm-ssh-linux-sandbox-admission/record.json",
+      "sha256": "4a0046ab80fd54485cb31de6f7b79d30afc692efeb8bdbea4c4ab5af6670b4e3"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/warm-ssh-linux-sandbox-admission/samples.txt",
+      "sha256": "a2da1cb03102f185ab1c598e85a514622fb8d05dee2cc42393dc9610e6820885"
+    },
+    {
+      "path": "evidence/environment.json",
+      "sha256": "63c502544e7bef261b19a29939e22a72e9a68c2d373e9f3d24d4c1e16b481962"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/bounded-cleanup/record.json",
+      "sha256": "cfd464e43bccb1b81df8838a107f31cae74412ac2528559b14d1313da98b9d77"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/bounded-cleanup/samples.txt",
+      "sha256": "dbc86031347ee899cebb6654fa093302d1dc253b52dd2520133146fe24db3c37"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/cancellation-acknowledgement/record.json",
+      "sha256": "10776e5480462398360d1bd73c4c2685b68c05b6478f71ce21867573adbeac38"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/cancellation-acknowledgement/samples.txt",
+      "sha256": "de04dc3876ad2ff7205cc2135e585343987f8bf1ef0824a2733af5fabf82b7e9"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/non-blocking-try-reserve/record.json",
+      "sha256": "a7df54a6efc5159eb23bb4b3436e80bb3e2e848c1edf003c6732388ea9c60ed4"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/non-blocking-try-reserve/samples.txt",
+      "sha256": "aad11a86e77fd86209a993805983ec5045aad8e49bba960ba7f25938812ae33c"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/ready-result-hit/record.json",
+      "sha256": "5f9ca588898024ded34e668ac40aa9d873102bf9ab1b30586c919d4f3f54eaeb"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/in-process/ready-result-hit/samples.txt",
+      "sha256": "911d2cf42492f4ef87c76a341d40959e2ed0f673954744e74fcd725b4df33e2c"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/bounded-cleanup/record.json",
+      "sha256": "2c03212b86cfd86ed974133a4693ec86d96e9cc95717cc487385305d8f27565b"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/bounded-cleanup/samples.txt",
+      "sha256": "89f59c2b0a0280e851fa70a7d9eb4d7c83e4338f2ab8a2be95c4d1931bbd398d"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/cancellation-acknowledgement/record.json",
+      "sha256": "c7e0a0bb858d9601a911386d1151d675213ff0c8bc23b51f2911cf431080a598"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/cancellation-acknowledgement/samples.txt",
+      "sha256": "862c65c0a8042dff420f60b5ac98d77f85458c0a587e477b7418d1af63c3effe"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/non-blocking-try-reserve/record.json",
+      "sha256": "a6aaf9f074f98a17ba3d7c8a3cda9fc6c38bc22964b26c23f1c139e428d931dd"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/non-blocking-try-reserve/samples.txt",
+      "sha256": "b7fac1859e30fb333dc0532f4287aafb52e504f7dc8838f805b118329d110409"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/ready-result-hit/record.json",
+      "sha256": "1b9217d78231300dc648d3e66dbd9410b565e81b6fff12221ff52f12233bb62b"
+    },
+    {
+      "path": "evidence/failures/pre-boundary-correction/macos-e06-stub/ready-result-hit/samples.txt",
+      "sha256": "76cb38cd84a1ae48a85175356e19d204034c44b322d733716faa99b5ca8d8b15"
+    },
+    {
+      "path": "evidence/implementation-manifest.json",
+      "sha256": "8c3a32eed6c795defa9876afb5d52d06bb37f3da2d4352f1ed87e0f96f97254f"
+    },
+    {
+      "path": "evidence/limitations.md",
+      "sha256": "1ddf52662c32b9b9f5c80f6c483522e36d2e8e2f348905c1d9ecdc1fa8f2107e"
+    },
+    {
+      "path": "evidence/raw/attestation/profile-mismatch.jsonl",
+      "sha256": "50010351d553acd73ad8d0817ca911b77b776e4ac4f5950fa6d0ed9a42a6c08c"
+    },
+    {
+      "path": "evidence/raw/cache/ready-cache-hit-before-reservation.jsonl",
+      "sha256": "a04cfbdb290ee29c10a2d2a8aaa31368bef0112973c31d0c4164bb6719cfa422"
+    },
+    {
+      "path": "evidence/raw/cancel/cancel-before-placement.jsonl",
+      "sha256": "9fc4cd5c88178f7126001d59085db64a6c9e1ae088acce0607a6b002d9995474"
+    },
+    {
+      "path": "evidence/raw/cancel/cancel-while-running.jsonl",
+      "sha256": "4c0a0e4be0926ea5d19bd01c90e97e93c4f652ee747a47ef782cc5d9ac8ded2b"
+    },
+    {
+      "path": "evidence/raw/cas/corrupted-chunk.jsonl",
+      "sha256": "12f33632a4f95a30ef28514d1c512d0059964064936bd38d51c0770d071ba7f2"
+    },
+    {
+      "path": "evidence/raw/cas/final-object-digest-mismatch.jsonl",
+      "sha256": "c547fa950eb4685e998dbcd47897401ebdc6c98988170f48be46cfe1505e02e8"
+    },
+    {
+      "path": "evidence/raw/cas/manifest-tamper.jsonl",
+      "sha256": "d068543d112372f5f4845de631ae4c28fe8947783251c08cad5f09b934ea4ed8"
+    },
+    {
+      "path": "evidence/raw/cas/missing-blob.jsonl",
+      "sha256": "b4fc96db4ec1eacac9094ebdba1491451d0a8fd159d12214a74847340ddda7f1"
+    },
+    {
+      "path": "evidence/raw/cas/partial-materialization.jsonl",
+      "sha256": "1c77db2bda051f897e4578daafd03aef3ce6988eaffab254899dc2ba04298811"
+    },
+    {
+      "path": "evidence/raw/cleanup/caller-loss-lease-expiry.jsonl",
+      "sha256": "464963bdb788cb8ae5f511019779a00d1e5d8b5f5fd1063bcaf29f2c96af0436"
+    },
+    {
+      "path": "evidence/raw/cleanup/cleanup-timeout.jsonl",
+      "sha256": "5c75e03ae0b1f3933cdd4f1d7265682ad42c699b89e5fb2902baf969d216650b"
+    },
+    {
+      "path": "evidence/raw/cleanup/orphan-query-and-reconcile.jsonl",
+      "sha256": "9deebdbad0c5a374fc5857da52497ba8e5e6d794e6f377fff3ca34af4db5d60d"
+    },
+    {
+      "path": "evidence/raw/execution/command-non-zero-exit.jsonl",
+      "sha256": "a28e74c55571fe18a20058c811a8f239ff0e9357f146656fbb1663eeffa61665"
+    },
+    {
+      "path": "evidence/raw/idempotency/duplicate-or-reordered-command.jsonl",
+      "sha256": "977a7c24642e863981cb69d0ded10fdac2860484947ceeae157c47cb0bb28fae"
+    },
+    {
+      "path": "evidence/raw/loss/permanent-worker-loss.jsonl",
+      "sha256": "fc0d1f1123fb32dc344c71fd4a5f19fa451d3c17257fa1f47a89884893a10694"
+    },
+    {
+      "path": "evidence/raw/placement/capability-profile-mismatch.jsonl",
+      "sha256": "3aed47bda1ea7ea9e7c9cc2629ec5b0c554a89d838bcb6787a746d037514b121"
+    },
+    {
+      "path": "evidence/raw/placement/provider-unavailable.jsonl",
+      "sha256": "2cbdc6a7002f0f4effd4ea05086685e8b42a80ed03d404cc9b4f3553753fd9bb"
+    },
+    {
+      "path": "evidence/raw/publication/atomic-publication-failure.jsonl",
+      "sha256": "0a99a434c8c7aa3f98af895b6cb36f8109bea0f786705d724f3e3d1b9da697de"
+    },
+    {
+      "path": "evidence/raw/publication/output-collection-failure.jsonl",
+      "sha256": "3fa24598c41113efb4d554538887fa62ac43f061c40afe2a5535a3d06531b78e"
+    },
+    {
+      "path": "evidence/raw/publication/output-digest-failure.jsonl",
+      "sha256": "f803b3ee74a1c4b31b34f947519fb18227e344c955233afc29971b18c46fc68a"
+    },
+    {
+      "path": "evidence/raw/reconnect/disconnect-before-exec-ack.jsonl",
+      "sha256": "c880cfa82d1e93972c57d595615c2aa06cbd2ed62cc303998a73aca36cfb60e9"
+    },
+    {
+      "path": "evidence/raw/reconnect/disconnect-during-cleanup.jsonl",
+      "sha256": "9878d50f2a285748d302026f97697ed2c8d29fe98d2f2651203122d89b2f5caf"
+    },
+    {
+      "path": "evidence/raw/reconnect/disconnect-during-logs.jsonl",
+      "sha256": "0ffacb896b3e863a93b27b6dfe2b6badfa311344288f379992c56cdf2809bda8"
+    },
+    {
+      "path": "evidence/raw/reconnect/disconnect-during-publication.jsonl",
+      "sha256": "8a11ff1dc463de25e197bdec49c4c4dfbb6a76804dfd42cbed62064a572405cd"
+    },
+    {
+      "path": "evidence/raw/reconnect/stale-token.jsonl",
+      "sha256": "d9657aa1414451f03ed7854fdd98b30f2c5b13e9cf802c0abecf12edebc5d4fb"
+    },
+    {
+      "path": "evidence/raw/resume/w2-compatible-worker-resume.jsonl",
+      "sha256": "f9f2440c36d184a0c914a759d7559931af5e92cb85d5fc53ddfb4369e0e017e9"
+    },
+    {
+      "path": "evidence/scorecard.json",
+      "sha256": "c0daeb14d01741e3e64063ea6bf4b905b7243e300609b2a413ba82e26f6c9cbe"
+    },
+    {
+      "path": "evidence/ssh-linux/cleanup-result.json",
+      "sha256": "edceb7a54a0b0214c1e5a3b60940fc3ba14154214f82b03be1cbc81ac95b7366"
+    },
+    {
+      "path": "evidence/ssh-linux/provenance.json",
+      "sha256": "9d9959c23a3d0ea6586e4ed100cde0616f827e6951b52033483e5fbe3a72f77d"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/atomic-publication-failure.jsonl",
+      "sha256": "075ab67e857a9bfb51af40cd1eb42a9a6d2c1a2092001b0c74f13b26e7cf221a"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/attested-profile-mismatch.jsonl",
+      "sha256": "f5e383cea2fdab57e25089630b370b4da99b435fa43bbc7849a98967e3a2b0ce"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/caller-loss-lease-expiry.jsonl",
+      "sha256": "facf4a7a1046b34d589fe041d65fd2b2b244413f681aff2da154acee261a7906"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cancel-before-placement.jsonl",
+      "sha256": "25a8d64f19a4025f03716b7f229f74648c471585073099467ea486466a38afe6"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cancel-while-running.jsonl",
+      "sha256": "08e1eea2eaa2160762acb3eb5036172bed25c6a5af2064c966b7cadf32c47111"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/capability-profile-mismatch-before-reservation.jsonl",
+      "sha256": "cab7a8d27ddc0b5d97b5e60b3d1f74cf89af2dc9fb632bcc3c4d57c38496ace7"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-corrupted-chunk.jsonl",
+      "sha256": "4f4f5ce3abe3e1c4bcba226d214b56306c8c101cd42451a03ec5b961bed69a87"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-final-object-digest-mismatch.jsonl",
+      "sha256": "09b661d693b9f163d97a15d3598f66c8be1a5f237b0e433b48b430b9464ad377"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-manifest-tamper.jsonl",
+      "sha256": "cb6389bf43c3db80263036dad3d25737e1db62556ab242c5d1c723bcedd7e830"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-missing-blob.jsonl",
+      "sha256": "318379482cdecd264d84bdb1d2eb0898ea0c697ab001efb506362368125e25fb"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-partial-materialization.jsonl",
+      "sha256": "1860c2af5ded4d16786b4f6436b61136e299600b0e74aaa3d2d3267af014bf22"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cleanup-timeout.jsonl",
+      "sha256": "7e731f4e4715cd4257533f5b9d312e730d397ec1f1784dc594fdfa30e6b10077"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/command-non-zero-exit.jsonl",
+      "sha256": "afa4fd5146acd339d650e0c5219a225db7e2abee38de881b6a7e4868f0c0df7e"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-before-exec-acknowledgement.jsonl",
+      "sha256": "572db87e3f3305541076efc0c0c9a43e477adcb70b5cb9be968b1fb855058b28"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-during-cleanup.jsonl",
+      "sha256": "f0f605725e95d6bc77fbaa1015ca962a8942bdf0de7fe4c9e20c100a52ec3982"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-during-log-stream.jsonl",
+      "sha256": "874029913226e05575b0e08af57bed9273e030f707e0feab91f87da20cb66e1e"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-during-publication.jsonl",
+      "sha256": "5def11e2557af9fcb0902b185074454a0d8c7612d3bfcd0c4b1f55427923535e"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/duplicate-or-reordered-command.jsonl",
+      "sha256": "3a72f2fc8e7886080dd1394bf405ff7c081fe164dec2440dd3b4a7a742ad8946"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/orphan-query-and-reconcile.jsonl",
+      "sha256": "b389bc313b1c3792d5ed281d1b3739ffec268f9675c3c705eb5e68ed2a43bb6d"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/output-collection-failure.jsonl",
+      "sha256": "7bf8abb0c3ff45917e4494db03ecec0e533b39a5ab8fc0fe68d6386c0bdffe4d"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/output-digest-failure.jsonl",
+      "sha256": "09e2de8165b664b87dc6ded5aefa40a26c580fe046c4930731f3371e023f61ce"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/permanent-worker-loss.jsonl",
+      "sha256": "cb92055e1c857962a6d3d2596cf0a759d086bb3cce050796a88c9ea708a4ff72"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/provider-unavailable-before-acquisition.jsonl",
+      "sha256": "1d7105de9f4aa080614eab42621bee05d701f3576087bfc3fa246a06ff5dba78"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/ready-cache-hit-before-reservation.jsonl",
+      "sha256": "0aa7138178214756a21b1fb17845d7b9fff43fcab51f8cbadd95003bdf02b523"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/stale-reconnect-token.jsonl",
+      "sha256": "fc7a3ae3600dc8a39796be3cc400343283c7c55a9ca6d228c06e21baa93c5755"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/w2-compatible-worker-resume.jsonl",
+      "sha256": "848eff80e323eac972c4117b72e38c65e76cabfba147591b7454191fa121d496"
+    },
+    {
+      "path": "evidence/summary.md",
+      "sha256": "b17161d47fcfb601652c6d37b2cd87e315909637f03afc47b18fd2b3616f3c53"
+    }
+  ],
+  "format_version": "taskflow-e08-evidence-manifest/v1",
+  "phase_a_commit": "fe41c6428c4d7d432cdd463c82dd12c3465e1103"
+}

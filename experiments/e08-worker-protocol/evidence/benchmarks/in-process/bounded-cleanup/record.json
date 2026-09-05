@@ -1,0 +1,42 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E08",
+  "fixture_id": "e08-worker-protocol",
+  "source_revision": "fe41c6428c4d7d432cdd463c82dd12c3465e1103",
+  "timestamp": "2026-09-04T17:46:57Z",
+  "hardware": {
+    "cpu": "managed-arm64",
+    "cores": 18,
+    "ram_gib": 1
+  },
+  "os": {
+    "name": "darwin",
+    "version": "25.5.0",
+    "build": "Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:34 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6050",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "true",
+  "cache_dimensions": {
+    "adapter": "in-process",
+    "metric": "bounded-cleanup"
+  },
+  "samples": [
+    0.013823042,
+    0.013199167,
+    0.013343167,
+    0.013771875,
+    0.013631583
+  ],
+  "sample_count": 5,
+  "median": 0.013631583,
+  "p95": 0.013823042,
+  "lease_count": 0,
+  "raw_result_location": "samples.txt"
+}

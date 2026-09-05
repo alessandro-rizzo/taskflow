@@ -1,0 +1,17 @@
+{
+  "collision_counts": {
+    "allocated_port": 0,
+    "database_path": 0,
+    "endpoint_id": 0,
+    "lease_id": 0,
+    "mutable_object_identity": 0,
+    "route_capability_id": 0,
+    "service_name": 0,
+    "writable_root": 0
+  },
+  "cross_namespace_endpoint_success_count": 0,
+  "paired_trials": 20,
+  "peer_marker_read_count": 0,
+  "peer_marker_write_count": 0,
+  "project_visible_forbidden_field_count": 0
+}

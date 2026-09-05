@@ -1,0 +1,21 @@
+{
+  "mechanism_id": "local-linux-openssh",
+  "mechanism_version": "v1-experimental",
+  "base_image_digest": "sha256:2a48f9ce01f61c1d7b376b7be99bd12801a3ecd9f339a4c7e7698d529e8d0b47",
+  "os": "linux",
+  "os_build": "alpine-3.24.1-kernel-6.8.0-100-generic",
+  "architecture": "aarch64",
+  "toolchains": [
+    "openssh-server:10.3_p1-r1-ls235"
+  ],
+  "runner_digest": "sha256:c1e08fb5df6d87c5628ac75dd7f8e25f2eeb072d26417a8a692293d9722319da",
+  "sandbox_policy_digest": "sha256:05a77e6d7ba321b23c5dd174383c7e0c95575c82f4b4bade12e173f1bb02e108",
+  "reset_policy_digest": "sha256:b1fe7854440dc546145fc27278920090f7423560f7969d4d24612f2774eed354",
+  "required_worker_features": [
+    "openssh",
+    "process",
+    "filesystem",
+    "cas",
+    "durable-operation-journal"
+  ]
+}
