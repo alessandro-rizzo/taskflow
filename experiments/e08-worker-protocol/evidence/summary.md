@@ -1,7 +1,7 @@
-# E08 partial Phase B evidence
+# E08 three-shape Phase B evidence
 
-The approved in-process and non-mutating macOS-stub scope passed. The retained set contains 260 fault rows: 200 executable/typed-core rows and 60 explicitly labelled state-machine-analysis rows. No analysis-only row is treated as transport evidence. All 8 applicable local benchmark sets passed their frozen thresholds.
+The same typed core now drives the in-process adapter, a real ARM64 Linux/OpenSSH worker hosted in an isolated local Colima VM, and the non-mutating E06-shaped macOS stub. All 390 retained fault rows pass: 300 executable/typed rows and 90 explicitly labelled analysis-only rows. All 13 benchmark sets pass their frozen thresholds.
 
-The representative SSH/Linux adapter was not available or approved. No SSH availability manifest exists, no network connection was opened, and no VM, simulator, provider, or shared host resource was mutated. Therefore AC #1 and every all-three-adapter gate remain unpassed. Frozen precedence mechanically selects `state-machine-first-transport-deferral`.
+The SSH/Linux records include 125 manifest-bound connections across benchmark and fault evidence, strict host-key and experiment-key authentication, digest-verified materialization, command allowlisting, persistent operation replay across new SSH connections, two compatible worker identities, exact cleanup, and orphan query. Cache hits and TryReserve open zero SSH connections.
 
-See `limitations.md`, `scorecard.json`, `raw/`, and `benchmarks/`.
+Frozen precedence still selects `state-machine-first-transport-deferral`: six SSH fault cases per repetition remain analysis-only or boundary-only, and local VM evidence cannot prove WAN/provider/credential-broker/physical-host-loss/cross-host behavior. See `limitations.md`, `scorecard.json`, `ssh-linux/`, `raw/`, and `benchmarks/`.

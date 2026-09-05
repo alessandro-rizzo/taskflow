@@ -65,6 +65,46 @@
       "sha256": "c3e1ff088b482c037fe58878937998d0385e4e14c963b6ae441a1fb59ec22fa2"
     },
     {
+      "path": "evidence/benchmarks/ssh-linux/bounded-cleanup/record.json",
+      "sha256": "1c10386b4c6cd6f4cc6250f03dbd89dc1cc85b959254be0c8bd3c08b81265767"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/bounded-cleanup/samples.txt",
+      "sha256": "14909237038048b9afce02400be9840808cdcf262e4e0b8d361b4911434e2738"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/cancellation-acknowledgement/record.json",
+      "sha256": "1acb68065d0f793a635317d8943a602753601bf050c4a5d4f0dcd642fbf60b40"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/cancellation-acknowledgement/samples.txt",
+      "sha256": "3d3b440377184d7976a5b43bc01c322bb5d6935e2dc28ddf17b09c81cceec654"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/non-blocking-try-reserve/record.json",
+      "sha256": "4669fedd4f344d108c809fb30beeaa66c8827f5c4f860461e52426adf37995fb"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/non-blocking-try-reserve/samples.txt",
+      "sha256": "59b2799e4b16a9de67e6c131fc423b8bace3baaf42b8609166268809df5ea329"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/ready-result-hit/record.json",
+      "sha256": "5e0caa8f92fee6aeae7d0bdc8c70909fdda71e67b10e7e749b6355ca60ec8c51"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/ready-result-hit/samples.txt",
+      "sha256": "5c95dc5a9f510f2487fe0ca0a7326cd96eb5078ee6abff0ad69608d8cdf51941"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/warm-ssh-linux-sandbox-admission/record.json",
+      "sha256": "4a0046ab80fd54485cb31de6f7b79d30afc692efeb8bdbea4c4ab5af6670b4e3"
+    },
+    {
+      "path": "evidence/benchmarks/ssh-linux/warm-ssh-linux-sandbox-admission/samples.txt",
+      "sha256": "a2da1cb03102f185ab1c598e85a514622fb8d05dee2cc42393dc9610e6820885"
+    },
+    {
       "path": "evidence/environment.json",
       "sha256": "63c502544e7bef261b19a29939e22a72e9a68c2d373e9f3d24d4c1e16b481962"
     },
@@ -134,11 +174,11 @@
     },
     {
       "path": "evidence/implementation-manifest.json",
-      "sha256": "27b4f29edbbd3ad0fdb01e6fbdb312615d311c09989ebf007b9926a1474a7147"
+      "sha256": "8c3a32eed6c795defa9876afb5d52d06bb37f3da2d4352f1ed87e0f96f97254f"
     },
     {
       "path": "evidence/limitations.md",
-      "sha256": "ddc501ecfc7aaaccfc1285af603d9724b16a332e5eda8078bc8d47a457737000"
+      "sha256": "1ddf52662c32b9b9f5c80f6c483522e36d2e8e2f348905c1d9ecdc1fa8f2107e"
     },
     {
       "path": "evidence/raw/attestation/profile-mismatch.jsonl",
@@ -246,11 +286,123 @@
     },
     {
       "path": "evidence/scorecard.json",
-      "sha256": "668083ed0ac8b4d1d71a694488329237c0151e2da3f28fa7ff9fffe78602086a"
+      "sha256": "c0daeb14d01741e3e64063ea6bf4b905b7243e300609b2a413ba82e26f6c9cbe"
+    },
+    {
+      "path": "evidence/ssh-linux/cleanup-result.json",
+      "sha256": "edceb7a54a0b0214c1e5a3b60940fc3ba14154214f82b03be1cbc81ac95b7366"
+    },
+    {
+      "path": "evidence/ssh-linux/provenance.json",
+      "sha256": "9d9959c23a3d0ea6586e4ed100cde0616f827e6951b52033483e5fbe3a72f77d"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/atomic-publication-failure.jsonl",
+      "sha256": "075ab67e857a9bfb51af40cd1eb42a9a6d2c1a2092001b0c74f13b26e7cf221a"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/attested-profile-mismatch.jsonl",
+      "sha256": "f5e383cea2fdab57e25089630b370b4da99b435fa43bbc7849a98967e3a2b0ce"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/caller-loss-lease-expiry.jsonl",
+      "sha256": "facf4a7a1046b34d589fe041d65fd2b2b244413f681aff2da154acee261a7906"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cancel-before-placement.jsonl",
+      "sha256": "25a8d64f19a4025f03716b7f229f74648c471585073099467ea486466a38afe6"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cancel-while-running.jsonl",
+      "sha256": "08e1eea2eaa2160762acb3eb5036172bed25c6a5af2064c966b7cadf32c47111"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/capability-profile-mismatch-before-reservation.jsonl",
+      "sha256": "cab7a8d27ddc0b5d97b5e60b3d1f74cf89af2dc9fb632bcc3c4d57c38496ace7"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-corrupted-chunk.jsonl",
+      "sha256": "4f4f5ce3abe3e1c4bcba226d214b56306c8c101cd42451a03ec5b961bed69a87"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-final-object-digest-mismatch.jsonl",
+      "sha256": "09b661d693b9f163d97a15d3598f66c8be1a5f237b0e433b48b430b9464ad377"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-manifest-tamper.jsonl",
+      "sha256": "cb6389bf43c3db80263036dad3d25737e1db62556ab242c5d1c723bcedd7e830"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-missing-blob.jsonl",
+      "sha256": "318379482cdecd264d84bdb1d2eb0898ea0c697ab001efb506362368125e25fb"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cas-partial-materialization.jsonl",
+      "sha256": "1860c2af5ded4d16786b4f6436b61136e299600b0e74aaa3d2d3267af014bf22"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/cleanup-timeout.jsonl",
+      "sha256": "7e731f4e4715cd4257533f5b9d312e730d397ec1f1784dc594fdfa30e6b10077"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/command-non-zero-exit.jsonl",
+      "sha256": "afa4fd5146acd339d650e0c5219a225db7e2abee38de881b6a7e4868f0c0df7e"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-before-exec-acknowledgement.jsonl",
+      "sha256": "572db87e3f3305541076efc0c0c9a43e477adcb70b5cb9be968b1fb855058b28"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-during-cleanup.jsonl",
+      "sha256": "f0f605725e95d6bc77fbaa1015ca962a8942bdf0de7fe4c9e20c100a52ec3982"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-during-log-stream.jsonl",
+      "sha256": "874029913226e05575b0e08af57bed9273e030f707e0feab91f87da20cb66e1e"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/disconnect-during-publication.jsonl",
+      "sha256": "5def11e2557af9fcb0902b185074454a0d8c7612d3bfcd0c4b1f55427923535e"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/duplicate-or-reordered-command.jsonl",
+      "sha256": "3a72f2fc8e7886080dd1394bf405ff7c081fe164dec2440dd3b4a7a742ad8946"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/orphan-query-and-reconcile.jsonl",
+      "sha256": "b389bc313b1c3792d5ed281d1b3739ffec268f9675c3c705eb5e68ed2a43bb6d"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/output-collection-failure.jsonl",
+      "sha256": "7bf8abb0c3ff45917e4494db03ecec0e533b39a5ab8fc0fe68d6386c0bdffe4d"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/output-digest-failure.jsonl",
+      "sha256": "09e2de8165b664b87dc6ded5aefa40a26c580fe046c4930731f3371e023f61ce"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/permanent-worker-loss.jsonl",
+      "sha256": "cb92055e1c857962a6d3d2596cf0a759d086bb3cce050796a88c9ea708a4ff72"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/provider-unavailable-before-acquisition.jsonl",
+      "sha256": "1d7105de9f4aa080614eab42621bee05d701f3576087bfc3fa246a06ff5dba78"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/ready-cache-hit-before-reservation.jsonl",
+      "sha256": "0aa7138178214756a21b1fb17845d7b9fff43fcab51f8cbadd95003bdf02b523"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/stale-reconnect-token.jsonl",
+      "sha256": "fc7a3ae3600dc8a39796be3cc400343283c7c55a9ca6d228c06e21baa93c5755"
+    },
+    {
+      "path": "evidence/ssh-linux/raw/w2-compatible-worker-resume.jsonl",
+      "sha256": "848eff80e323eac972c4117b72e38c65e76cabfba147591b7454191fa121d496"
     },
     {
       "path": "evidence/summary.md",
-      "sha256": "0660bf379f135223750da314f17ef96a64aa38d33fa99035600559fe6579d17d"
+      "sha256": "b17161d47fcfb601652c6d37b2cd87e315909637f03afc47b18fd2b3616f3c53"
     }
   ],
   "format_version": "taskflow-e08-evidence-manifest/v1",

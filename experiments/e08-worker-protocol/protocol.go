@@ -11,6 +11,7 @@ import (
 
 const (
 	AdapterInProcess = "in-process"
+	AdapterSSHLinux  = "ssh-linux"
 	AdapterMacOSStub = "macos-e06-stub"
 )
 

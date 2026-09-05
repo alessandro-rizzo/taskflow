@@ -1,0 +1,71 @@
+{
+  "schema_version": "taskflow-t1-benchmark/v2",
+  "experiment_id": "E08",
+  "fixture_id": "e08-worker-protocol",
+  "source_revision": "fe41c6428c4d7d432cdd463c82dd12c3465e1103",
+  "timestamp": "2026-09-05T17:11:51Z",
+  "hardware": {
+    "cpu": "managed-arm64",
+    "cores": 2,
+    "ram_gib": 2
+  },
+  "os": {
+    "name": "linux",
+    "version": "alpine-3.24.1",
+    "build": "6.8.0-100-generic",
+    "arch": "arm64"
+  },
+  "toolchain": [
+    {
+      "name": "go",
+      "version": "go1.25.12"
+    },
+    {
+      "name": "openssh",
+      "version": "10.3_p1-r1-ls235"
+    }
+  ],
+  "state": "warm",
+  "preparation_command": "true",
+  "cache_dimensions": {
+    "adapter": "ssh-linux",
+    "metric": "warm-ssh-linux-sandbox-admission"
+  },
+  "samples": [
+    0.306021334,
+    0.048299,
+    0.048330791,
+    0.048180166,
+    0.046957375,
+    0.04730325,
+    0.04701525,
+    0.048756667,
+    0.048962375,
+    0.047095292,
+    0.048735958,
+    0.047166375,
+    0.047828666,
+    0.047485541,
+    0.047369792,
+    0.046483959,
+    0.047374917,
+    0.047410083,
+    0.048376667,
+    0.047640875,
+    0.048311625,
+    0.051178334,
+    0.049012084,
+    0.047796583,
+    0.050202666,
+    0.047547667,
+    0.048241666,
+    0.049238375,
+    0.048454708,
+    0.049261625
+  ],
+  "sample_count": 30,
+  "median": 0.048210916000000006,
+  "p95": 0.051178334,
+  "lease_count": 0,
+  "raw_result_location": "samples.txt"
+}

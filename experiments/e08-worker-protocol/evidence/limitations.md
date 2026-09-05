@@ -1,11 +1,8 @@
-# E08 Phase B limitations
+# E08 evidence limitations
 
-- No SSH availability manifest, endpoint, host-key approval, credential mediator, immutable Linux profile, remote ownership scope, or cleanup allowlist was supplied. The experiment opened zero SSH/network connections and produced no representative SSH/Linux evidence.
-- The macOS adapter is an E06-shaped in-memory stub. It exercises reusable-worker, disposable-sandbox, and optional-session semantics but does not call Xcode, `simctl`, a VM, the filesystem, a process runner, or any provider API.
-- The in-process adapter uses only an attempt-owned temporary directory and bounded child process on the current host. It is not remote Linux, does not validate transport framing or credential mediation, and does not prove remote process-tree cleanup.
-- Fault rows are labelled by evidence method. Executable and typed-core rows exercise implemented semantics; `state-machine-analysis` rows only show that the frozen transition is representable and are not counted as implementation, SSH, reconnect-framing, or provider evidence.
-- Timing records cover only the approved in-process and macOS-stub shapes. The frozen warm SSH/Linux admission metric has no samples and remains blocked rather than being approximated.
-- Reconnect tokens are semantic values only. Their wire encoding, authentication, expiry storage, and any SSH, gRPC, Connect, HTTP, or newline framing remain deliberately unselected.
-- Evidence binds uncommitted Phase B source bytes through the implementation manifest. The immutable Phase A contract is separately bound to commit `fe41c6428c4d7d432cdd463c82dd12c3465e1103`.
-- The managed sandbox did not expose physical RAM discovery to the T1 harness. Records use a declared conservative 1 GiB RAM override and sanitized machine/OS values; timing conclusions apply to this managed execution context rather than a hardware capacity claim.
-- The first complete local benchmark collection accidentally included the `TryReserve` probe's deliberate five-second acquisition delay in the cleanup probe. Although it passed the 30-second limit, it crossed the frozen cleanup start boundary. The complete set is retained under `failures/pre-boundary-correction/` and excluded; after the probe-only configuration correction every set was rerun from sample one.
+- SSH/Linux is real OpenSSH into a real ARM64 Linux container, but both controller and VM share one physical Mac; this is not external-host or WAN evidence.
+- Locality does not prove WAN latency, jitter, packet loss, NAT/firewall behavior, provider provisioning/quotas, external credential mediation, physical host loss, or cross-host recovery.
+- Thirty SSH rows covering permanent worker loss, cancellation while running, output collection/digest failure, cleanup timeout, and caller lease expiry remain explicitly `state-machine-analysis-local-linux`; four disconnect groups prove durable replay across fresh connections only, not a precisely timed mid-flight socket cut.
+- The two worker identities share one container and kernel. Their resume evidence proves identity separation and compatible replay, not recovery on a second physical host.
+- The macOS leg remains a non-mutating stub and proves no Xcode, simulator, VM, reset, or native-host behavior.
+- Transport framing, reconnect-token authentication/expiry, provider APIs, and all experiment types remain disposable and unstabilized.

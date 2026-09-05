@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import importlib.util
 import json
@@ -79,7 +80,7 @@ def verify_benchmarks(scorecard: dict) -> None:
     thresholds = load(EXPERIMENT / "thresholds.json")
     frozen = {item["id"]: item for item in thresholds["timing_metrics"]}
     measurements = scorecard["measurements"]
-    require(len(measurements) == 8, "expected eight approved local benchmark sets")
+    require(len(measurements) == 13, "expected thirteen three-shape benchmark sets")
     for item in measurements:
         record = load(EXPERIMENT / item["record"])
         metric = frozen[item["metric"]]
@@ -100,7 +101,9 @@ def verify_faults(scorecard: dict) -> None:
     for case in matrix["cases"]:
         path = EXPERIMENT / case["raw_trace"]
         current = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
-        require(len(current) == 10, f"expected 2 adapters x 5 repetitions: {case['id']}")
+        ssh_path = EXPERIMENT / "evidence/ssh-linux/raw" / f"{case['id']}.jsonl"
+        ssh = [json.loads(line) for line in ssh_path.read_text(encoding="utf-8").splitlines() if line]
+        require(len(current) == 10 and len(ssh) == 5, f"expected 3 adapters x 5 repetitions: {case['id']}")
         require({row["adapter"] for row in current} == {"in-process", "macos-e06-stub"}, f"adapter coverage mismatch: {case['id']}")
         for row in current:
             require(row["fault_id"] == case["id"] and row["verdict"] == "pass", f"failed fault row: {case['id']}")
@@ -109,8 +112,12 @@ def verify_faults(scorecard: dict) -> None:
             if row["evidence_method"] == "state-machine-analysis":
                 require(row["assertions"]["implemented_transport_fault"] is False, "analysis row masquerades as implementation")
         rows.extend(current)
-    require(len(rows) == scorecard["fault_rows"] == 260, "fault row total mismatch")
-    analyzed = sum(row["evidence_method"] == "state-machine-analysis" for row in rows)
+        for row in ssh:
+            require(row["adapter"] == "ssh-linux" and row["fault_id"] == case["id"] and row["verdict"] == "pass", f"failed SSH row: {case['id']}")
+            require(row["evidence_method"] in {"actual-openssh-boundary-reconnect", "actual-openssh-linux", "actual-openssh-plus-local-allowlist", "actual-openssh-two-worker-identities", "executable-core-no-ssh", "state-machine-analysis-local-linux", "typed-core-no-ssh", "typed-core-unit"}, "unknown SSH evidence strength")
+        rows.extend(ssh)
+    require(len(rows) == scorecard["fault_rows"] == 390, "fault row total mismatch")
+    analyzed = sum(row["evidence_method"].startswith("state-machine-analysis") for row in rows)
     require(analyzed == scorecard["state_machine_analysis_only_rows"] and analyzed > 0, "analysis-only limitations missing")
 
 
@@ -121,15 +128,45 @@ def verify_no_forbidden_adapter_work() -> None:
         require(token not in mac, f"macOS stub contains forbidden host operation: {token}")
     for path in EXPERIMENT.rglob("*.go"):
         text = path.read_text(encoding="utf-8")
-        require('"golang.org/x/crypto/ssh"' not in text and '"net"' not in text, f"network/SSH import forbidden: {path}")
+        require('"golang.org/x/crypto/ssh"' not in text, f"embedded SSH implementation forbidden: {path}")
+        if '"net"' in text:
+            require(path.relative_to(EXPERIMENT).as_posix() == "cmd/e08worker/main.go", f"network import outside worker proxy: {path}")
         require("map[string]any" not in text, f"provider option bag forbidden: {path}")
-    require(not (EXPERIMENT / "ssh-availability.json").exists(), "unapproved SSH manifest appeared")
+    manifest = load(EXPERIMENT / "ssh-availability.json")
+    require(set(manifest) == {"format_version", "manifest_id", "endpoint", "identity", "profile", "remote_scope", "capacity", "commands", "fault_scope", "cleanup", "evidence", "approval"}, "SSH manifest is not closed")
+    require(manifest["format_version"] == "taskflow-e08-ssh-availability-manifest/v1-experimental", "SSH manifest version drifted")
+    require(manifest["endpoint"]["host"] == "127.0.0.1" and manifest["endpoint"]["port"] == 22216, "SSH endpoint drifted")
+    require(manifest["endpoint"]["strict_host_key_checking"] is True, "strict host checking disabled")
+    require(manifest["endpoint"]["host_key_algorithm"] == "ssh-ed25519", "host-key algorithm drifted")
+    known_hosts = (REPOSITORY / manifest["endpoint"]["known_hosts_path"]).read_text(encoding="utf-8").strip().split()
+    require(known_hosts[:2] == ["[127.0.0.1]:22216", "ssh-ed25519"] and len(known_hosts) == 3, "known-host entry drifted")
+    fingerprint = base64.b64encode(hashlib.sha256(base64.b64decode(known_hosts[2])).digest()).decode().rstrip("=")
+    require(manifest["endpoint"]["host_key_sha256"] == "SHA256:" + fingerprint, "known-host fingerprint mismatch")
+    identity = manifest["identity"]
+    require(identity["user"] == "e08worker" and identity["credential_mediator"] == "experiment-owned-ed25519-key-wrapper", "SSH identity drifted")
+    require(all(identity[key] is True for key in ("ambient_ssh_config_forbidden", "ambient_agent_forbidden", "interactive_prompts_forbidden", "forwarding_forbidden")), "ambient SSH authority enabled")
+    require(manifest["remote_scope"]["root"] == "/config/taskflow-e08-ssh-linux", "remote ownership drifted")
+    require(all(manifest["remote_scope"][key] is True for key in ("shared_root_forbidden", "sudo_forbidden", "installation_forbidden")), "remote safety boundary drifted")
+    profile = load(EXPERIMENT / "approved/ssh-profile.json")
+    profile_digest = "sha256:" + hashlib.sha256(json.dumps(profile, separators=(",", ":")).encode()).hexdigest()
+    require(manifest["profile"]["linux_profile_digest"] == profile_digest, "SSH profile digest drifted")
+    require(manifest["profile"]["runner_digest"] == profile["runner_digest"] and manifest["profile"]["os"] == "linux" and manifest["profile"]["architecture"] == "aarch64", "SSH runner/profile fields drifted")
+    require(manifest["commands"]["allowlist"] == [["e08-w2"]] and manifest["commands"]["shell_startup_forbidden"] is True, "SSH command allowlist drifted")
+    require(manifest["capacity"]["max_concurrent_attempts"] == 1 and manifest["capacity"]["exclusive_paths"] is True, "SSH capacity scope drifted")
+    require(all(manifest["cleanup"][key] is True for key in ("broad_process_kill_forbidden", "outside_allowlist_forbidden")), "cleanup scope widened")
+    require(manifest["evidence"]["credential_values_forbidden"] is True, "credential evidence allowed")
+    require(manifest["approval"]["exact_network_and_mutations_approved"] is True and manifest["approval"]["phase_a_approval_is_not_execution_approval"] is True, "SSH approval missing")
+    cleanup = load(EXPERIMENT / "evidence/ssh-linux/cleanup-result.json")
+    require(cleanup["status"] == "complete" and cleanup["owned_root_absent_after_cleanup"] is True and cleanup["run_created_cache_absent_after_cleanup"] is True, "SSH cleanup incomplete")
+    require(cleanup["listener_127_0_0_1_22216_closed"] is True and cleanup["named_worker_processes_absent"] is True, "SSH resource remained live")
+    require(cleanup["private_keys_retained"] is False and cleanup["pre_existing_default_profile_deleted"] is False, "cleanup crossed ownership boundary")
 
 
 def verify_decision(scorecard: dict) -> None:
     require(scorecard["selected_branch"] == "state-machine-first-transport-deferral", "wrong frozen-precedence branch")
     require(scorecard["failed_exercised_rows"] == 0, "local exercised hard gate failed")
-    require(scorecard["representative_ssh_linux_evidence"] is False and scorecard["ssh_connections"] == 0, "SSH blocker was misrepresented")
+    require(scorecard["representative_ssh_linux_evidence"] is True and scorecard["ssh_connections"] > 0, "SSH evidence missing")
+    require(scorecard["external_remote_host_evidence"] is False and scorecard["local_linux_vm_transport_only"] is True, "locality limitation missing")
     require(scorecard["transport_frozen"] is False and scorecard["production_contract_allowed_to_stabilize"] is False, "experimental boundary drifted")
     decision = (REPOSITORY / "docs/decisions/0012-e08-worker-protocol.md").read_text(encoding="utf-8")
     require("state-machine-first transport deferral" in decision.lower(), "ADR does not match scorecard")
@@ -154,7 +191,7 @@ def main() -> None:
     verify_phase_a_snapshot()
     if not args.phase_a_only:
         verify_phase_b()
-    print("E08 Phase A snapshot valid" if args.phase_a_only else "E08 approved non-SSH Phase B evidence valid")
+    print("E08 Phase A snapshot valid" if args.phase_a_only else "E08 three-shape Phase B evidence valid")
 
 
 if __name__ == "__main__":

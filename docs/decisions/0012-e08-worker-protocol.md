@@ -22,11 +22,20 @@ in-process adapter, and an E06-shaped in-memory macOS stub. The stub retains
 separate reusable-worker, disposable-sandbox, and optional namespace-session
 identities without calling Xcode, `simctl`, a VM, the filesystem, or a provider.
 
-No approved SSH availability manifest or representative Linux endpoint was
-available. The experiment made zero SSH connections and did not inspect SSH
-configuration or credentials. It therefore has no evidence for remote Linux
-admission, host-key and credential mediation, reconnect framing, remote process
-ownership, or remote cleanup.
+The initial Phase B checkpoint had no approved SSH endpoint. A subsequent
+approved extension created an isolated ARM64 Linux/OpenSSH container inside a
+ticket-owned local Colima VM. Its manifest pins the loopback endpoint, Ed25519
+host key, experiment-only client identity, complete Linux profile and runner
+digests, command and fault scope, owned paths/processes, and cleanup policy.
+The adapter invokes `/usr/bin/ssh` with ambient configuration, agents,
+interactive authentication, forwarding, and unknown host keys disabled.
+
+This is genuine SSH/Linux execution rather than a mocked command or macOS
+advertised as Linux. It exercises transport framing, strict host identity,
+digest-verified transfer, Linux process/filesystem ownership, persistent
+operation replay, and cleanup. Because controller and worker still share one
+physical Mac, it is not external-host, WAN, provider, or physical-host-loss
+evidence.
 
 ## Options considered
 
@@ -58,30 +67,42 @@ Evidence is under `experiments/e08-worker-protocol/evidence/`:
 
 - `scorecard.json` records the mechanical branch evaluation and local timing
   results;
-- `raw/` retains ten rows per fault case for the two approved adapter shapes,
-  with executable/typed-core and state-machine-analysis strength explicitly
-  distinguished;
+- `raw/` retains ten rows per fault case for the original two adapter shapes,
+  while `ssh-linux/raw/` adds five rows per case for the Linux shape; evidence
+  strength remains explicit;
 - `benchmarks/` retains T1 benchmark-v2 records and raw samples;
 - `implementation-manifest.json` and `manifest.json` bind implementation and
   evidence bytes; and
 - `limitations.md` states the untested boundaries.
 
-The applicable local measurements and executable/typed-core assertions pass.
+All 13 measurements and all 390 retained rows pass. The SSH/Linux measurements
+are: ready-hit p95 12.066 ms, warm admission p95 51.178 ms, `TryReserve`
+maximum 8.129 ms, cancellation acknowledgement maximum 7.563 ms, and bounded
+cleanup maximum 55.801 ms. The frozen limits are unchanged.
+
+The applicable executable/typed-core assertions pass.
 Ready hits perform zero reservation or other resource work; attestation
 precedes sandbox/session creation; immutable bytes are digest-checked before
 use; publication uses compare-and-swap; operation replay is idempotent;
 log replay verifies cursor order and byte digests; cancellation runs detached
 bounded cleanup; and exact orphan query/reconciliation is exercised. Analysis-
-only rows are not treated as implemented transport fault evidence.
+only rows are not treated as implemented transport fault evidence. The Linux
+records include 125 manifest-bound SSH connections across the accepted fault
+and benchmark sets, plus exact strict-host/profile/container provenance.
 
 ## Decision
 
-**Select state-machine-first transport deferral.** This is precedence branch
-two. Branch one is not selected because no exercised local hard gate failed
-and the contract retains a credible, approval-gated representative SSH/Linux
-path. Branch two necessarily matches because local core semantics pass while
-representative approved SSH/Linux and transport/reconnect evidence is absent.
-Later branches are not evaluated as successful after the first match.
+**Retain state-machine-first transport deferral.** This remains precedence
+branch two. Branch one is not selected because no exercised correctness,
+integrity, ownership, publication, cleanup, or orphan-accounting gate failed.
+The SSH/Linux extension strengthens the result substantially: one typed core
+drives all three shapes and the frozen timing gates pass. Branch two still
+matches because thirty Linux rows remain explicitly analysis-only and the
+disconnect rows prove durable replay across fresh connections at acknowledged
+boundaries rather than a precisely timed mid-flight socket cut. Local hosting
+also cannot close WAN, external-provider, credential-broker, physical-host-loss,
+or cross-host recovery questions. Later branches are not selected after the
+first matching precedence branch.
 
 The E06-shaped optional session remains isolated from stateless in-process
 execution, so the partial evidence does not currently force separate protocol
@@ -95,22 +116,27 @@ branch requires all three adapter shapes, including representative SSH/Linux.
   digest-before-use, idempotent operations, cursor-based replay, atomic
   publication, bounded detached cleanup, and exact orphan accounting as
   semantic inputs only.
-- The SSH adapter and warm Linux admission threshold remain unimplemented and
-  unmeasured. AC #1 and dependent all-three-adapter gates remain unpassed.
+- The experimental SSH adapter and warm Linux admission threshold are now
+  implemented and measured on a local Linux VM. This proves the minimum typed
+  core can drive all three required shapes, but not that its transport should
+  stabilize.
 - SSH framing, reconnect-token encoding/authentication, gRPC, Connect, HTTP,
-  credential mediation, and provider APIs remain unselected.
+  external credential mediation, and provider APIs remain unselected.
 - The macOS stub proves only shape compatibility. It does not prove native
   build, simulator, VM, reset, performance, or host-lifecycle behavior.
+- The two Linux worker identities share one container and physical host.
+  Resume proves compatible identity separation, not cross-host recovery.
 - State-machine-analysis traces preserve coverage and reviewability but do not
-  prove transport disconnection, worker loss, lease expiry, or remote resume.
+  prove precise mid-flight cancellation, permanent physical worker loss,
+  cleanup timeout, lease expiry, or output failure over a WAN transport.
 - All code, schemas, trace formats, and adapters remain disposable experiment
   artifacts and must not be imported by production or prototype code.
 
 ## Trigger for revisiting this decision
 
-- An explicit SSH availability manifest and approval permit representative
-  Linux execution under the frozen host-key, credential, ownership, command,
-  timeout, cleanup, and orphan-query boundaries.
+- A representative external Linux host becomes available under an equally
+  strict host-key, credential, ownership, command, timeout, cleanup, and
+  orphan-query manifest.
 - Representative transport faults reveal stale success, duplicate effects,
   cursor divergence, unsafe cleanup, or ownership ambiguity.
 - The real macOS lifecycle requires session behavior that leaks into or

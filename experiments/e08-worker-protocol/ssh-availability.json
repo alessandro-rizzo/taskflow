@@ -1,0 +1,109 @@
+{
+  "format_version": "taskflow-e08-ssh-availability-manifest/v1-experimental",
+  "manifest_id": "taskflow-e08-local-linux-20260905",
+  "endpoint": {
+    "host": "127.0.0.1",
+    "port": 22216,
+    "host_key_algorithm": "ssh-ed25519",
+    "host_key_sha256": "SHA256:jijUrPcVoEr8vHLFOAjJR3I9eLnhS6HT/RwJPB55/Ck",
+    "strict_host_key_checking": true,
+    "known_hosts_path": "experiments/e08-worker-protocol/approved/known_hosts"
+  },
+  "identity": {
+    "user": "e08worker",
+    "credential_mediator": "experiment-owned-ed25519-key-wrapper",
+    "ambient_ssh_config_forbidden": true,
+    "ambient_agent_forbidden": true,
+    "interactive_prompts_forbidden": true,
+    "forwarding_forbidden": true
+  },
+  "profile": {
+    "linux_profile_digest": "sha256:e6da1e31f41cade64d1f9c32818b59fa56f9771b90c4ff340dd841949fe2146e",
+    "runner_digest": "sha256:c1e08fb5df6d87c5628ac75dd7f8e25f2eeb072d26417a8a692293d9722319da",
+    "os": "linux",
+    "architecture": "aarch64",
+    "attestation_command": [
+      "/config/e08/bin/e08worker",
+      "proxy",
+      "--socket",
+      "/config/taskflow-e08-ssh-linux/taskflow-e08-worker-a/taskflow-e08-worker-a.sock"
+    ]
+  },
+  "remote_scope": {
+    "root": "/config/taskflow-e08-ssh-linux",
+    "name_prefix": "taskflow-e08-ssh-linux",
+    "shared_root_forbidden": true,
+    "sudo_forbidden": true,
+    "installation_forbidden": true
+  },
+  "capacity": {
+    "reservation_reference": "local-colima-e08-ssh-linux-single-container",
+    "exclusive_paths": true,
+    "max_concurrent_attempts": 1,
+    "expires_at": "2026-09-06T23:00:00+01:00"
+  },
+  "commands": {
+    "runner": [
+      "/config/e08/bin/e08worker",
+      "proxy"
+    ],
+    "allowlist": [
+      ["e08-w2"]
+    ],
+    "shell_startup_forbidden": true
+  },
+  "fault_scope": {
+    "allowed_fault_ids": [
+      "disconnect-before-exec-ack",
+      "disconnect-during-logs",
+      "disconnect-during-publication",
+      "disconnect-during-cleanup",
+      "permanent-worker-loss",
+      "cancel-while-running",
+      "caller-loss-lease-expiry",
+      "cleanup-timeout"
+    ],
+    "connection_timeout_ms": 5000,
+    "reconnect_timeout_ms": 5000,
+    "process_targets": [
+      "taskflow-e08-worker-a",
+      "taskflow-e08-worker-b"
+    ]
+  },
+  "cleanup": {
+    "path_allowlist": [
+      "/config/taskflow-e08-ssh-linux",
+      "/private/tmp/taskflow-e08-ssh-linux"
+    ],
+    "process_allowlist": [
+      "taskflow-e08-worker-a",
+      "taskflow-e08-worker-b"
+    ],
+    "orphan_query": [
+      "/config/e08/bin/e08worker",
+      "proxy",
+      "--socket",
+      "/config/taskflow-e08-ssh-linux/taskflow-e08-worker-a/taskflow-e08-worker-a.sock"
+    ],
+    "broad_process_kill_forbidden": true,
+    "outside_allowlist_forbidden": true
+  },
+  "evidence": {
+    "local_destination": "experiments/e08-worker-protocol/evidence/ssh-linux",
+    "remote_diagnostics_allowlist": [
+      "kernel-release",
+      "os-release",
+      "runner-sha256",
+      "sshd-process",
+      "owned-processes",
+      "owned-paths"
+    ],
+    "credential_values_forbidden": true
+  },
+  "approval": {
+    "approved_by": "user-in-thread",
+    "approved_at": "2026-09-05T16:55:00+01:00",
+    "exact_network_and_mutations_approved": true,
+    "phase_a_approval_is_not_execution_approval": true
+  }
+}
